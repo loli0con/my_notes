@@ -61,7 +61,10 @@ Type "help", "copyright", "credits" or "license" for more information.
 所幸在查阅网上资料时，已经知道了这个东西是**Command Lines Tool**了。
 参考[教程][3]进行对应的处理，如下：
 ```shell
-$ tree /Library/Developer/CommandLineTools
+$ gcc  # 安装之间运行gcc
+xcrun: error: invalid active developer path (/Library/Developer/CommandLineTools), missing xcrun at: /Library/Developer/CommandLineTools/usr/bin/xcrun
+
+$ tree /Library/Developer/CommandLineTools  # 安装之前的文件目录
 /Library/Developer/CommandLineTools
 └── usr
     └── share
@@ -69,6 +72,27 @@ $ tree /Library/Developer/CommandLineTools
             └── whatis
 
 3 directories, 1 file
+
+# 目录里肉眼可见的空虚
+
+$ xcode-select --install  # 执行安装
+xcode-select: note: install requested for command line developer tools
+# 此处省略一波操作，下一步下一步就OK了 #
+
+$ ll /Library/Developer/CommandLineTools  # 完成安装之后的文件目录
+total 0
+drwxr-xr-x  5 root  wheel   160B 12  4 06:12 Library
+drwxr-xr-x  5 root  wheel   160B  1  4 18:09 SDKs
+drwxr-xr-x  7 root  admin   224B  1  4 18:10 usr
+$ ll /Library/Developer/CommandLineTools/usr  # 完成安装之后的文件目录
+total 0
+drwxr-xr-x  110 root  wheel   3.4K  1  4 18:07 bin
+drwxr-xr-x    5 root  wheel   160B 12  4 06:15 include
+drwxr-xr-x   16 root  wheel   512B 12  4 06:24 lib
+drwxr-xr-x    6 root  admin   192B 12  4 06:23 libexec
+drwxr-xr-x    8 root  admin   256B  1  4 18:10 share
+$ gcc  # 安装完成之后，可以运行gcc命令了
+clang: error: no input files
 ```
 缺少bin文件夹，应该是需要重新安装Command Lines Tool了。
 有兴趣的话，可以[深入浅出一下Command Lines Tool][4]。
