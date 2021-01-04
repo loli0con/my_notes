@@ -2,7 +2,7 @@
 
 ## 起因
 某天，脑子被门夹了，然后，我......  
-```shell
+```zsh
 brew upgrade
 ```
 再然后打开了一个陈年屎坑
@@ -10,7 +10,7 @@ brew upgrade
 忆往昔懵懂岁月，入手这台MacBook是2016年年中的时候，因此这里存在一个是我迷惑的开发环境。
 这波升级，让我的python直接升到了3.9，pip也出了点问题
 
-**もうやるしかない**
+[**もうやるしかない**](https://fanyi.baidu.com/#jp/zh/%E3%82%82%E3%81%86%E3%82%84%E3%82%8B%E3%81%97%E3%81%8B%E3%81%AA%E3%81%84)
 
 ## 开坑
 > 动手删除多余python，开始整理开发环境
@@ -24,7 +24,7 @@ mac上安装python的方式有很多，常见的如下：
 由于我没有装过anaconda，所以我检查的范围主要是前两者的
 
 对自己有一点的了解，相信自己不会骚操作，所以就没用```locate```和```find```，然后执行如下操作：
-```shell
+```zsh
 $ which -a python
 /usr/bin/python  # macos自带的，不能删的，系统依赖它，将来会被python3取代
 $ which -a python3
@@ -32,7 +32,7 @@ $ which -a python3
 /usr/bin/python3 # 这是什么鬼？
 ```
 运行这个/usr/bin/python3
-```shell
+```zsh
 $ python3  # 这是用brew装的python3
 Python 3.9.1 (default, Dec 16 2020, 01:57:40)
 [Clang 12.0.0 (clang-1200.0.32.27)] on darwin
@@ -60,7 +60,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 由于删掉了Xcode，在我印象中好像Xcode里面有一些东西是被依赖的。
 所幸在查阅网上资料时，已经知道了这个东西是**Command Lines Tool**了。
 参考[教程][3]进行对应的处理，如下：
-```shell
+```zsh
 $ gcc  # 安装之间运行gcc
 xcrun: error: invalid active developer path (/Library/Developer/CommandLineTools), missing xcrun at: /Library/Developer/CommandLineTools/usr/bin/xcrun
 
