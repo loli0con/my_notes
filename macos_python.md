@@ -168,7 +168,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 如果在命令行里制定了，那么情况就好说了。如果是用**shebang**来指定的，就需要考虑了。
 常见的两种分写法```#!/usr/bin/python3```和```#!/usr/bin/env python3```，前者会直接调用macOS自带的python执行，
 后者会从**PATH环境变量**中去寻找，这具备灵活性，但因此也有可能调用的不是系统自带的python。
-详细可以参考[这篇文章][5]
+有关shebang的介绍可以参考[这篇文章][5]
 
 [1]: https://segmentfault.com/q/1010000022576249
 [2]: https://www.cnblogs.com/jing99/p/13963048.html
