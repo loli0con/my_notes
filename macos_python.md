@@ -98,6 +98,77 @@ clang: error: no input files
 有兴趣的话，可以[深入浅出一下Command Lines Tool][4]。
 
 
+## 进坑
+> 偶然间发现我之前的理解有问题
+
+安装完Command Lines Tool之后，我突然想看看之前在Xcode里面的python3怎样了。
+万万没想到，惊喜就来了。
+```zsh
+$ python3  # brew安装的python3
+Python 3.9.1 (default, Dec 16 2020, 01:57:40)
+[Clang 12.0.0 (clang-1200.0.32.27)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import pip
+>>> pip.__file__
+'/usr/local/lib/python3.9/site-packages/pip/__init__.py'
+>>>
+$ /usr/bin/python3  # Command Lines Tool里面的python3
+Python 3.8.2 (default, Nov  4 2020, 21:23:28)
+[Clang 12.0.0 (clang-1200.0.32.28)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import pip
+>>> pip.__file__
+'/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.8/lib/python3.8/site-packages/pip/__init__.py'
+>>>
+
+$ which -a pip3
+/usr/local/bin/pip3  # brew
+/usr/bin/pip3  # Command Lines Tool
+```
+好吧，看来python3已经成功加入macOS大礼包了。
+
+之前我认为的"xcode里面的python3，其实就是现在Command Lines Tool里面的"，只是我把Command Lines Tool单独拿出来用，没有放在Xcode里面。
+
+## 总结
+目前在我的macOS里面存在着两个系统级别python程序（即给系统的其他程序提供依赖），python2就快被取代了。
+```shell
+$ ll /usr/bin/python*
+lrwxr-xr-x  1 root  wheel    75B  1  1  2020 /usr/bin/python -> ../../System/Library/Frameworks/Python.framework/Versions/2.7/bin/python2.7
+lrwxr-xr-x  1 root  wheel    82B  1  1  2020 /usr/bin/python-config -> ../../System/Library/Frameworks/Python.framework/Versions/2.7/bin/python2.7-config
+lrwxr-xr-x  1 root  wheel    75B  1  1  2020 /usr/bin/python2 -> ../../System/Library/Frameworks/Python.framework/Versions/2.7/bin/python2.7
+lrwxr-xr-x  1 root  wheel    75B  1  1  2020 /usr/bin/python2.7 -> ../../System/Library/Frameworks/Python.framework/Versions/2.7/bin/python2.7
+lrwxr-xr-x  1 root  wheel    82B  1  1  2020 /usr/bin/python2.7-config -> ../../System/Library/Frameworks/Python.framework/Versions/2.7/bin/python2.7-config
+-rwxr-xr-x  1 root  wheel   134K  1  1  2020 /usr/bin/python3
+lrwxr-xr-x  1 root  wheel    76B  1  1  2020 /usr/bin/pythonw -> ../../System/Library/Frameworks/Python.framework/Versions/2.7/bin/pythonw2.7
+lrwxr-xr-x  1 root  wheel    76B  1  1  2020 /usr/bin/pythonw2.7 -> ../../System/Library/Frameworks/Python.framework/Versions/2.7/bin/pythonw2.7
+
+$ python2
+
+WARNING: Python 2.7 is not recommended.
+This version is included in macOS for compatibility with legacy software.
+Future versions of macOS will not include Python 2.7.
+Instead, it is recommended that you transition to using 'python3' from within Terminal.
+
+Python 2.7.16 (default, Nov 23 2020, 08:01:20)
+[GCC Apple LLVM 12.0.0 (clang-1200.0.30.4) [+internal-os, ptrauth-isa=sign+stri on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import sys
+>>> sys.path
+['', '/Library/Python/2.7/site-packages/beautifulsoup4-4.5.1-py2.7.egg', '/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python27.zip', '/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7', '/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/plat-darwin', '/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/plat-mac', '/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/plat-mac/lib-scriptpackages', '/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/lib-tk', '/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/lib-old', '/System/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/lib-dynload', '/Users/loli0con/Library/Python/2.7/lib/python/site-packages', '/Library/Python/2.7/site-packages', '/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python', '/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/PyObjC']
+>>> import pip
+>>> pip.__file__
+'/Library/Python/2.7/site-packages/pip/__init__.pyc'
+```
+
+# 附录
+设备里面存在多个python，用途各不相同，我的个人策略是封存好系统自带的，确保系统的正常运行。
+将开发所需要的python使用HomeBrew来管理，此python可以作为一个基准模版，再构建一个需环境，供项目使用。
+
+还有一个可能要注意的问题，假设某个文件执行的时候需要需要用到python解释器，那么究竟会调用哪个？
+如果在命令行里制定了，那么情况就好说了。如果是用**shebang**来指定的，就需要考虑了。
+常见的两种分写法```#!/usr/bin/python3```和```#!/usr/bin/env python3```，前者会直接调用macOS自带的python执行，
+后者会从**PATH环境变量**中去寻找，这具备灵活性，但因此也有可能调用的不是系统自带的python。
+
 [1]: https://segmentfault.com/q/1010000022576249
 [2]: https://www.cnblogs.com/jing99/p/13963048.html
 [3]: https://segmentfault.com/a/1190000018045211
