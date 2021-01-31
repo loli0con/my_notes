@@ -1,2 +1,2 @@
-# python_note
-something about python
+# my_notes
+something minds during studying
