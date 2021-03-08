@@ -57,6 +57,10 @@ ONBOOT=no
 ```
 配置完，可以上网了
 
+重点来了，上面是一次性的配置，重启之后就莫得了。  
+重点是把文件`/etc/sysconfig/network-scripts/ifcfg-ens33`里面的**ONBOOT=no**修改为**ONBOOT=yes**  
+这样重启系统之后，系统就能自动通过dhcp协议获取到ip地址了。
+
 #### 优化
 修改一下yum源比较好，根据自己的网络选择合适的源。后续课程里面，我觉得应该用得着。特别是minimal，还要按需填坑的。  
 [教程不唯一，仅供参考](https://mirrors.scau.edu.cn/mirrors-help/centos.html)
