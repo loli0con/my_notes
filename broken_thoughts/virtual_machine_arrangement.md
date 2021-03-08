@@ -31,6 +31,7 @@ Hadoop课程，linux课程，都需要用到虚拟机。
 忘记当时用的是啥密码了，随便猜一个，进去了。好像桌面软件有点bug？不影响，反正当服务器使用的。
 ![virtual_machine_arrangement+WechatIMG46442](https://raw.githubusercontent.com/loli0con/picgo/master/images/virtual_machine_arrangement%2BWechatIMG46442.png%2B2021-03-08-17-26-49)
 确实很省事，能用了。
+> 原来不是bug，是桌面壁纸，我还以为显示驱动有问题。。。
 
 ##### 迷你版
 之前听某海信大佬说坑很多，我想了想应该是网络问题？啊，还真是。。。
