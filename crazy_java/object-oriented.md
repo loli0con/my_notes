@@ -269,7 +269,6 @@ Lambda表达式实际上将会被当成一个“任意类型”的对象，到�
 Lambda表达式的目标类型必须明确是函数式接口，否则代码会报错:
 ```Java
 Object obj1 = () -> System.out.println("Hello world"); 
-}
 ```
 将Lambda表达式赋值给Object变量，编译器只能确定该Lambda表达式的类型为Object，而Object并不是函数式接口。可进行如下修改：
 ```Java
