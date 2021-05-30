@@ -39,6 +39,36 @@ https://www.cnblogs.com/fudashi/p/6856628.html
 
 菜鸟教程应该是转载别人的，算是笔记的笔记了，所以我就不做笔记了，看菜鸟的就行，没时间去造轮子。
 
+## 补充
+在菜鸟教程里有一些没有提到的东西，这里补充一下。
+
+### 修饰符的用法
+![regex_guide+20210530154359](https://raw.githubusercontent.com/loli0con/picgo/master/images/regex_guide%2B20210530154359.png%2B2021-05-30-15-44-00)
+
+```Java
+String content = "a11c8abcABC";
+String regStr = "abc";
+String regStr1 = "(?i)abc";
+String regStr2 = "a(?i)bc";
+String regStr3 = "a((?i)b)c";
+
+Pattern pattern = Pattern.compile(regStr);
+Pattern pattern1 = Pattern.compile(regStr,Pattern.CASE_INSENSITIVE);
+Matcher matcher = pattern.matcher(content);
+
+while (matcher.find()) {
+    System.out.println("找到  " + matcher.group());
+}
+```
+
+### 转义
+大多数特殊符号在中括号`[]`里时，都不需要转义。具体可以参考idea的提示，并在使用前自行测试。
+
+### 命名分组
+语法：`(?<分组名>正则表达式)`
+![regex_guide+20210530160743](https://raw.githubusercontent.com/loli0con/picgo/master/images/regex_guide%2B20210530160743.png%2B2021-05-30-16-07-45)
+
+
 ## 玩具
 之前工作的时候写的，用于匹配markdown语法，并提取出相关的信息。
 ```Python
