@@ -38,7 +38,7 @@ HashSet集合判断两个元素相等的标准是**两个对象通过equals()方
 HashSet中每个能存储元素的“槽位（slot）”通常称为”桶（bucket）“，如果有多个元素的hashCode值相同，但它们通过equals()方法比较返回false，就需要在一个“桶”里放多个元素，这样会导致性能下降。
 
 ### LinkedHashSet
-HashSet还有一个子类LinkedHashSet，它使用了链表记录集合元素的的添加顺序。
+HashSet还有一个子类LinkedHashSet，它使用了*双向*链表记录集合元素的的添加顺序。
 
 LinkedHashSet需要维护链表，所以性能略低于HashSet，但在迭代访问Set里的全部元素时将有很好的性能。
 
