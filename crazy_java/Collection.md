@@ -6,7 +6,7 @@
 * Collection.iterator方法，获取一个迭代器（*往后&能删*）
   * 使用迭代器的hasNext、next、remove等方法
   * 使用迭代器的forEachRemaining方法
-* forEach循环
+* for/forEach循环
 * Collection.stream方法，StreamAPI
 
 ***
