@@ -1,18 +1,19 @@
 # 集合
 ![Collection+Collection](https://raw.githubusercontent.com/loli0con/picgo/master/images/Collection%2BCollection.png%2B2021-06-01-17-54-35)
 ## 遍历
-有方式去遍历集合：
+有如下方式去遍历集合：
 * Collection.forEach方法
-* Collection.iterator方法，获取一个迭代器
-  * 使用迭代器的hasNext、next、remove等方法
+* Collection.iterator方法，获取一个迭代器（**往后&能删**）
+  * 使用迭代器的hasNext、next、**remove**等方法
   * 使用迭代器的forEachRemaining方法
 * forEach循环
 * Collection.stream方法，StreamAPI
 
+***
 ## Set
 Set的两个特征：
-* 不允许包含相同的元素
-* 集合中的元素无序
+* 不允许包含相同的元素，即**不重复**
+* 集合中的元素**无序**
 
 ### HashSet
 HashSet是Set接口的典型实现，它按Hash算法来存储集合中的元素，有很好的存取和查找性能。
@@ -20,13 +21,13 @@ HashSet是Set接口的典型实现，它按Hash算法来存储集合中的元素
 HashSet的特点：无序、非同步、值可为null。
 
 #### hashCode 和 equals
-有两个重要的方法，hashCode和equals，它们在使用HashSet时非常关键。
+有两个重要的方法，`hashCode`和`equals`，它们在使用HashSet时非常关键。
 
-##### 对象存储
-HashSet通过调用对象的hashCode()方法来得到该对象的hashCode值，然后根据hashCode值来决定该对象在HashSet中的存储位置。
+##### 存储规则
+HashSet通过调用对象的hashCode()方法来得到该对象的hashCode值，然后**根据hashCode值来决定该对象在HashSet中的存储位置**。
 
-##### 相等判断
-HashSet集合判断两个元素相等的标准是两个对象通过equals()方法比较相等，并且两个对象的hashCode()方法的返回值也相等。
+##### 相同判定
+HashSet集合判断两个元素相等的标准是**两个对象通过equals()方法比较相等，并且两个对象的hashCode()方法的返回值也相等**。
 
 ##### 结论
 如果需要把某个类的对象保存到HashSet集合中，重写这个类的equals()方法和hashCode()方法时，应该尽量保证两个对象通过equals()方法比较返回true时，它们的hashCode()方法返回值也相等。
@@ -42,7 +43,7 @@ HashSet还有一个子类LinkedHashSet，它使用了链表记录集合元素的
 LinkedHashSet需要维护链表，所以性能略低于HashSet，但在迭代访问Set里的全部元素时将有很好的性能。
 
 ### TreeSet
-TreeSet时SortedSet接口的实现类，可以确保集合元素处于排序状态。
+TreeSet时SortedSet接口的实现类，可以确保集合**元素处于排序状态**。
 TreeSet采用红黑树的数据结构来存储集合元素，它支持两种排序方式：自然排序和定制排序。默认采用自然排序。
 
 #### 自然排序
@@ -66,10 +67,11 @@ Java提供了一个Comparable接口，该接口里定义了一个compareTo(Objec
 Comparator是一个函数式接口，里面包含一个int compare(T o1,T o2)方法，该方法用于比较o1和o2的大小；如果方法返回正整数，则表明o1大于o2；如果该方法返回0，则表明o1等于o2；如果该方法返回负整数，则表明o1小于o2。
 
 ## List
-List接口继承了Collection接口，还增加了一些根据索引来操作集合元素的方法。  
-List额外提供了一个listIterator方法，该方法返回一个ListIterator对象，ListIterator接口继承了Iterator接口，提供了专门操作List的方法。
+List接口继承了Collection接口，还**增加了一些根据索引来操作集合元素的方法**。  
+List额外提供了一个listIterator方法，该方法返回一个ListIterator对象，ListIterator接口继承了Iterator接口，提供了专门操作List的方法（往前&能增）。
 
-List判断两个对象相等只要通过equals()方法比较返回true即可。
+
+List判断两个对象相等只要**通过equals()方法比较**返回true即可。
 
 ### ArrayList和Vector
 Vector和它的子类Stack已经过时，不推荐使用，保留它仅为了向后兼容。Vector和ArrayList在用法上几乎完全相同，Vector是线程安全的，所以性能会低。
@@ -88,14 +90,14 @@ ArrayList默认是线程不安全的，可以通过工具类将它变成线程�
 Queue用于模拟队列这种数据结构——“先进先出（FIFO）”的容器。
 
 ### Priority
-优先队列，根据队列元素的大小进行重新排序，最小的元素先出队。不可插入null元素，toString()方法返回值不可直接利用。
+**优先队列**，根据队列元素的大小进行重新排序，**最小的元素先出队**。不可插入null元素，toString()方法返回值不可直接利用。
 
 有两种排序方式（同TreeSet）：自然排序 和 定制排序。
 
 ## Deque
-Deque接口是Queue接口的子接口，它代表一个双端队列，它里面定义了一些双端队列的方法。
+Deque接口是Queue接口的子接口，它代表一个**双端队列**，它里面定义了一些双端队列的方法。
 
-Deque可以当成栈来使用。
+Deque可以当成**栈**来使用。
 
 ### ArrayDeque
 ArrayDeque是Deque接口典型的实现类，它是基于数组实现的双端队列，创建Deque时可指定一个numElement参数，用于指定Object[]的长度，默认为16。
