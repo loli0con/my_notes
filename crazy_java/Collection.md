@@ -66,6 +66,7 @@ Java提供了一个Comparable接口，该接口里定义了一个compareTo(Objec
 
 Comparator是一个函数式接口，里面包含一个int compare(T o1,T o2)方法，该方法用于比较o1和o2的大小；如果方法返回正整数，则表明o1大于o2；如果该方法返回0，则表明o1等于o2；如果该方法返回负整数，则表明o1小于o2。
 
+***
 ## List
 List接口继承了Collection接口，还**增加了一些根据索引来操作集合元素的方法**。  
 List额外提供了一个listIterator方法，该方法返回一个ListIterator对象，ListIterator接口继承了Iterator接口，提供了专门操作List的方法（*往前&能增*）。
@@ -86,6 +87,7 @@ ArrayList默认是线程不安全的，可以通过工具类将它变成线程�
 #### 注意
 此*java.util.ArrayList*非彼*java.util.Arrays.ArrayList*
 
+***
 ## Queue
 Queue用于模拟**队列**这种数据结构——“**先进先出**（FIFO）”的容器。
 
