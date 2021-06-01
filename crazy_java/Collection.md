@@ -3,8 +3,8 @@
 ## 遍历
 有如下方式去遍历集合：
 * Collection.forEach方法
-* Collection.iterator方法，获取一个迭代器（**往后&能删**）
-  * 使用迭代器的hasNext、next、**remove**等方法
+* Collection.iterator方法，获取一个迭代器（*往后&能删*）
+  * 使用迭代器的hasNext、next、remove等方法
   * 使用迭代器的forEachRemaining方法
 * forEach循环
 * Collection.stream方法，StreamAPI
@@ -43,7 +43,7 @@ HashSet还有一个子类LinkedHashSet，它使用了链表记录集合元素的
 LinkedHashSet需要维护链表，所以性能略低于HashSet，但在迭代访问Set里的全部元素时将有很好的性能。
 
 ### TreeSet
-TreeSet时SortedSet接口的实现类，可以确保集合**元素处于排序状态**。
+TreeSet是SortedSet接口的实现类，可以确保集合**元素处于排序状态**。
 TreeSet采用红黑树的数据结构来存储集合元素，它支持两种排序方式：自然排序和定制排序。默认采用自然排序。
 
 #### 自然排序
@@ -68,13 +68,13 @@ Comparator是一个函数式接口，里面包含一个int compare(T o1,T o2)方
 
 ## List
 List接口继承了Collection接口，还**增加了一些根据索引来操作集合元素的方法**。  
-List额外提供了一个listIterator方法，该方法返回一个ListIterator对象，ListIterator接口继承了Iterator接口，提供了专门操作List的方法（往前&能增）。
+List额外提供了一个listIterator方法，该方法返回一个ListIterator对象，ListIterator接口继承了Iterator接口，提供了专门操作List的方法（*往前&能增*）。
 
 
 List判断两个对象相等只要**通过equals()方法比较**返回true即可。
 
 ### ArrayList和Vector
-Vector和它的子类Stack已经过时，不推荐使用，保留它仅为了向后兼容。Vector和ArrayList在用法上几乎完全相同，Vector是线程安全的，所以性能会低。
+Vector和它的子类Stack已经过时，不推荐使用，保留它仅为了向后兼容。Vector和ArrayList在用法上几乎完全相同，Vector是线程安全的，性能低。
 
 ArrayList类封装了一个动态的、允许再分配的Object[]数组，ArrayList对象使用initialCapacity参数来设置该数组长度，当向ArrayList中添加元素超出该数组的长度时，他们的initialCapacity会自动增加。  
 创建对象时可指定initialCapacity，不指定默认为10。
@@ -87,7 +87,7 @@ ArrayList默认是线程不安全的，可以通过工具类将它变成线程�
 此*java.util.ArrayList*非彼*java.util.Arrays.ArrayList*
 
 ## Queue
-Queue用于模拟队列这种数据结构——“先进先出（FIFO）”的容器。
+Queue用于模拟**队列**这种数据结构——“**先进先出**（FIFO）”的容器。
 
 ### Priority
 **优先队列**，根据队列元素的大小进行重新排序，**最小的元素先出队**。不可插入null元素，toString()方法返回值不可直接利用。
@@ -109,14 +109,15 @@ LinkedList内部以链表的形式来保存集合中的元素。
 
 ### Array 和 Linked
 [数组和链表的区别](https://zhuanlan.zhihu.com/p/52440208)
-|❌|数组|链表|
-|典型类|ArrayList|LinkedList|
+
+|区别|数组|链表|
 |-----|-----|-----|
-|保存形式|ArrayList和ArrayDeque内部以数组的形式来保存集合中的元素|LinkedList内部以链表的形式来保存集合中的元素|
 |优点|随机访问性强 & 查找速度快|插入和删除效率低 & 可能浪费内存 & 内存空间要求高，必须有足够的连续内存空间 & 数组大小固定，不能动态拓展|
 |缺点|插入删除速度快 & 内存利用率高，不会浪费内存 & 大小没有固定，拓展很灵活|不能随机查找，必须从第一个开始遍历，查找效率低|
-|遍历|应该使用随机访问方法（get）|应该采用迭代器（Iterator）|
-|选择|默认选择|需要经常插入和删除|
+|典型类|ArrayList|LinkedList|
+|保存形式|ArrayList和ArrayDeque内部以数组的形式来保存集合中的元素|LinkedList内部以链表的形式来保存集合中的元素|
+|遍历方式|应该使用随机访问方法（get）|应该采用迭代器（Iterator）|
+|如何选择|默认选择|需要经常插入和删除|
 
 **注意表格中的“数组”指的是原生的数组，是ArrayXXX内部维护的Object[]，不是这个ArrayXXX本身，ArrayXXX实现了重新分配内部数组大小的功能**
 
