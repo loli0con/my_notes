@@ -1,5 +1,5 @@
 # 映射
-
+![Map+Map](https://raw.githubusercontent.com/loli0con/picgo/master/images/Map%2BMap.png%2B2021-06-01-23-22-13)
 ## Map
 Map用于保存具有映射关系的数据，因此Map集合里保存着两组值，一组保存key，另一组保存value。  
 key和value都可以是任何引用类型的数据，key不允许重复，即同一个Map对象的任何两个key通过equals方法比较总是返回flase。  
