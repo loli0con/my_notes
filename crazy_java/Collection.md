@@ -2,8 +2,8 @@
 ![Collection+Collection](https://raw.githubusercontent.com/loli0con/picgo/master/images/Collection%2BCollection.png%2B2021-06-01-17-54-35)
 ## 遍历
 有如下方式去遍历集合：
-* Collection.forEach方法
-* Collection.iterator方法，获取一个迭代器（*往后&能删*）
+* Iterable.forEach方法
+* Iterable.iterator方法，获取一个迭代器（*往后&能删*）
   * 使用迭代器的hasNext、next、remove等方法
   * 使用迭代器的forEachRemaining方法
 * for/forEach循环
