@@ -77,8 +77,7 @@ List判断两个对象相等只要**通过equals()方法比较**返回true即可
 ### ArrayList和Vector
 Vector和它的子类Stack已经过时，不推荐使用，保留它仅为了向后兼容。Vector和ArrayList在用法上几乎完全相同，Vector是线程安全的，性能低。
 
-ArrayList类封装了一个动态的、允许再分配的Object[]数组，ArrayList对象使用initialCapacity参数来设置该数组长度，当向ArrayList中添加元素超出该数组的长度时，他们的initialCapacity会自动增加。  
-创建对象时可指定initialCapacity，不指定默认为10。
+ArrayList类封装了一个动态的、允许再分配的Object[]数组，ArrayList对象使用initialCapacity参数来设置该数组长度，当向ArrayList中添加元素超出该数组的长度时，他们的initialCapacity会自动增加。创建对象时可指定initialCapacity。
 
 有两个方法可以重新分配Object[]：ensureCapacity 和 trmToSize。
 
