@@ -9,6 +9,8 @@
 * for/forEach循环
 * Collection.stream方法，StreamAPI
 
+[迭代方式的总结和比较](https://juejin.cn/post/6863108420552261646)
+
 ***
 ## Set
 Set的两个特征：
