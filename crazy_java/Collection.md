@@ -125,5 +125,5 @@ LinkedList内部以链表的形式来保存集合中的元素。
 
 **注意表格中的“数组”指的是原生的数组，是ArrayXXX内部维护的Object[]，不是这个ArrayXXX本身，ArrayXXX实现了重新分配内部数组大小的功能**
 
-
-
+## 后记
+[ArrayList源码+扩容机制分析](https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/collection/ArrayList%E6%BA%90%E7%A0%81%2B%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6%E5%88%86%E6%9E%90.md)
