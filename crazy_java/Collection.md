@@ -110,7 +110,8 @@ LinkedList实现了List接口（可以根据索引来随机访问集合中的元
 
 LinkedList内部以链表的形式来保存集合中的元素。
 
-### Array 和 Linked
+***
+## ArrayXXX 和 LinkedXXX
 [数组和链表的区别](https://zhuanlan.zhihu.com/p/52440208)
 
 |区别|数组|链表|
