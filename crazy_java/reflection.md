@@ -78,3 +78,6 @@ Proxy提供了用于创建动态代理类和代理对象的静态方法，它也
 
 ## 获取泛型信息
 [ParameterizedType详解](https://blog.csdn.net/LVXIANGAN/article/details/94836504)
+
+## 后记
+[Type详解](https://blog.csdn.net/u010884123/article/details/78189395)

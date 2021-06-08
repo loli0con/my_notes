@@ -127,3 +127,7 @@ LinkedList内部以链表的形式来保存集合中的元素。
 
 ## 后记
 [ArrayList源码+扩容机制分析](https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/collection/ArrayList%E6%BA%90%E7%A0%81%2B%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6%E5%88%86%E6%9E%90.md)
+
+[streamAPI-够用-廖雪峰](https://www.liaoxuefeng.com/wiki/1252599548343744/1322402873081889)
+
+[streamAPI-进阶](https://colobu.com/2016/03/02/Java-Stream/)
