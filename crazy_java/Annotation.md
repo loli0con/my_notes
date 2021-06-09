@@ -57,7 +57,7 @@ value成员变量的值只能是如下三个：
 ![Annotation+20210609092220](https://raw.githubusercontent.com/loli0con/picgo/master/images/Annotation%2B20210609092220.png%2B2021-06-09-09-22-21)
 
 #### 增强
-修饰任何用到类型的地方！
+[修饰任何用到类型的地方！](Annotation.md#type-annotation)
 
 ### @Documented
 @Documented用于指定被该元Annotation修饰的Annotation类将被javadoc工具提取成文档，如果定义Annotation类时使用了@Documented修饰，则所有使用该Annotation修饰的程序元素的API文档中将会包含该Annotation说明。
