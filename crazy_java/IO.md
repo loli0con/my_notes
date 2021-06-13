@@ -154,4 +154,5 @@ Files和Paths是两个工具类，其中Files包含了大量静态的工具方�
 ![IO+20210612210537](https://raw.githubusercontent.com/loli0con/picgo/master/images/IO%2B20210612210537.png%2B2021-06-12-21-05-39)
 
 ## 后记
-http://zhongmingmao.me/2019/07/22/java-performance-io-model/
+http://zhongmingmao.me/2019/07/22/java-performance-io-model/  
+http://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html
