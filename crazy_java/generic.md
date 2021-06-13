@@ -70,3 +70,9 @@ Java 泛型的实现方式不太优雅，但这是因为泛型是在 JDK5 时引
 * 可在方法调用链中，将推断得到的泛型传递到最后一个方法。
 
 泛型推断也不是万能的，因此也可以显式指定泛型的实际类型。
+
+## 字母意义
+* E — Element，常用在java Collection里，如：List<E>,Iterator<E>,Set<E>
+* K,V — Key，Value，代表Map的键值对
+* N — Number，数字
+* T — Type，类型，如String，Integer等等
