@@ -25,9 +25,8 @@ something minds during studying
 
 ### 一
 1. 多线程重写
-   1. https://www.cnblogs.com/wxd0108/p/5479442.html
-   2. https://blog.csdn.net/Evankaka/article/details/44153709
-   3. https://segmentfault.com/a/1190000023960592
+   1. https://blog.csdn.net/Evankaka/article/details/44153709
+   2. https://segmentfault.com/a/1190000023960592
 2. IO笔记重写
    1. 序列化
 3. 网络编程
