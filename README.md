@@ -20,6 +20,10 @@ something minds during studying
 因为少了别人可能会看不懂，所以前提是不能太省略。多了笔记就会失去“记录重点”的意义，通过标注提炼出重点，可以保持得住这个意义。
 
 ## todo
+### 零点五
+* 不背单词
+
+### 一
 1. 多线程重写
    1. https://www.cnblogs.com/wxd0108/p/5479442.html
    2. https://blog.csdn.net/Evankaka/article/details/44153709
@@ -28,3 +32,21 @@ something minds during studying
    1. 序列化
 3. 网络编程
 4. 异常
+
+### 一点五
+* git笔记整理
+* linux就该这么学
+* mysql笔记整理
+* 数据结构
+* OOAD
+
+### 二
+* 计算机网络
+* 操作系统
+* 算法
+  * 递归分治
+  * 动归
+  * 贪心
+  * 回溯
+
+### 三
