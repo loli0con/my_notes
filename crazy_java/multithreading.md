@@ -62,18 +62,19 @@ Jvm是运行在操作系统之上的，程序员和Java代码打交道（.java�
 ### 线程的生命周期
 ![multithreading+20210609170620](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210609170620.png%2B2021-06-09-17-06-21)
 
-
 #### 六种状态
 [java线程运行怎么有第六种状态?](https://www.zhihu.com/question/56494969)  
-主要是java区分出了waiting和timed waiting。
+通过阅读上面的文章，得出以下结论：
+* Jvm没有区分READY和RUNNING两种状态。
+* Java里描述的6种状态（Thread.State源码），这些状态是虚拟机状态，它不反映任何操作系统的线程状态。
 
 ![multithreading+java线程状态](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2Bjava%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81.jpeg%2B2021-06-15-15-27-38)
 
-需要注意的是：一个线程要运行，（如果存在同步监视器的话）首先要抢到锁，（必经步骤）还需要抢占到CPU资源。
+需要注意的是：一个线程要运行，（如果存在）要抢到锁，（必经步骤）还要抢占到CPU资源。
 
 ##### 状态详细说明
 1. 初始状态(NEW)
-   * 实现Runnable接口和继承Thread可以得到一个线程类，new一个实例出来，线程就进入了初始状态。
+   * 新创建了一个线程对象，但还没有调用start()方法。
 2. 就绪状态(RUNNABLE之READY)
    1. 就绪状态只是说你资格运行，调度程序(Cpu)没有挑选到你，你就永远是就绪状态。
    2. 调用线程的start()方法，此线程进入就绪状态。
@@ -89,8 +90,7 @@ Jvm是运行在操作系统之上的，程序员和Java代码打交道（.java�
 6. 超时等待(TIMED_WAITING)
    * 处于这种状态的线程不会被分配CPU执行时间，不过无须无限期等待被其他线程显示地唤醒，在达到一定时间后它们会自动唤醒。
 7. 终止状态(TERMINATED)
-   1. 当线程的run()方法完成时，或者主线程的main()方法完成时，我们就认为它终止了。这个线程对象也许是活的，但是它已经不是一个单独执行的线程。线程一旦终止了，就不能复生。
-   2. 在一个终止的线程上调用start()方法，会抛出java.lang.IllegalThreadStateException异常。
+   1. 当线程的run()方法完成时，或者主线程的main()方法完成时，我们就认为它终止了。
 
 
 ### 硬线程 软线程
@@ -142,20 +142,6 @@ thread.setName()
 Thread提供了让一个线程等待另一个线程完成的方法——join()方法。当在某个程序执行流中调用其他线程的join()方法时，调用线程将被阻塞，直到被join()方法加入的join线程执行完成为止。
 ![multithreading+20210609171013](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210609171013.png%2B2021-06-09-17-10-14)
 
-### 中断线程
-中断一个线程要在其他线程中对目标线程调用interrupt()方法，目标线程需要反复检测自身状态是否是interrupted状态，如果是，就立刻结束运行。要注意，interrupt()方法仅仅向目标线程发出了“中断请求”，至于目标线程是否能立刻响应，要看具体代码。
-
-当目标线程处于等待状态，如果对目标线程调用interrupt()，目标线程的join()方法会立刻抛出InterruptedException，因此，目标线程只要捕获到join()方法抛出的InterruptedException，就说明有其他线程对其调用了interrupt()方法，通常情况下该线程应该立刻结束运行。
-
-### 后台线程
-后台线程，又被称为守护线程，它是在后台运行的，它的任务是为其他的线程提供服务。
-
-如果所有的前台线程都死亡，后台线程会自动死亡。  
-当整个虚拟机中只剩下后台线程时，虚拟机就退出了。
-
-调用Thread对象的setDaemon(true)方法可将指定线程设置成后台线程。前台线程创建的子线程默认是前台线程，后台线程创建的子线程默认是后台线程。  
-Thread还提供了一个isDaemon()方法，用于判断指定线程是否为后台线程。
-
 ### 线程睡眠
 如果需要让当前正在执行的线程暂停一段时间，并进入阻塞状态，则可以通过调用Thread类的静态sleep()方法来实现。线程在其睡眠时间内，不会获得执行机会，即使系统中没有其他可执行的线程。
 
@@ -173,6 +159,24 @@ Thread类的yield()静态方法，也可以让当前正在执行的线程暂停�
 |状态切换|该线程进入阻塞|该线程进入就绪|
 |throws|方法声明抛出了异常|没有声明抛出任何异常|
 |移植性|很好|一般|
+
+### 中断线程
+中断有两种，正常/沟通的中断，和不正常/暴力的中断，就类似平时给电脑关机。  
+这里主要描述正常中断，暴力中断的stop方法请永远不要使用它。
+
+中断一个线程要在其他线程中对目标线程调用interrupt()方法，目标线程需要反复检测自身状态是否是interrupted状态（中断标识值是否为true），如果是，就立刻结束运行。要注意，interrupt()方法仅仅向目标线程发出了“中断请求”，至于目标线程是否能立刻响应，要看具体代码（这个过程需要程序员实现）。
+
+中断只会影响wait状态、sleep状态和join状态。例如目标线程调用了join()方法，处于joins状态，对目标线程调用断interrupt()方法，此时join()方法会抛出InterruptedException异常。  
+因此，当线程捕获到InterruptedException异常，就说明有其他线程对其调用了interrupt()方法，通常情况下该线程应该立刻结束运行。
+
+### 后台线程
+后台线程，又被称为守护线程，它是在后台运行的，它的任务是为其他的线程提供服务。
+
+如果所有的前台线程都死亡，后台线程会自动死亡。  
+当整个虚拟机中只剩下后台线程时，虚拟机就退出了。
+
+调用Thread对象的setDaemon(true)方法可将指定线程设置成后台线程。前台线程创建的子线程默认是前台线程，后台线程创建的子线程默认是后台线程。  
+Thread还提供了一个isDaemon()方法，用于判断指定线程是否为后台线程。
 
 ### 优先级
 ![multithreading+20210609174621](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210609174621.png%2B2021-06-09-17-46-22)
@@ -259,8 +263,11 @@ ISTORE  -->  写回
 ![multithreading+20210615213627](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210615213627.png%2B2021-06-15-21-36-28)
 想了解更多关于jdk中的同步原理，可以阅读[这篇文章](https://www.cnblogs.com/binarylei/p/12544002.html)。
 
+在这里，我们需要明白的是管程是编程语言*在操作系统提供的同步原语的基础上*提出的更高层次的同步原语。
+
 ### 同步监视器-概念
-在Java中，使用同步监视器的概念去包装“管程”的概念。
+在Java中，同步监视器即是管程。
+
 
 ### 同步代码块
 为解决线程安全问题，Java的多线程引入了同步监视器。使用同步监视器的通用方法就是同步代码块，语法格式如下：
@@ -284,31 +291,34 @@ synchronized(obj){
 ### 同步方法
 同步方法就是使用synchronized关键字来修饰的方法，实例方法的同步监视器是this，静态方法的同步监视器是该类对应的Class对象。
 
-### 同步监视器-模型
-一个线程执行到synchronized代码时，会在加锁的对象上，关联一个同步监视器。所以在谈论起，锁和同步监视器的时候，两者概念常常可以互换。
-![multithreading+20210615214220](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210615214220.png%2B2021-06-15-21-42-21)
+### 同步监视器-详解
+Java中的每个对象都有一个监视器，来监测并发代码的重入。在非多线程编码时该监视器不发挥作用，反之如果在synchronized范围内，监视器发挥作用。
 
-![multithreading+20210615214623](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210615214623.png%2B2021-06-15-21-46-24)
-线程进入同步区等于获得对象的锁，如果一个线程进入同步区，其他线程不能进入，直到当前线程离开同步代码（synchronized）释放锁，其他对象才能进入。  
-一个线程也可以执行wait()进入等待区，释放锁；其他线程可以进入同步区并向等待区的线程发通知notify()。等待区可以有多个线程在等待，同步区线程发通知应该全部发，入口和等待区的线程都应该受到通知。
+![multithreading+20210616154831](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210616154831.png%2B2021-06-16-15-48-32)
+
+一个线程（或者说一个执行流）在进入同步区（synchronized）时，需要获取*acquire*这个对象的监视器，即成为该监视器的拥有者*Owner*；如果一个线程在进入同步区时，发现监视器已被其他线程占有，它会在入口*entry*处等待其他线程释*release*放监视器。
+
+已经获得监视器的线程可以调用wait()方法，释放它所拥有的监视器，进入等待*wait*区；其他进入同步区的线程可以向等待区的线程发通知notify()，以此来唤醒它们。
+
+这里再放一个线程转换状态图，重点关注图中的“等待队列”和“锁池状态”。
+![multithreading+20210616161136](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210616161136.png%2B2021-06-16-16-11-37)
 
 
 ### 释放同步监视器的锁定
 ![multithreading+WechatIMG70677](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2BWechatIMG70677.jpeg%2B2021-06-11-20-23-10)
 
-一定要记住，只有*离开同步块*或者*调用wait方法*的情况下，锁才会被释放。
+一定要记住，只有*离开同步块*或者*调用wait方法*的情况下，同步监视器才会被释放。
 
 ### 同步锁
-同步锁Lock是控制多个线程对共享资源进行访问的工具，它比同步代码块和同步方法更灵活，每次只能由一个线程对Lock对象加锁，线程开始访问共享资源之前应该先获得Lock对象。
+同步锁Lock是控制多个线程对共享资源进行访问的工具，它比同步代码块和同步方法更灵活，每次只能由一个线程对Lock对象加锁，线程开始访问共享资源之前应该先获得Lock对象。访问结束之后，必须释放锁（通过finally）。
 
 Lock、ReadWriteLock是两个根接口，ReentrantLock（可重入锁）、ReentrantReadWriteLock分辨是它们的实现类。  
 还有更强大的一个StampedLock类，它为读写操作提供了三种锁模式：Writing、ReadingOptimistic、Reading。
 
-Java的synchronized锁是可重入锁。
 
 #### ReentrantLock
 JVM允许同一个线程重复获取同一个锁，这种能被同一个线程反复获取的锁，就叫做可重入锁——ReentrantLock。  
-ReentrantLock是Java代码实现的锁，我们就必须先获取锁，然后在finally中正确释放锁。
+ReentrantLock是Java里最基本的锁。
 
 #### ReadWriteLock
 读写锁是计算机程序的并发控制的一种同步机制：读操作可并发重入，写操作是互斥的。
@@ -326,6 +336,8 @@ StampedLock提供了乐观读锁，可取代ReadWriteLock以进一步提升并�
 StampedLock是不可重入锁。
 
 [StampedLock用法](https://www.liaoxuefeng.com/wiki/1252599548343744/1309138673991714)
+
+TODO 乐观锁悲观锁
 
 ### 死锁
 死锁产生的条件是多线程各自持有不同的锁，并互相试图获取对方已持有的锁，导致无限等待；
@@ -383,6 +395,9 @@ Java使用ThreadGroup来表示线程组，它可以对一批线程进行分类�
 
 ![multithreading+20210611220248](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210611220248.png%2B2021-06-11-22-02-50)
 
+### 异常处理
+TODO
+
 ## 线程池
 系统启动一个新线程的成本是比较高的，当程序中需要创建大量生存期很短暂的线程时，应该考虑实现线程池。除此之外，使用线程池可以有效控制系统中并发线程的数量。
 
@@ -434,8 +449,12 @@ ThreadLocal适合在一个线程的处理流程中保持上下文（避免了同
 
 使用ThreadLocal要用try ... finally结构，并在finally中清除。
 
+#### 浅析ThreadLocal的实现
+让每个线程都持有一个Map类型的变量，该Map被这些线程共同持有；  
+每个线程使用它本身作为key，通过它本身从这个Map里面获取value。
+
 ### 原子类
-Java的java.util.concurrent包除了提供底层锁、并发集合外，还提供了一组原子操作的封装类，它们位于java.util.concurrent.atomic包。  
+Java的java.util.concurrent包提供了一组原子操作的封装类，它们位于java.util.concurrent.atomic包。  
 Atomic类是通过无锁（lock-free）的方式实现的线程安全（thread-safe）访问。它的主要原理是利用了CAS：Compare and Set。
 
 [原子类详解1](https://www.liaoxuefeng.com/wiki/1252599548343744/1306581083881506)  
@@ -455,3 +474,10 @@ CompletionStage 的接口一般都返回新的CompletionStage，表示执行完�
 
 ## 后记
 已对笔记进行大幅度修改，但还有待进一步优化。
+
+优秀博文：
+* https://www.cnblogs.com/wxd0108/p/5479442.html
+* https://blog.csdn.net/Evankaka/article/details/44153709
+* https://segmentfault.com/a/1190000023960592
+* https://www.liaoxuefeng.com/wiki/1252599548343744/1255943750561472
+* https://blog.csdn.net/qq_22771739/article/details/82529874
