@@ -131,3 +131,5 @@ LinkedList内部以链表的形式来保存集合中的元素。
 [streamAPI-够用-廖雪峰](https://www.liaoxuefeng.com/wiki/1252599548343744/1322402873081889)
 
 [streamAPI-进阶](https://colobu.com/2016/03/02/Java-Stream/)
+
+[Java 集合框架综述]https://segmentfault.com/a/1190000023520835
