@@ -495,3 +495,4 @@ CompletionStage 的接口一般都返回新的CompletionStage，表示执行完�
 * https://www.liaoxuefeng.com/wiki/1252599548343744/1255943750561472
 * https://blog.csdn.net/qq_22771739/article/details/82529874
 * https://www.cnblogs.com/noteless/category/1394612.html
+* https://www.cnblogs.com/noteless/p/10394054.html
