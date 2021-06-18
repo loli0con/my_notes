@@ -24,13 +24,12 @@ something minds during studying
 * 不背单词
 
 ### 一
-1. 多线程重写
-   1. https://www.cnblogs.com/noteless/p/10394054.html
-2. IO笔记重写
+1. IO笔记重写
    1. 序列化
-3. 网络编程
-4. 异常
-5. 单元测试
+2. 异常
+3. 单元测试
+4. 日志
+5. 网络编程（应该走远了）
 
 ### 一点五
 * git笔记整理
@@ -48,5 +47,3 @@ something minds during studying
   * 动归
   * 贪心
   * 回溯
-
-### 三
