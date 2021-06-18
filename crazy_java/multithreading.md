@@ -509,7 +509,7 @@ Atomic类是通过无锁（lock-free）的方式实现的线程安全（thread-s
 [原子类详解1](https://www.liaoxuefeng.com/wiki/1252599548343744/1306581083881506)  
 [原子类详解2](https://www.cnblogs.com/jingmoxukong/p/12109049.html)
 
-### ComletableFuture
+### CompletableFuture
 CompletableFuture，它针对Future做了改进，可以传入回调对象，当异步任务完成或者发生异常时，自动调用回调对象的回调方法。  
 CompletableFuture实现了Future和CompletionStage接口，前者使其具备了Future的所有功能，这里我们重点讨论后者——CompletionStage。
 
