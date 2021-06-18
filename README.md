@@ -30,6 +30,7 @@ something minds during studying
    1. 序列化
 3. 网络编程
 4. 异常
+5. 单元测试
 
 ### 一点五
 * git笔记整理
