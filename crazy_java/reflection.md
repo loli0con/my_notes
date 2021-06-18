@@ -41,7 +41,7 @@ Class类提供了大量的实例方法来获取该Class对象所对应类的详�
 ![reflection+20210606162728](https://raw.githubusercontent.com/loli0con/picgo/master/images/reflection%2B20210606162728.png%2B2021-06-06-16-27-30)
 
 #### 注意
-当isNamePresent返回为ture时，getName、getParameterizedType、getType才能得到相应信息。
+当isNamePresent返回为true时，getName、getParameterizedType、getType才能得到相应信息。
 
 ## 生成并操作对象
 ### 访问权限检查
