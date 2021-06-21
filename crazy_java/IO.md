@@ -98,6 +98,79 @@ RandomAccessFile类有两个构造器，一个使用String参数来指定文件�
 * "rwd"：以读、写方式打开指定文件。相对于"rw"模式，还要求对文件的内容的每个更新都同步写入到底层存储设备。
 * "rws"：以读、写方式打开指定文件。相对于"rw"模式，还要求对文件的内容或元数据的每个更新都同步写入到底层存储设备。
 
+## 序列化
+
+### 基本概念
+序列化是把内存中的对象转换成二进制内容，从而进行存储或者传输。  
+Java对象 --> byte[]
+
+反序列化，即把一个二进制内容变回对象。  
+byte[] --> Java对象
+
+### 可序列化
+如果要让某个对象支持序列化机制，则它的类必须是可序列化的。为了让某个类是可序列化的，则该类必须实现如下两个接口之一：
+* Serializable：  
+Serializable是一个“标记接口”——它是一个空接口，没有定义任何方法。
+* Externalizable
+
+
+### 序列化
+一旦某个类实现了Serializable接口，该类的对象就是可序列化的，程序可通过如下两个步骤序列化该对象：
+1. 创建一个ObjectOutputStream，这个输出流是一个处理流，必须建立在其他节点流的基础之上。
+2. 调用ObjectOutputStream对象的writeObject()方法输出可序列化对象。
+
+### 反序列化
+如果希望从二进制的内容中恢复对象，则需要使用反序列化，步骤如下：
+1. 创建一个ObjectInputStream输入流，这个输入流是一个处理流，必须建立在其他节点流的基础之上。
+2. 调用ObjectInputStream对象的readObject()方法读取流中的对象，该方法返回一个Object类型的Java对象。如果知道该Java对象的类型，则可以将该对象强制类型转换成其真实的类型。
+
+必须指出的是，反序列化读取的仅仅是Java对象的数据，而不是Java类，因此采用反序列化恢复Java对象时，必须提供该Java对象所属类的class文件，否则将会引发ClassNotFoundException异常。
+
+反序列化无需通过构造器来初始化Java对象。
+
+当一个可序列化类有多个父类时（包括直接父类和间接父类），这些父类要么有无参数的构造器，要么也是可序列化的——否则反序列化时将抛出InvalidClassException异常。如果父类是不可序列化的，只是带有无参数的构造器，则该父类中定义的成员变量值不会序列化到二进制流中。
+
+### 对象引用
+如果某个类的成员变量的类型不是基本类型或String类型，而是另一个引用类型，那么这个引用类型必须是可序列化的，否则拥有该引用类型成员变量的类也是不可序列化的，无论是否实现Serializable、Externalizable接口。
+
+Java序列化机制采用了一种特殊的序列化算法：
+* 所有保存到磁盘中的对象都有一个序列化编号
+* 当程序试图序列化一个对象时，程序将先检查该对象是否已经被序列化过，只有该对象从未（在本次虚拟机中）被序列化过，系统才会将该对象转换成字节序列并输出。
+* 如果某个对象已经被序列化过，程序将只是直接输出一个序列化编号，而不是再次重新序列化该对象。
+
+![IO+20210621010430](https://raw.githubusercontent.com/loli0con/picgo/master/images/IO%2B20210621010430.png%2B2021-06-21-01-04-31)
+
+![IO+20210621010746](https://raw.githubusercontent.com/loli0con/picgo/master/images/IO%2B20210621010746.png%2B2021-06-21-01-07-47)
+
+序列化前后对象的地址不同了，但是内容是一样的，而且对象中包含的引用也相同。换句话说，通过序列化操作,我们可以实现对任何可Serializable对象的“深度复制（deep copy）”。
+### 自定义序列化
+通过在实例变量前面使用transient关键字修饰，被transient修饰的实例变量将被完全隔离在序列化机制之外。
+
+Java还提供了一种自定义序列化机制，通过这种自定义序列化机制，可以让程序控制如何实例化各实例变量。在序列化和反序列化过程中需要特殊处理的类应提供如下特殊签名的方法，这些特殊的方法用以实现自定义序列化：
+* private void writeObject(java.io.ObjectOutputStream out)throws IOException;
+* private void readObject(java.io.ObjectInputStream in)throws IOException, ClassNotFoundException;
+* private void readObjectNoData()throws ObjectStreamException;
+
+![IO+20210621091722](https://raw.githubusercontent.com/loli0con/picgo/master/images/IO%2B20210621091722.png%2B2021-06-21-09-17-23)
+
+![IO+20210621091953](https://raw.githubusercontent.com/loli0con/picgo/master/images/IO%2B20210621091953.png%2B2021-06-21-09-19-53)
+
+![IO+20210621092421](https://raw.githubusercontent.com/loli0con/picgo/master/images/IO%2B20210621092421.png%2B2021-06-21-09-24-21)
+
+![IO+20210621092522](https://raw.githubusercontent.com/loli0con/picgo/master/images/IO%2B20210621092522.png%2B2021-06-21-09-25-23)
+
+![IO+20210621092554](https://raw.githubusercontent.com/loli0con/picgo/master/images/IO%2B20210621092554.png%2B2021-06-21-09-25-54)
+
+### Externalizable —— 另一种自定义序列化机制
+![IO+20210621092726](https://raw.githubusercontent.com/loli0con/picgo/master/images/IO%2B20210621092726.png%2B2021-06-21-09-27-27)
+
+![IO+20210621092926](https://raw.githubusercontent.com/loli0con/picgo/master/images/IO%2B20210621092926.png%2B2021-06-21-09-29-26)
+
+### 版本
+![IO+20210621093142](https://raw.githubusercontent.com/loli0con/picgo/master/images/IO%2B20210621093142.png%2B2021-06-21-09-31-42)
+
+![IO+20210621093201](https://raw.githubusercontent.com/loli0con/picgo/master/images/IO%2B20210621093201.png%2B2021-06-21-09-32-03)
+
 ## NIO
 新IO采用内存内存映射文件的方式来处理输入/输出，新IO将文件或文件的一段区域映射到内存中，像访问内存一样来访问文件（模拟了虚拟内存的概念）。新IO是面向块/缓存的。
 
