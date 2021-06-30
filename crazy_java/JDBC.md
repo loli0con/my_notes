@@ -11,6 +11,10 @@ JDBC为数据库开发提供了标准的API，使用JDBC开发的数据库应用
 ### 用途
 程序可通过JDBC API连接到关系数据库，并使用结构化查询语言（SQL，数据库标准的查询语言）来完成对数据库的查询、更新。
 
+JDBC接口(API)包括两个层次:
+* 面向应用的API：Java API，抽象接口，供应用程序开发人员使用(连接数据库，执行SQL语句，获得结 果)。
+* 面向数据库的API：Java Driver API，供开发商开发数据库驱动程序用。
+
 ### 驱动程序
 数据库驱动程序是JDBC程序和数据库之间的转换层，数据库驱动程序负责将JDBC调用映射成特定的数据库调用。
 
@@ -18,11 +22,39 @@ JDBC为数据库开发提供了标准的API，使用JDBC开发的数据库应用
 
 当需要连接某个特定的数据库时，必须有相应的数据库驱动程序。
 
+### Java与SQL对应数据类型转换表
+![JDBC+20210701020953](https://raw.githubusercontent.com/loli0con/picgo/master/images/JDBC%2B20210701020953.png%2B2021-07-01-02-09-54)
+
 ## 常用接口和类
 ### DriverManager
 用于管理JDBC驱动的服务类。  
 程序中使用该类的主要功能是获取Connection对象，该类包含如下方法：
 * public static synchronized Connection getConnection(String url, String user, String pass) throws SQLException：该方法获得url对应数据库的连接。
+
+#### URL
+JDBC URL用于标识一个被注册的驱动程序，驱动程序管理器通过这个URL选择正确的驱动程序，从而建立到数据库的连接。
+
+JDBC URL的标准由三部分组成，各部分间用冒号分隔——jdbc:子协议:子名称。
+* 协议:JDBC URL中的协议总是jdbc
+* 子协议:子协议用于标识一个数据库驱动程序
+* 子名称:一种标识数据库的方法。子名称可以依不同的子协议而变化，用子名称的目的是为了定位数据库提供足够的信息。包含主机名(对应服务端的ip地址)，端口号，数据库名
+
+![JDBC+20210701020455](https://raw.githubusercontent.com/loli0con/picgo/master/images/JDBC%2B20210701020455.png%2B2021-07-01-02-04-55)
+
+##### 示例
+几种常用数据库的JDBC URL：
+* MySQL的连接URL编写方式:
+  * jdbc:mysql://主机名称:mysql服务端口号/数据库名称?参数=值&参数=值 
+  * jdbc:mysql://localhost:3306/atguigu
+  * jdbc:mysql://localhost:3306/atguigu?useUnicode=true&characterEncoding=utf8(如果JDBC 程序与服务器端的字符集不一致，会导致乱码，那么可以通过参数指定服务器端的字符集)
+  * jdbc:mysql://localhost:3306/atguigu?user=root&password=123456
+* Oracle 9i的连接URL编写方式:
+  * jdbc:oracle:thin:@主机名称:oracle服务端口号:数据库名称
+  * jdbc:oracle:thin:@localhost:1521:atguigu
+* SQLServer的连接URL编写方式:
+  * jdbc:sqlserver://主机名称:sqlserver服务端口号:DatabaseName=数据库名称
+  * jdbc:sqlserver://localhost:1433:DatabaseName=atguigu
+
 
 ### Connection
 代表数据库连接对象，每个Connection代表一个物理连接会话。要想访问数据库，必须先获得数据库连接。该接口的常用方法如下：
@@ -57,7 +89,7 @@ JDBC编程大致按如下步骤进行：
 2. 通过DriverManager获取数据库连接
 3. 通过Connection对象创建Statement对象
 4. 使用Statement执行SQL语句
-5. 操作结果集
+5. 操作结果集/影响行数
 6. 回收数据库资源
 
 ## 执行SQL语句
@@ -202,7 +234,7 @@ Connection提供了setSavepoint()方法设置中间点，提供了rollback(Savep
 ### 批量更新
 JDBC还提供了一个批量更新的功能，使用批量更新时，多条SQL语句将被作为一批操作被同时收集，并同时提交。
 
-使用批量更新也需要先创建一个Statement对象，然后利用该对象的addBatch()方法将多条SQL语句同时收集起来，最后调用executeBatch()方法同时执行这些SQL语句。
+使用批量更新也需要先创建一个Statement对象，然后利用该对象的addBatch()方法将多条SQL语句同时收集起来，最后调用executeBatch()方法同时执行这些SQL语句。除此之外，还需要调用clearBatch()方法清空缓存的数据，确保执行的顺利。
 
 执行executeBatch()方法将返回一个int\[]数组，因为使用Statement执行DDL、DML语句都将返回一个long值，而执行多条DDL、DML语句将会返回多个long值，多个long值就组成了这个int[]数组。如果在批量更新的addBatch()方法中添加了select查询语句，程序将直接出现错误。
 
