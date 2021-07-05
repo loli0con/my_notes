@@ -39,12 +39,20 @@ xmind格式无法在线阅读，主要用于备份和发布。
 * 不背单词
 
 ### 一
-1. maven
-2. 日志
-3. jdbc
-4. 网络编程
+1. mybatis
+2. maven
+   1. https://www.bilibili.com/video/BV1Ah411S7ZE
+   2. https://www.runoob.com/maven/maven-tutorial.html
+   3. https://www.liaoxuefeng.com/wiki/1252599548343744/1309301146648610
+   4. https://www.cnblogs.com/lenve/p/12047793.html
+   5. https://dunwu.github.io/java-tutorial/javatool/build/maven/maven-quickstart.html
+   6. https://www.cnblogs.com/hzg110/p/6936101.html
+   7. http://c.biancheng.net/maven/
+3. homebrew
+4. 日志
 
 ### 一点五
+* Java网络编程
 * git笔记整理
 * linux就该这么学
 * mysql笔记整理
