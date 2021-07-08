@@ -14,6 +14,6 @@
    2. 自定义SQL
    3. 存储过程
 3. 封装JDBC（提供强大的功能，见⬆️）
-4. 通过简单的XML来进行配置
+4. 通过简单的**XML**来进行配置
 
 ![introduction+mybatis-mybaits简介](https://raw.githubusercontent.com/loli0con/picgo/master/images/introduction%2Bmybatis-mybaits%E7%AE%80%E4%BB%8B.png%2B2021-07-05-23-06-10)
