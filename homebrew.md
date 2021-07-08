@@ -30,6 +30,69 @@ cask啤酒被称为桶装啤酒，它是未经高温消毒的，未经过滤的�
 ### 优点
 一个是方便集中管理，在删除不再使用的软件包时，省去了大量软件包散落在各处带来日后清理的头疼问题。另外可以方便更集中的权限管理。
 
+#### 例子
+> 这一段是纯抄的，原本想拷贝链接地址，发现网站的证书过期了数月了，而且也一年没新文章了，有点担忧前辈是不是没爱发电了，明明文章挺好的...
+
+举个具体的例子——安装的node软件（node.js，一个运行JavaScript的软件，可近似看作jre/jvm）。如果不使用Homebrew，而用它官网提供的安装程序，那么安装完成后，会创建如下文件：
+```shell
+/usr/local/bin
+-rwxrwxr-x  1 spring  admin  30994272 10  3 09:55 node
+lrwxr-xr-x  1 502     staff        38 10 16 09:57 npm -> ../lib/node_modules/npm/bin/npm-cli.js
+
+/usr/local/include
+drwxrwxr-x  42 spring  admin  1344 10  3 09:55 node
+
+/usr/local/lib
+drwxrwxr-x  3 spring  admin  96 10  3 09:54 node_modules
+
+/usr/local/lib/dtrace
+-rw-rw-r--  1 spring  admin  12324 10  3 09:50 node.d
+
+/usr/local/share/doc
+drwxrwxr-x  5 spring  admin  160 10  3 09:54 node
+
+/usr/local/share/man/man1
+-rw-rw-r--  1 spring  admin  7849 10  3 09:48 node.1
+
+/usr/local/share/systemtap/tapset
+-rw-rw-r--  1 spring  admin  2361 10  3 09:48 node.stp
+```
+一个nodejs环境，安装看起来不难，但它却会在这么多的位置创建文件。当然，如果你一直在同样的环境使用它，没什么问题。但如果有一天你不需要它了，想删除掉，就比较麻烦了，除非官方能提供方便的卸载工具。也就是说，你必须像我现在这样清楚的列出它所有文件的位置，才能干净的将它删除掉。这个现象存在于大多数我们常用的工具软件中。
+
+再来看看 Homebrew 是如何解决这个问题的，下面是使用 Homebrew 安装 node 后文件的存放位置：
+```
+/usr/local/bin
+lrwxr-xr-x  1 marspro  admin  29 10 16 12:03 node -> ../Cellar/node/8.7.0/bin/node
+lrwxr-xr-x  1 marspro  admin  46 10 16 12:03 npm -> /usr/local/lib/node_modules/npm/bin/npm-cli.js
+
+/usr/local/include
+lrwxr-xr-x  1 marspro  admin  33 10 16 12:03 node -> ../Cellar/node/8.7.0/include/node
+
+/usr/local/lib
+drwxr-xr-x  4 marspro  admin  128 10 17 14:01 node_modules
+
+/usr/local/lib/dtrace
+lrwxr-xr-x  1 marspro  admin  41 10 16 12:03 node.d -> ../../Cellar/node/8.7.0/lib/dtrace/node.d
+
+/usr/local/share/doc
+lrwxr-xr-x  1 marspro  admin  38 10 16 12:03 node -> ../../Cellar/node/8.7.0/share/doc/node
+
+/usr/local/share/man/man1
+lrwxr-xr-x  1 marspro  admin     48 10 16 12:03 node.1 -> ../../../Cellar/node/8.7.0/share/man/man1/node.1
+
+/usr/local/share/systemtap/tapset
+-rw-r--r--  1 marspro  admin  3495 10 11 20:36 node.stp
+```
+之前目录中的文件都变成了符号链接，并且指向 Cellar 目录中。
+
+也就是说，虽然 node 安装后的目录结构没变，但相应的位置已经变成了符号链接，而 node 实际的文件都存放在了 /usr/local/Cellar 目录中。也就是我们前面说的 Homebrew 模块主目录。当你想删除 nodejs 的时候，只需要运行：
+```
+brew uninstall node
+```
+这一条命令就可以完整的删除之前安装的 nodejs 所有内容，这里也包括在 /usr/local/ 中创建的那些符号链接。
+
+这就是包管理的魅力，因此有必要好好认识一下这位大管家。
+
 ## 安装
 开始安装前需要安装 macOS 命令行工具，请确保该工具存在，否则需要执行如下命令：
 ```shell
