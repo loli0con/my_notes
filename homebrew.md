@@ -8,6 +8,7 @@
 * https://www.jianshu.com/p/d7013f24f342
 * https://osx-guide.readthedocs.io/zh_CN/latest/devenv/homebrew.html
 * https://www.jianshu.com/p/d7013f24f342
+* https://www.zhihu.com/question/443828638
 
 ## 简介
 HomeBrew中文翻译为**家酿酒**，是macOS上包管理的事实标准。
@@ -155,16 +156,16 @@ brew services start mysql
 ## cask
 Homebrew Cask 是 Homebrew 的扩展，借助它可以方便地在 macOS 上**安装图形界面程序**，即我们常用的各类应用。Homebrew 中文含义为自制、自酿酒，Cask 中文含义为桶、木桶，桶装酒是一种成品，也就是说每一个 homebrew cask 都可以直接使用的，比如atom和chrome，可以使用如下命令安装：
 ```shell
-brew cask install atom
-brew cask install google-chrome
+brew install --cask atom
+brew install --cask google-chrome
 ```
 
 ### 常用命令
-1. brew cask install <formula> 安装指定图形界面软件
-2. brew cask uninstall <formula> 卸载软件
-3. brew cask uninstall --force <formula> 卸载软件，带参数
-4. brew cask search text 搜索软件
-5. brew cask list 列出所有通过cask安装的软件
+1. brew install --cask <formula> 安装指定图形界面软件
+2. brew uninstall --cask <formula> 卸载软件
+3. brew uninstall --cask --force <formula> 卸载软件，带参数
+4. brew search --cask text 搜索软件
+5. brew list --cask 列出所有通过cask安装的软件
 
 ### 搜索软件
 * https://formulae.brew.sh/cask/
@@ -244,7 +245,7 @@ source ~/.zshrc
 ### Cakebrew
 Cakebrew 是 Homebrew 的 GUI 管理器，在 Cakebrew 中，你可以看到当前所有已经安装的软件，并可以在 Caskbrew 中对其他软件执行升级等操作。
 
-你只需要执行`brew cask install cakebrew`就可以完成 Cakebrew 的安装。
+你只需要执行`brew install --cask cakebrew`就可以完成 Cakebrew 的安装。
 
 安装完成后，在 LaunchPad 中打开即可。
 
@@ -253,7 +254,7 @@ launchrocket 可以用于管理 Homebrew 安装的服务，在使用时，你需
 
 ```shell
 brew tap jimbojsb/launchrocket
-brew cask install launchrocket
+brew install --cask launchrocket
 ```
 
 安装完成后，在 LaunchPad 中打开即可。
