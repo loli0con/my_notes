@@ -31,14 +31,17 @@ cask啤酒被称为桶装啤酒，它是未经高温消毒的，未经过滤的�
 一个是方便集中管理，在删除不再使用的软件包时，省去了大量软件包散落在各处带来日后清理的头疼问题。另外可以方便更集中的权限管理。
 
 ## 安装
-开始安装前需要安装 macOS 命令行工具，请自行确保该工具存在，否则需要执行如下命令：
+开始安装前需要安装 macOS 命令行工具，请确保该工具存在，否则需要执行如下命令：
 ```shell
-xcode-select —-install
+xcode-select -v  # 查看版本，以确认工具存在
+
+xcode-select —-install  # 如果工具不存在则执行该命令
 ```
 
 通过运行以下的命令安装HomeBrew：
-`/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
-
+```shell
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
 该命令包括两个命令，下载install文件，然后用系统的ruby工具安装HomeBrew。
 
 安装过程中会提示你执行了哪些动作。
@@ -83,7 +86,7 @@ xcode-select —-install
 4. brew list 显示所有的已安装的软件
 5. brew search text 搜索本地远程仓库的软件，已安装会显示绿色的勾
    * 在搜索时应当遵循宁可少字，不能错字的原则来搜索。
-   * 也可以直接访问https://formulae.brew.sh/来进行搜索
+   * 也可以直接访问 https://formulae.brew.sh/ 来进行搜索
 6. brew search /text/ 使用正则表达式搜软件
 7. brew info <formula> 显示指定软件信息
 8. brew reinstall <formula> 重新安装指定软件，先卸载后安装
@@ -118,7 +121,7 @@ Homebrew 会把软件安装到 /usr/local/Cellar，并且通过软链链接到 /
 
 ### 通用
 * brew commands 列出所有可用命令
-* brew doctor 环境检查并修复问题
+* brew doctor 环境检查，修复error，提示warning
 
 ## service
 macOS使用 launchctl 命令加载开机自动运行的服务，brew service 可以简化 lauchctl 的操作。
@@ -227,7 +230,7 @@ source ~/.zshrc
 
 ### 常用命令
 1. brew tap 列出本地资源仓库，其中 homebrew 是默认仓库，其它都是第三方仓库
-2. brew tap <user/repo> 添加第三方仓库，命名的规则按照github来定的。使用
+2. brew tap <user/repo> 添加仓库
 3. brew untap <user/repo> 删除仓库
 
 这里的添加/删除仓库，和上述的换源不太一样。
@@ -236,7 +239,7 @@ source ~/.zshrc
 
 
 ## 辅助软件
-除了命令行，还有两款软件可以帮助我们更好的使用 Homebrew ，他们分别是 Cakebrew 和 launchrocket。
+除了命令行，还有两款GUI软件可以帮助我们更好的使用 Homebrew ，他们分别是 Cakebrew 和 launchrocket。
 
 ### Cakebrew
 Cakebrew 是 Homebrew 的 GUI 管理器，在 Cakebrew 中，你可以看到当前所有已经安装的软件，并可以在 Caskbrew 中对其他软件执行升级等操作。
