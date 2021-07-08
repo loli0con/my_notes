@@ -7,7 +7,6 @@
 * https://sspai.com/post/56009
 * https://www.jianshu.com/p/d7013f24f342
 * https://osx-guide.readthedocs.io/zh_CN/latest/devenv/homebrew.html
-* https://www.jianshu.com/p/d7013f24f342
 * https://www.zhihu.com/question/443828638
 
 ## 简介
