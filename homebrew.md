@@ -249,6 +249,8 @@ Cakebrew 是 Homebrew 的 GUI 管理器，在 Cakebrew 中，你可以看到当�
 
 安装完成后，在 LaunchPad 中打开即可。
 
+> 亲测体验很差
+
 ### launchrocket
 launchrocket 可以用于管理 Homebrew 安装的服务，在使用时，你需要先添加对应的tap，然后再安装软件。
 
