@@ -1,22 +1,11 @@
 # Maven
 Maven是一个软件**项目管理**及自动**构建**工具。
 
+项目开发过程中会涉及到很多东西：项目描述、版本、构建、输出物、文档、项目关系、移植性、开发者列表、许可证、缺陷管理等，Maven能够我们管理这些。
+
+经过大量的学习和总结，Maven提供了一套成熟的规则，对项目开发和构建时的方方面面进行了规范化。只要遵循这些规则，程序员就能节省大量的时间和精力。
+
 ## 项目
-### 基本概念
-项目开发过程中会涉及到很多东西，Maven则会去管理它们：
-* 版本 - maven 有自己的版本定义和规则。
-* 构建 - maven 支持许多种的应用程序类型，对于每一种支持的应用程序类型都定义好了一组构建规则和工具集。
-* 输出物管理 - maven 可以管理项目构建的产物，并将其加入到用户库中。这个功能可以用于项目组和其他部门之间的交付行为。
-* 依赖关系 - maven 对依赖关系的特性进行细致的分析和划分，避免开发过程中的依赖混乱和相互污染行为
-* 文档和构建结果 - maven 的 site 命令支持各种文档信息的发布，包括构建过程的各种输出，javadoc，产品文档等。
-* 项目关系 - 一个大型的项目通常有几个小项目或者模块组成，用 maven 可以很方便地管理。
-* 移植性管理 - maven 可以针对不同的开发场景，输出不同种类的输出结果。
-
-> 有不懂的地方不要紧，毕竟项目大师不会看这篇文章。
-
-Maven将项目开发和管理过程抽象成一个项目对象模型（POM），反映在配置中，就是一个 pom.xml 文件。在POM，包含了项目的基本信息，用于描述项目如何构建，声明项目依赖，等等。因此，一个pom.xml定义了一个Maven项目。
-
-在Maven的安装目录中，有一个预设的、顶级的pom，类似Java里的Object。所有的 Maven 项目都会继承这个 pom.xml，所以通常把这个 pom 叫超级 pom。
 
 ### 项目结构
 Maven提倡使用一个标准的目录结构：
@@ -25,7 +14,7 @@ Maven提倡使用一个标准的目录结构：
 实际举例（${basedir}为“my-maven-project”）：
 ```
 my-maven-project
-├── pom.xml(maven的核心配置文件)
+├── pom.xml(项目的核心配置文件)
 ├── src
 │   ├── main
 │   │   ├── java(java源代码目录)
@@ -36,8 +25,13 @@ my-maven-project
 └── target(输出目录，所有的输出物都存放在这个目录下)
 ```
 
-#### pom.mxl
-最关键的项目描述文件pom.xml，它的内容大致如下：
+### POM
+Maven将项目开发和管理过程抽象成一个项目对象模型（POM），正对应着上文里的pom.xml文件。也就是说，一个pom.xml定义了一个Maven项目。POM包含了项目的基本信息，它用于描述项目如何构建、声明项目依赖等等。
+
+在Maven的安装目录中，有一个预设的、顶级的pom，类似Java里的Object。所有的Maven项目都会继承这个pom.xml，所以通常把这个pom叫超级pom。
+
+### pom.mxl
+项目描述文件pom.xml，它的内容大致如下：
 ```xml
 <project xmlns = "http://maven.apache.org/POM/4.0.0"
     xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
@@ -77,7 +71,7 @@ my-maven-project
 ### 创建项目
 想要创建一个Maven项目，最原始的方式便是按照上述目录结构手动创建，不借助任何的工具。
 
-还可以通过使用命令的方式来创建：
+其次还可以通过使用命令的方式来创建：
 * 使用命令向导一步步创建项目
    1. 在硬盘上创建一个空的目录，用来存放Maven项目
    2. 打开命令行窗口，切换到该目录
@@ -95,11 +89,90 @@ my-maven-project
 2. 有些开发工具会内置Maven（当然你知道我在说idea）
 3. 创建一个简单的项目要记得“archetype”为“quickstart”（快速开始）
 
-## 仓库
-在 Maven 的术语中，仓库是一个位置（place）。Maven 仓库是项目中依赖的第三方库，这个库所在的位置叫做仓库。
 
-在 Maven 中，任何一个依赖、插件或者项目构建的输出，都可以称之为**构件**。  
-Maven 仓库能帮助我们管理构件（主要是JAR），它就是放置所有JAR文件（WAR，ZIP，POM等等）的地方。
+## 生命周期
+### 构建
+构建就是「把工程/项目经过编译～得到的编译结果～部署到服务器上」的一整个过程，或者说就是程序员写完代码到项目上线运行的一整个过程。
+
+主要有下面几个环节：
+1. 清理clean：将以前编译得到的旧文件class字节码文件删除
+2. 编译compile：将java源程序编译成class字节码文件
+3. 测试test：自动测试，自动调用junit程序
+4. 报告report：测试程序执行的结果
+5. 打包package：动态Web工程打War包，java工程打jar包
+6. 安装install：Maven特定的概念——将打包得到的文件复制到“仓库”中
+7. 部署deploy：将工程生成的包复制到容器下，使其运行
+
+### 引入
+在 Maven 之前，项目构建的生命周期概念就已经存在了。软件开发人员每天都要对项目进行清理、编译、测试、打包以及安装部署。
+
+通过学习、分析、反思和总结以前工作中对项目的构建过程，Maven 抽象出了一个适合于所有项目的构建生命周期，并将它们统一规范。
+
+需要注意的是，**Maven 中项目的构建生命周期只是 Maven 根据实际情况抽象提炼出来的一个统一*标准和规范***，是不能做具体事情的。也就是说，Maven 没有提供一个编译器能在编译阶段编译源代码。 Maven 只是规定了生命周期的各个阶段和步骤，**具体事情，由集成到 Maven 中的插件完成**。比如前面创建项目，就是由 maven-archetype-quickstart 插件完成的。
+
+### 三个生命周期
+Maven 拥有三套独立的生命周期，它们分别是 clean、default 和 site。clean 生命周期的目的是清理项目；default 生命周期的目的是构建项目；site 生命周期的目的是建立项目站点。
+
+每个生命周期又包含了多个**阶段**，这些阶段在执行的时候是**有固定顺序**的，后面的阶段一定要等前面的阶段执行完成后才能被执行
+
+#### clean 生命周期
+clean 生命周期的目的是清理项目，它包括以下三个阶段：
+1. pre-clean：执行清理前需要完成的工作。
+2. clean：清理上一次构建过程中生成的文件，比如编译后的 class 文件等。
+3. post-clean：执行清理后需要完成的工作。
+
+#### default 生命周期
+default 生命周期定义了构建项目时所需要的执行步骤，它是所有生命周期中最核心部分，包含的阶段如下表所述，比较常用的阶段用粗体标记。
+|名称|说明|
+|-----|-----|
+|validate（校验）|验证项目结构是否正常，必要的配置文件是否存在|
+|initialize（初始化）|做构建前的初始化操作，比如初始化参数、创建必要的目录等|
+|generate-sources（生成源代码）|产生在编译过程中需要的源代码|
+|process-sources（处理源代码）|处理源代码，比如过滤值|
+|generate-resources（生成资源文件）|生成将会包含在项目包中的资源文件|
+|process-resources（处理资源文件）|	复制和处理资源到目标目录，为打包阶段最好准备|
+|**compile（编译）**|编译项目中的源代码|
+|process-classes（处理类文件）|处理编译生成的文件，比如说对Java class文件做字节码改善优化|
+|generate-test-sources（生成测试源代码）|产生编译过程中测试相关的代码|
+|process-test-sources（处理测试源代码）|处理测试源代码，比如说，过滤任意值|
+|generate-test-resources（生成测试资源文件）|为测试创建资源文件|
+|process-test-resources（处理测试资源文件）|复制和处理测试资源到目标目录|
+|test-compile（编译测试源码）|编译测试源代码到测试目标目录|
+|process-test-classes（处理测试类文件）|处理测试源码编译生成的文件|
+|**test（测试）**|使用合适的单元测试框架运行测试（Juint是其中之一）|
+|prepare-package（准备打包）|处理打包前需要初始化的准备工作|
+|**package（打包）**|将编译后的 class 和资源打包成可分发格式的文件，比如JAR、WAR或者EAR文件|
+|pre-integration-test（集成测试前）|做好集成测试前的准备工作，比如集成环境的参数设置|
+|integration-test（集成测试）|处理和部署项目到可以运行集成测试环境中|
+|post-integration-test（集成测试后）|完成集成测试后的收尾工作，比如清理集成环境的值|
+|verify（验证）|运行任意的检查来验证项目包有效且达到质量标准|
+|**install（安装）**|将打包的组件以构件的形式，安装到本地依赖仓库中，以便共享给本地的其他项目，用作其他本地项目的依赖|
+|**deploy**|将最终的项目包复制到远程仓库中与其他开发者和项目共享|
+
+这些阶段的详细介绍内容可以参考链接：  
+http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html
+
+#### site 生命周期
+site 生命周期的目的是建立和发布项目站点。Maven 可以基于 pom 所描述的信息自动生成项目的站点，同时还可以根据需要生成相关的报告文档集成在站点中，方便团队交流和发布项目信息。site 生命周期包括如下阶段：
+1. pre-site：执行生成站点前的准备工作。
+2. site：生成站点文档。
+3. post-site：执行生成站点后需要收尾的工作。
+4. site-deploy：将生成的站点发布到服务器上。
+
+
+## 常用命令
+执行maven命令必须进入到pom.xml的目录中进行执行，通过这些命令让 Maven 执行生命周期的特定阶段。常用命令如下：
+1. mvn clean：清理，这个命令可以用来清理已经编译好的文件
+2. mvn compile：编译主程序，将 Java 代码编译成 Class 文件
+3. mvn test：执行单元测试测试，打印测试结果
+4. mvn package：打包，根据用户的配置将项目打成 jar 包或者 war 包
+5. mvn install：安装，手动向本地仓库安装一个 jar 包供其他项目共享使用
+
+
+## 仓库
+在 Maven 中，任何一个依赖、插件或者项目构建的输出，都可以称之为**构件**。
+
+在 Maven 的术语中，仓库是一个位置（place）。这个用于存放构建的位置就叫仓库，它帮我们管理这些构建。
 
 Maven 仓库有三种类型：
 * 本地（local）
@@ -231,81 +304,6 @@ Maven 项目和实际项目不一定是一一对应的。比如 SpringFramework�
 Maven spring-core 项目除了可以生成上面的主构件外，也可以生成 spring-core-4.2.7.RELEASE-javadoc.java 和 spring-core-4.2.7.RELEASE-sources.jar 这样的附属构件。这时候，javadoc 和 sources 就是这两个附属构件的 classifier。这样就为主构件的每个附属构件也定义了一个唯一的坐标。
 
 最后需要特别注意的是，不能直接定义一个 Maven 项目的 classifier，因为附属构件不是由 Maven 项目构建的时候直接默认生成的，而是由附加的其他插件生成的。
-
-
-## 构建
-构建就是「把工程/项目经过编译～得到的编译结果～部署到服务器上」的一整个过程，或者说就是程序员写完代码到项目上线运行的一整个过程。
-
-主要有下面几个环节：
-1. 清理clean：将以前编译得到的旧文件class字节码文件删除
-2. 编译compile：将java源程序编译成class字节码文件
-3. 测试test：自动测试，自动调用junit程序
-4. 报告report：测试程序执行的结果
-5. 打包package：动态Web工程打War包，java工程打jar包
-6. 安装install：Maven特定的概念——将打包得到的文件复制到“仓库”中
-7. 部署deploy：将工程生成的包复制到容器下，使其运行
-
-### 引子
-在介绍 Maven 之前，项目构建的生命周期概念就已经存在了。软件开发人员每天都要对项目进行清理、编译、测试、打包以及安装部署。虽然每个软件开发人员都做相关的事情，但公司和公司之间、项目和项目之间，往往目的一样，而实现的形式各种各样。有的项目基于 IDE 工具完成编译、打包和发布，有些是软件开发人员自己编写脚本。这些都是具有个性化和针对性的，到下一个项目后，又需要改造成新项目所需要的形式。因此就产生了一个问题：感觉是一样的，又不能重用，所以必须重写。通过学习、分析、反思和总结以前工作中对项目的构建过程，Maven 抽象出了一个适合于所有项目的构建生命周期，并将它们统一规范。具体步骤包括清理、初始化、编译、测试、打包、集成测试、验证、部署和生成站点。这些步骤几乎适合所有的项目，也就是说，所有项目的管理构建过程都可以对应到这个生命周期上来。
-
-需要注意的是，**Maven 中项目的构建生命周期只是 Maven 根据实际情况抽象提炼出来的一个统一*标准和规范***，是不能做具体事情的。也就是说，Maven 没有提供一个编译器能在编译阶段编译源代码。 Maven 只是规定了生命周期的各个阶段和步骤，**具体事情，由集成到 Maven 中的插件完成**。比如前面创建项目，就是由 maven-archetype-quickstart 插件完成的。
-
-## Maven 生命周期
-Maven 拥有三套独立的生命周期，它们分别是 clean、default 和 site。clean 生命周期的目的是清理项目；default 生命周期的目的是构建项目；site 生命周期的目的是建立项目站点。
-
-每个生命周期又包含了多个**阶段**，这些阶段在执行的时候是**有固定顺序**的，后面的阶段一定要等前面的阶段执行完成后才能被执行。
-
-### clean 生命周期
-clean 生命周期的目的是清理项目，它包括以下三个阶段：
-1. pre-clean：执行清理前需要完成的工作。
-2. clean：清理上一次构建过程中生成的文件，比如编译后的 class 文件等。
-3. post-clean：执行清理后需要完成的工作。
-
-### default 生命周期
-default 生命周期定义了构建项目时所需要的执行步骤，它是所有生命周期中最核心部分，包含的阶段如下表所述，比较常用的阶段用粗体标记。
-|名称|说明|
-|-----|-----|
-|validate（校验）|验证项目结构是否正常，必要的配置文件是否存在|
-|initialize（初始化）|做构建前的初始化操作，比如初始化参数、创建必要的目录等|
-|generate-sources（生成源代码）|产生在编译过程中需要的源代码|
-|process-sources（处理源代码）|处理源代码，比如过滤值|
-|generate-resources（生成资源文件）|生成将会包含在项目包中的资源文件|
-|process-resources（处理资源文件）|	复制和处理资源到目标目录，为打包阶段最好准备|
-|**compile（编译）**|编译项目中的源代码|
-|process-classes（处理类文件）|处理编译生成的文件，比如说对Java class文件做字节码改善优化|
-|generate-test-sources（生成测试源代码）|产生编译过程中测试相关的代码|
-|process-test-sources（处理测试源代码）|处理测试源代码，比如说，过滤任意值|
-|generate-test-resources（生成测试资源文件）|为测试创建资源文件|
-|process-test-resources（处理测试资源文件）|复制和处理测试资源到目标目录|
-|test-compile（编译测试源码）|编译测试源代码到测试目标目录|
-|process-test-classes（处理测试类文件）|处理测试源码编译生成的文件|
-|**test（测试）**|使用合适的单元测试框架运行测试（Juint是其中之一）|
-|prepare-package（准备打包）|处理打包前需要初始化的准备工作|
-|**package（打包）**|将编译后的 class 和资源打包成可分发格式的文件，比如JAR、WAR或者EAR文件|
-|pre-integration-test（集成测试前）|做好集成测试前的准备工作，比如集成环境的参数设置|
-|integration-test（集成测试）|处理和部署项目到可以运行集成测试环境中|
-|post-integration-test（集成测试后）|完成集成测试后的收尾工作，比如清理集成环境的值|
-|verify（验证）|运行任意的检查来验证项目包有效且达到质量标准|
-|**install（安装）**|将打包的组件以构件的形式，安装到本地依赖仓库中，以便共享给本地的其他项目，用作其他本地项目的依赖|
-|**deploy**|将最终的项目包复制到远程仓库中与其他开发者和项目共享|
-
-这些阶段的详细介绍内容可以参考链接：  
-http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html
-
-### site 生命周期
-site 生命周期的目的是建立和发布项目站点。Maven 可以基于 pom 所描述的信息自动生成项目的站点，同时还可以根据需要生成相关的报告文档集成在站点中，方便团队交流和发布项目信息。site 生命周期包括如下阶段：
-1. pre-site：执行生成站点前的准备工作。
-2. site：生成站点文档。
-3. post-site：执行生成站点后需要收尾的工作。
-4. site-deploy：将生成的站点发布到服务器上。
-
-## 常用命令
-执行maven命令必须进入到pom.xml的目录中进行执行，通过这些命令让 Maven 执行生命周期的特定阶段。常用命令如下：
-1. mvn clean：清理，这个命令可以用来清理已经编译好的文件
-2. mvn compile：编译主程序，将 Java 代码编译成 Class 文件
-3. mvn test：执行单元测试测试，打印测试结果
-4. mvn package：打包，根据用户的配置将项目打成 jar 包或者 war 包
-5. mvn install：安装，手动向本地仓库安装一个 jar 包供其他项目共享使用
 
 
 ## 插件
@@ -690,43 +688,6 @@ Maven 依赖调解原则有两个：一个是路径优先原则；另一个是�
         </exclusion>
     </exclusions>
 </dependency>
-```
-
-### 依赖的归类
-在引用依赖的时候，很多情况需要引入一个 Maven 项目的多个模块，这些模块都应该是相同的版本。如果在每个依赖里面都分别用 groupId、artifactId 和 version 具体指明的话，在修改的时候容易出现不一致的情况。
-
-为了避免出现这种情况，可以在 pom.xml 中定义一个属性名称描述版本的值。接下来在每个 version 中，用特殊的语法引用这个属性名称。实际引入的时候，由 Maven 将属性改成对应的值。这样就可以统一版本，也方便修改。具体样例代码如下：
-```xml
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    ...
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- 3.2.16.RELEASE 或 3.1.4.RELEASE -->
-        <project.build.spring.version>4.2.7.RELEASE</project.build.spring.version>
-    </properties>
-    <dependencies>
-        <!-- spring -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${project.build.spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-            <version>${project.build.spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>${project.build.spring.version}</version>
-        </dependency>
-        ...
-    </dependencies>
-    ...
-</project>
 ```
 
 ### 依赖的优化
