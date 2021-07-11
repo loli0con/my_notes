@@ -172,7 +172,8 @@ site 生命周期的目的是建立和发布项目站点。Maven 可以基于 po
 ## 仓库
 在 Maven 中，任何一个依赖、插件或者项目构建的输出，都可以称之为**构件**。
 
-在 Maven 的术语中，仓库是一个位置（place）。这个用于存放构建的位置就叫仓库，它帮我们管理这些构建。
+在 Maven 的术语中，仓库是一个位置（place）。  
+这个用于存放构建的位置就叫仓库，它帮我们管理这些构件。
 
 Maven 仓库有三种类型：
 * 本地（local）
@@ -266,7 +267,7 @@ Maven通过坐标管理每个构件。
 
 一个完整的坐标信息，由 groupId、artifactId、version、packaging、classifier 组成。组成坐标的 5 个要素中，groupId、artifactId 和 version 是必需的，packaging 是可选的，默认是 jar，而 classifier 是不能直接定义的。
 
-Maven 项目的构件文件名与坐标也是有对应关系的，一般规则是 artifactId-version\[-classifier].packaging。
+Maven 项目的构件文件名与坐标也是有对应关系的，一般规则是 groupId/artifactId/version/artifactId-version\[-classifier].packaging。
 
 如下是一个简单的坐标定义：
 ```xml
