@@ -3,12 +3,12 @@ Maven是一个软件**项目管理**及自动**构建**工具。
 
 项目开发过程中会涉及到很多东西：项目描述、版本、构建、输出物、文档、项目关系、移植性、开发者列表、许可证、缺陷管理等，Maven能够我们管理这些。
 
-经过大量的学习和总结，Maven提供了一套成熟的规则，对项目开发和构建时的方方面面进行了规范化。只要遵循这些规则，程序员就能节省大量的时间和精力。
+经过大量的学习和总结，Maven提供了一套成熟的**规则**，对项目开发和构建时的方方面面进行了规范化。只要遵循这些规则，程序员就能节省大量的时间和精力。
 
 ## 项目
 
 ### 项目结构
-Maven提倡使用一个标准的目录结构：
+Maven提倡使用一个**标准的目录结构**：
 ![maven+20210709151523](https://raw.githubusercontent.com/loli0con/picgo/master/images/maven%2B20210709151523.png%2B2021-07-09-15-15-25)
 
 实际举例（${basedir}为“my-maven-project”）：
@@ -26,9 +26,9 @@ my-maven-project
 ```
 
 ### POM
-Maven将项目开发和管理过程抽象成一个项目对象模型（POM），正对应着上文里的pom.xml文件。也就是说，一个pom.xml定义了一个Maven项目。POM包含了项目的基本信息，它用于描述项目如何构建、声明项目依赖等等。
+Maven将项目开发和管理过程抽象成一个**项目对象模型**（POM），对应着上面例子里的pom.xml文件。也就是说，一个pom.xml定义了一个Maven项目。POM包含了项目的基本信息，它用于描述项目如何构建、声明项目依赖等等。
 
-在Maven的安装目录中，有一个预设的、顶级的pom，类似Java里的Object。所有的Maven项目都会继承这个pom.xml，所以通常把这个pom叫超级pom。
+在Maven的安装目录中，有一个预设的、顶级的pom，类似Java里的Object。所有的Maven项目都会继承这个pom.xml，所以通常把这个pom叫**超级pom**。
 
 ### pom.mxl
 项目描述文件pom.xml，它的内容大致如下：
@@ -69,20 +69,20 @@ Maven将项目开发和管理过程抽象成一个项目对象模型（POM），
 可以通过阅读[POM标签依赖大全](https://www.runoob.com/maven/maven-pom.html)获取更多知识，但通常我们会按需获取。
 
 ### 创建项目
-想要创建一个Maven项目，最原始的方式便是按照上述目录结构手动创建，不借助任何的工具。
+想要创建一个Maven项目，最原始的方式便是按照上述目录结构**手动创建**，不借助任何的工具。
 
-其次还可以通过使用命令的方式来创建：
+其次还可以通过**使用命令的方式来创建**：
 * 使用命令向导一步步创建项目
    1. 在硬盘上创建一个空的目录，用来存放Maven项目
    2. 打开命令行窗口，切换到该目录
-   3. 输入“mvn archetype:generate”，按 Enter 键。
-   4. 会一步步提示输入 groupId、artifactId、version、package 等信息
+   3. 输入“mvn archetype:generate”，按 Enter 键
+   4. 一步步按照提示输入 groupId、artifactId、version、package 等信息
 * 在命令中输入所有必要信息直接创建项目
    1. 在硬盘上创建一个空的目录，用来存放 Maven 项目
    2. 打开命令行窗口，切换到该目录
    3. 输入“mvn archetype:generate -DgroupId=mygroup -DartifactId=myapp -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false”
 
-另外也能通过idea等IDE开发工具来创建Maven项目，本质上是同理的。
+另外也能通过**idea等开发工具来创建**Maven项目，本质上是同理的。
 
 主要注意的地方：
 1. 第一次Maven使用可能需要初始化
@@ -92,7 +92,7 @@ Maven将项目开发和管理过程抽象成一个项目对象模型（POM），
 
 ## 生命周期
 ### 构建
-构建就是「把工程/项目经过编译～得到的编译结果～部署到服务器上」的一整个过程，或者说就是程序员写完代码到项目上线运行的一整个过程。
+构建就是「把工程/项目经过编译 -··-> 得到的编译结果 -··-> 部署到服务器上」的一整个过程，或者说就是从完成代码到项目运行/被使用的一整个过程。
 
 主要有下面几个环节：
 1. 清理clean：将以前编译得到的旧文件class字节码文件删除
@@ -101,19 +101,19 @@ Maven将项目开发和管理过程抽象成一个项目对象模型（POM），
 4. 报告report：测试程序执行的结果
 5. 打包package：动态Web工程打War包，java工程打jar包
 6. 安装install：Maven特定的概念——将打包得到的文件复制到“仓库”中
-7. 部署deploy：将工程生成的包复制到容器下，使其运行
+7. 部署deploy：将工程生成的包复制到容器下，使其运行/被使用
 
 ### 引入
 在 Maven 之前，项目构建的生命周期概念就已经存在了。软件开发人员每天都要对项目进行清理、编译、测试、打包以及安装部署。
 
-通过学习、分析、反思和总结以前工作中对项目的构建过程，Maven 抽象出了一个适合于所有项目的构建生命周期，并将它们统一规范。
+通过学习、分析、反思和总结已有的项目的构建过程，Maven 抽象出了一个适合于所有项目的**构建生命周期**。
 
-需要注意的是，**Maven 中项目的构建生命周期只是 Maven 根据实际情况抽象提炼出来的一个统一*标准和规范***，是不能做具体事情的。也就是说，Maven 没有提供一个编译器能在编译阶段编译源代码。 Maven 只是规定了生命周期的各个阶段和步骤，**具体事情，由集成到 Maven 中的插件完成**。比如前面创建项目，就是由 maven-archetype-quickstart 插件完成的。
+需要注意的是，**Maven 中项目的构建生命周期只是 Maven 根据实际情况抽象提炼出来的一个统一*标准和规范***，是不能做具体事情的。也就是说，Maven 没有提供一个编译器能在编译阶段编译源代码。 Maven 只是规定了生命周期的各个阶段和步骤，**具体事情，由集成到 Maven 中的插件完成**。比如前面在命令行创建项目时，实际是由 maven-archetype-quickstart 插件完成的。
 
 ### 三个生命周期
 Maven 拥有三套独立的生命周期，它们分别是 clean、default 和 site。clean 生命周期的目的是清理项目；default 生命周期的目的是构建项目；site 生命周期的目的是建立项目站点。
 
-每个生命周期又包含了多个**阶段**，这些阶段在执行的时候是**有固定顺序**的，后面的阶段一定要等前面的阶段执行完成后才能被执行
+每个生命周期又包含了多个**阶段**，这些阶段在执行的时候是**有固定顺序**的，**后面的阶段一定要等前面的阶段执行完成后才能被执行**。
 
 #### clean 生命周期
 clean 生命周期的目的是清理项目，它包括以下三个阶段：
@@ -161,7 +161,7 @@ site 生命周期的目的是建立和发布项目站点。Maven 可以基于 po
 
 
 ## 常用命令
-执行maven命令必须进入到pom.xml的目录中进行执行，通过这些命令让 Maven 执行生命周期的特定阶段。常用命令如下：
+执行maven命令必须进入到pom.xml的目录中进行执行，通过这些命令可以让 Maven 执行生命周期的特定阶段。常用命令如下：
 1. mvn clean：清理，这个命令可以用来清理已经编译好的文件
 2. mvn compile：编译主程序，将 Java 代码编译成 Class 文件
 3. mvn test：执行单元测试测试，打印测试结果
@@ -173,7 +173,7 @@ site 生命周期的目的是建立和发布项目站点。Maven 可以基于 po
 在 Maven 中，任何一个依赖、插件或者项目构建的输出，都可以称之为**构件**。
 
 在 Maven 的术语中，仓库是一个位置（place）。  
-这个用于存放构建的位置就叫仓库，它帮我们管理这些构件。
+这个用于存放构建的位置就叫仓库，仓库帮我们管理这些构件。
 
 Maven 仓库有三种类型：
 * 本地（local）
@@ -237,7 +237,7 @@ Maven 中央仓库是由 Maven 社区提供的仓库，其中包含了大量常�
 
 ### 镜像仓库
 如果仓库 A 能提供仓库 B 存储的所有服务，那么就把 A 叫作 B 的镜像。  
-由于地理位置的因素，该镜像往往能够提供比中央仓库更快的服务。所以，为了提高 Maven 效率，可以通过配置文件用镜像代替。
+由于地理位置的因素，该镜像往往能够提供比中央仓库更快的服务。所以，为了提高 Maven 效率，可以通过配置文件用镜像代替中央仓库。
 
 修改 maven 根目录下的 conf 文件夹中的 settings.xml 文件，在 mirrors 节点上，添加内容如下：
 ```xml
@@ -278,7 +278,7 @@ Maven 项目的构件文件名与坐标也是有对应关系的，一般规则�
 ```
 
 ### groupId
-定义当前 Maven 项目从属的实际项目。groupId 的表述形式同 Java 包名的表述方式类似，通常与域名反向一一对应。
+定义当前 Maven 项目**从属**的实际项目。groupId 的表述形式同 Java 包名的表述方式类似，通常与域名反向一一对应。
 
 Maven 项目和实际项目不一定是一一对应的。比如 SpringFramework，它对应的 Maven 项目就有很多，如 spring-core、spring-context、spring-security 等。造成这样的原因是模块的概念，所以一个实际项目经常会被划分成很多模块。
 
@@ -287,7 +287,7 @@ Maven 项目和实际项目不一定是一一对应的。比如 SpringFramework�
 
 推荐命名的方式为：实际项目名称-模块名称。
 
-比如，org.springframework 是实际项目名称，而现在用的是其中的核心模块（core的中文翻译），它的 artifactId 为 spring-core。
+比如，org.springframework 是实际项目名称，而现在用的是其中的核心模块（core的中文翻译为“核心”），它的 artifactId 为 spring-core。
 
 ### version
 定义 Maven 当前所处的版本。如上的描述，用的是 4.2.7.RELEASE 版本。需要注意的是，Maven 中对版本号的定义是有一套规范的。具体规范请参考《[版本管理](http://c.biancheng.net/view/4828.html)》的介绍。
@@ -308,13 +308,13 @@ Maven spring-core 项目除了可以生成上面的主构件外，也可以生�
 
 
 ## 插件
-在Maven生命周期中都包含着一系列的阶段。这些阶段就相当于Maven提供的统一的接口，然后这些阶段的实现由 Maven 的插件来完成。
+在Maven生命周期中都包含着一系列的阶段。这些阶段就相当于Maven提供的统一的接口，然后这些**阶段的实现由 Maven 的插件来完成**。
 
 例如输入`mvn clean`命令，clean对应clean生命周期中的clean阶段，该阶段的具体操作是由 maven-clean-plugin 插件来实现的。
 
 Maven 实际上是一个依赖插件执行的框架，每个任务实际上是由插件完成。
 
-但是从插件本身来说，一个插件可以实现生命周期多个阶段的任务，为方便指定执行插件的某个功能，将插件的每个功能叫目标。这样就可以实现*在哪个阶段，执行哪个插件，达到哪个目标*。
+但是**从插件本身来说，一个插件可以实现生命周期多个阶段的任务，为方便指定执行插件的某个功能，将插件的每个功能叫目标**。这样就可以实现*在哪个阶段，执行哪个插件，达到哪个目标*。
 
 插件通常提供了一个目标的集合,这些目标可能被绑定到多个阶段或者无绑定，不绑定到任何构建阶段的目标可以在构建生命周期之外通过直接调用执行。
 
@@ -365,7 +365,9 @@ Maven 在安装好后，自动为生命周期的主要阶段绑定很多插件�
                 <executions>
                     <execution>
                         <id>id.clean</id>
-                        <phase>clean</phase>
+                        <!-- 绑定的阶段 -->
+                        <phase>clean</phase> 
+                        <!-- 目标 -->
                         <goals>
                             <goal>run</goal>
                         </goals>
@@ -424,7 +426,7 @@ mvn install -Dmaven.test.skip=true
 ```
 
 #### pom 配置参数
-上面的示例maven-antrun-plugin示例中已经展示过了在pom中配置局部参数的方法，下面的示例展示的是配置全局参数的方法。
+上面的示例maven-antrun-plugin示例中已经展示过了在pom中配置**局部参数**的方法，下面的示例展示的是配置**全局参数**的方法。
 ```xml
 <project
     xmlns="http://maven.apache.org/POM/4.0.0"
@@ -462,7 +464,6 @@ mvn install -Dmaven.test.skip=true
 </project>
 ```
 
-
 ### 获取插件信息
 #### 在线查找插件
 插件基本上都来源于两处，一个是 Apache（官方）；另一个是 Codehaus（三方）。
@@ -482,26 +483,26 @@ maven <插件名称|前缀>:<目标> [-D参数名=参数值 ...]
 ```
 
 ### 解析插件
-在输入 mvn compiler:compile 命令用到的是 compiler 插件。这里有没有感觉到疑惑，使用插件的话一般要指定插件的坐标信息（groupId、artifactId、version）才能唯一指定一个插件，为什么这里只是输入了 compiler 就可以指定使用的是 maven-compiler-plugin 插件呢？
+在输入 mvn compiler:compile 命令用到的是 compiler 插件。这里有没有感觉到疑惑，使用插件的话一般要指定插件的坐标信息（groupId、artifactId、version）才能唯一指定一个插件，为什么这里只是输入了 compiler 就可以指定使用的是 maven-compiler-plugin 插件呢（即根据 *前缀* 找到 *插件名称* ）？
 
 其实这是 Maven 为了方便用户提供的一种简单方式，可以使用插件的前缀来指定插件。接下来详细介绍一下 Maven 的运行机制，来从本质上把握 mvn 命令的语法。
 
 #### 插件仓库
 同依赖构件一样，插件构件也是基于坐标存储在 Maven 仓库中的。在需要时，Maven 先从本地仓库中查找插件，如果没有，就从远程仓库查找。找到插件后，下载到本地仓库使用。
 
-#### 插件默认的 groupId
+#### groupId
 在使用插件或者在 pom 中配置插件的时候，如果使用的是 Maven 官方插件的话，是可以不指定 groupId 的，因为这些插件的 groupId 都是一样的，都是 org.apache.maven.plugins。
-如果没有配置指定 groupId 的话，Maven 默认认为是 org.apache.maven.plugins。
+如果没有配置指定 groupId 的话，Maven 默认认为是 **org.apache.maven.plugins**。
 
-#### 解析插件的版本
-如果没有指定插件的版本，Maven 对版本处理的方式是：如果插件不属于核心插件范畴，Maven 会去检测所有仓库中的版本，最终会选择最新版本，而且这个最新版本不排除是快照版本。
+#### version
+如果没有指定插件的版本，Maven 对版本处理的方式是：如果插件不属于核心插件范畴，Maven 会去检测所有仓库中的版本，最终会选择**最新版本**，而且这个最新版本不排除是快照版本。
 
 #### 解析插件的前缀
 插件前缀与 groupId:artifactId 是一一对应的（也就是知道插件前缀，就可以找到groupId和artifactId）。这种对应关系保存在仓库的元数据中，这样的元数据为 groupId/maven-metadata.xml。
 
 目前绝大部分插件都是放在 http://repo1.maven.org 和 http://repository.codehaus.org 中的，它们的 groupId 对应的是 org.apache.maven.plugins 和 org.codehaus.mojo。
 
-Maven 在解析插件仓库元数据的时候，会默认使用 org.apache.maven.plugins 和 org.codehaus.mojo 两个 groupId，也就是说，Maven 会自动检测 http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-metadata.xml和 http://repository.codehaus.org/org/codehaus/mojo/maven-metadata.xml 中的元数据。
+Maven 在解析插件仓库元数据的时候，会默认使用 org.apache.maven.plugins 和 org.codehaus.mojo 两个 groupId，也就是说，Maven 会自动检测 http://repo1.maven.org/maven2/org/apache/maven/plugins/maven-metadata.xml 和 http://repository.codehaus.org/org/codehaus/mojo/maven-metadata.xml 中的元数据。
 
 插件仓库数据的内容是大概是这样的：
 ```xml
@@ -529,8 +530,7 @@ Maven 在解析插件仓库元数据的时候，会默认使用 org.apache.maven
 ```
 从上面的内容中可以发现，maven-clean-plugin 的前缀是 clean，maven-compiler-plugin 的前缀是 compiler，maven-dependency-plugin 的前缀是 dependency。
 
-当 Maven 解析到 compiler:compile 命令后，它首先基于默认的 groupId 归并所有插件仓库的元数据 org/apache/maven/plugins/maven-metadata.xml。接着检查归并后的元数据，找到对应的 artifactId 为 maven-compiler-plugin。
-
+当 Maven 解析到 compiler:compile 命令后，它首先基于默认的 groupId 归并所有插件仓库的元数据org/apache/maven/plugins/maven-metadata.xml。接着检查归并后的元数据，找到对应的 artifactId 为 maven-compiler-plugin。  
 接下来再结合当前元数据的 groupId 为 org.apache.maven.plugins。最后找到仓库中最新的 version，从而就可以得到一个插件的完整坐标信息。
 
 如果在第一个 metadata.xml 中没有找到目标插件，就用同样的流程找其他的 metadata.xml，包括用户自己定义的 metadata.xml。如果所有的地方都没有找到对应的前缀，这就以报错的形式结束了。
@@ -546,12 +546,11 @@ Maven 在解析插件仓库元数据的时候，会默认使用 org.apache.maven
     <dependencies>
         <dependency>
             <groupId>...</groupId>
-            <artifactId>
-                ...
-            </artifactId>
+            <artifactId>...</artifactId>
             <version>...</version>
             <type>...</type>
             <scope>...</scope>
+            <!-- 不推荐使用optional标签 -->
             <optional>...</optional>
             <exclusions>
                 <exclusion>...</exclusion>
@@ -567,13 +566,16 @@ Maven 在解析插件仓库元数据的时候，会默认使用 org.apache.maven
 * groupId、artifactId 和 version：依赖的基本坐标。对于任何依赖，基本坐标是最基本、最重要的，因为 Maven 是根据坐标找依赖的。
 * type：依赖的类型，同项目中的 packaging 对应。大部分情况不需要声明，默认是 jar。
 * scope：依赖的范围
-* optional：标记依赖是否可选
+* optional：标记依赖是否可选（不推荐使用）
 * exclusions：排除传递性依赖
 
 ### 依赖的范围
 Java 中有个环境变量叫 classpath。JVM 运行代码的时候，需要基于 classpath 查找需要的类文件，才能加载到内存执行。
 
-Maven 在编译项目主代码的时候，使用的是一套 classpath，主代码编译时需要的依赖就添加到这个 classpath 中去；Maven 在编译和执行测试代码的时候，又会使用一套 classpath，这个动作需要的依赖就添加到这个 classpath 中去；Maven 项目具体运行的时候，又有一个独立的 classpath，同样运行时需要的依赖，肯定也要加到这个 classpath 中。这些 classpath，就是依赖的范围。
+Maven 在编译项目主代码的时候，使用的是一套 classpath，主代码编译时需要的依赖就添加到这个 classpath 中去；  
+Maven 在编译和执行测试代码的时候，又会使用一套 classpath，这个动作需要的依赖就添加到这个 classpath 中去；  
+Maven 项目具体运行的时候，又有一个独立的 classpath，同样运行时需要的依赖，肯定也要加到这个 classpath 中。  
+这些 classpath，就是依赖的范围。
 
 依赖的范围，就是用来控制这三种 classpath 的关系（编译 classpath、测试 classpath 和运行 classpath），接下来分别介绍依赖的范围的名称和意义。
 
@@ -615,13 +617,12 @@ Maven 在编译项目主代码的时候，使用的是一套 classpath，主代�
     ...
     <dependencyManagement>
         <dependencies>
-            <!-- spring -->
+            <!-- 以下三个是spring框架需要导入的依赖 -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
                 <version>${project.build.spring.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-aop</artifactId>
@@ -706,7 +707,7 @@ Maven 依赖调解原则有两个：一个是路径优先原则；另一个是�
 在 Maven 中主要有两个常用的内置属性，它们分别是＄{basedir}和＄{version}属性。＄{basedir}表示项目的根目录，也就是包含 pom.xml 文件的目录；＄{version}表示项目的版本。
 
 ### POM 属性
-用户可以通过 POM 属性，引用 POM 文件中对应元素的值，比如＄{project.artifactId}就对应 project→artifactId 元素的值。常用的 POM 属性包括以下方面：
+用户可以通过 POM 属性，引用 POM 文件中对应元素的值，比如＄{project.artifactId}就对应 project→artifactId 元素的值。这些属性都在 pom 中有对应的元素，常用的 POM 属性包括以下方面：
 * ＄{project.build.sourceDirectory}：项目的主源码目录，默认是 src/main/java。
 * ＄{project.build.testSourceDirectory}：项目的测试源码目录，默认是 src/test/java。
 * ＄{project.build.directory}：项目构建输出目录，默认是 target。
@@ -717,7 +718,7 @@ Maven 依赖调解原则有两个：一个是路径优先原则；另一个是�
 * ＄{project.version}：项目的版本。
 * ＄{project.build.finalName}：项目输出的文件名称，默认为“＄{project.artifactId}-＄{project.version}”。
 
-这些属性都在 pom 中有对应的元素。它们中一些属性的默认值都在超级 pom 中有定义，详细情况可以参考超级 pom.xml。
+它们中一些属性的默认值都在超级 pom 中有定义，详细情况可以参考超级 pom.xml。
 
 ### 自定义属性
 用户可以在 pom 的 properties 中定义自己的 Maven 属性，然后在后面重复使用。
@@ -749,3 +750,13 @@ Settings 属性同 POM 属性是一样的，可以用以“settings.”开头的
     </testResource>
 </testResources>
 ```
+
+
+## 参考
+* https://www.bilibili.com/video/BV1Ah411S7ZE
+* https://www.runoob.com/maven/maven-tutorial.html
+* https://www.liaoxuefeng.com/wiki/1252599548343744/1309301146648610
+* https://www.cnblogs.com/lenve/p/12047793.html
+* https://dunwu.github.io/java-tutorial/javatool/build/maven/maven-quickstart.html
+* https://www.cnblogs.com/hzg110/p/6936101.html
+* http://c.biancheng.net/maven/
