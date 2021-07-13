@@ -11,6 +11,15 @@ Hyper Text Markup Language（超文本标记语言）
    * 单标签：`<“自结束标签” />`
    * 双标签：`<“开始标签”>封装的数据</“结束标签”>`
 
+## 属性
+下面列出了适用于大多数 HTML 元素的属性（通用属性）：
+|属性|描述|
+|---|---|
+|class|为html元素定义一个或多个类名（多个类名以空格分隔）|
+|id|定义元素的唯一id|
+|style|规定元素的行内样式|
+|title|描述了元素的额外信息|
+
 ## 常用标签
 ### 字体
 ```html
@@ -48,7 +57,6 @@ align属性是对齐属性:
 ```html
 <!--
 a标签是超链接
-title 属性设置鼠标悬停显示的文字
 href 属性设置连接的地址
 target 属性设置哪个目标进行跳转
   _self  表示当前页面(默认值)
@@ -56,7 +64,7 @@ target 属性设置哪个目标进行跳转
 
 -->
 
-<a href="baidu.com" title="百度走起">百度1</a>
+<a href="baidu.com">百度1</a>
 <a href="baidu.com" target="_self">百度2</a>
 <a href="baidu.com" target="_blank">百度3</a>
 ```
@@ -70,7 +78,6 @@ width 属性设置图片的宽度
 height 属性设置图片的高度
 border 属性设置图片边框大小
 alt 属性设置当指定路径找不到图片时,用来代替显示的文本内容
-title 属性设置鼠标悬停显示的文字"
  -->
 <img src="图片.jpg" width="666" height="666" border="1" alt="图片找不到"/>
 ```
