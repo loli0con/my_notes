@@ -48,12 +48,15 @@ align属性是对齐属性:
 ```html
 <!--
 a标签是超链接
+title 属性设置鼠标悬停显示的文字
 href 属性设置连接的地址
 target 属性设置哪个目标进行跳转
-_self  表示当前页面(默认值)
-_blank 表示打开新页面来进行跳转 -->
+  _self  表示当前页面(默认值)
+  _blank 表示打开新页面来进行跳转 
 
-<a href="baidu.com">百度1</a>
+-->
+
+<a href="baidu.com" title="百度走起">百度1</a>
 <a href="baidu.com" target="_self">百度2</a>
 <a href="baidu.com" target="_blank">百度3</a>
 ```
@@ -67,6 +70,7 @@ width 属性设置图片的宽度
 height 属性设置图片的高度
 border 属性设置图片边框大小
 alt 属性设置当指定路径找不到图片时,用来代替显示的文本内容
+title 属性设置鼠标悬停显示的文字"
  -->
 <img src="图片.jpg" width="666" height="666" border="1" alt="图片找不到"/>
 ```
@@ -112,12 +116,12 @@ table标签是表格标签，有如下属性：
 * cellspacing 设置单元格间距
 
 表格内存在如下标签：
-* th 是表头标签
-* tr 是行标签
-* td 是单元格标签，有如下属性：
-  * align 属性设置单元格文本对齐方式
-  * colspan 属性设置跨列
-  * rowspan 属性设置跨行
+* tr 是行标签，一行里面可以有以下内容：
+  * th 是表头标签
+  * td 是单元格标签，有如下属性：
+    * align 属性设置单元格文本对齐方式
+    * colspan 属性设置跨列
+    * rowspan 属性设置跨行
 
 ### 表单
 表单就是 html 页面中，用来收集用户信息的所有标签集合，然后把这些信息发送给服务器。
