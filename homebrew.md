@@ -332,4 +332,4 @@ brew install --cask launchrocket
 ### Tomcat
 臭猫是真的烦
 * https://newsn.net/say/brew-install-tomcat.html
-* https://blog.csdn.net/Al_assad/article/details/76383107
+* https://www.cnblogs.com/kerrycode/p/3586098.html
