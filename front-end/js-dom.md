@@ -93,3 +93,22 @@ document 对象的理解:
 ```js
 按钮对象.onclick = function() { /* 代码 */ };
 ```
+
+### 表单校验
+表单在提交的时候，会激活onsubmit事件。通过给表单注册提交事件，可以进行校验并阻止提交。
+```html
+<!-- 给表单注册提交事件有4种方式 -->
+<script>
+//   第一种[推荐]:
+表单对象.onsubmit=function(){ /* 函数体 */ return true/false;}
+//   第二种:
+提交按钮对象.onclick = function(){ /* 函数体 */ return true/false}
+</script>
+
+<!-- 第三种: -->
+<form onsubmit="return checkForm();">
+<!-- 第四种: -->
+<input type="submit" onclick="return checkForm();">
+
+<!-- return true 代表提交表单,否则不提交表单 -->
+```
