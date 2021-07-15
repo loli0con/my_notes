@@ -322,3 +322,14 @@ brew install --cask launchrocket
 ```
 
 安装完成后，在 LaunchPad 中打开即可。
+
+## 解酒药
+有时候喝酒可能会上头，这里有一些我曾经吃过的解酒药。
+
+### JDK
+* http://asing1elife.com/homebrew/2019/04/10/Homebrew-%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE-JDK/
+
+### Tomcat
+臭猫是真的烦
+* https://newsn.net/say/brew-install-tomcat.html
+* https://blog.csdn.net/Al_assad/article/details/76383107
