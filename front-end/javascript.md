@@ -1,5 +1,5 @@
 # Javascript
-
+[参考手册-菜鸟版](https://www.runoob.com/jsref/jsref-tutorial.html)
 ## 结合方式
 在html页面中使用script标签来书写JavaScript代码（简单）
 ```html
@@ -51,28 +51,74 @@ JavaScript里的特殊值：
 'number'
 ```
 
+#### undefined 与 null 的区别
+表面上 undefined 与 null 都是什么都没有的意思，但是实际上 undefined 是未定义（就是变量没有初始化），null 是一个变量初始化了，但是什么值都没给，只给了一个空对象；进一步说，undefined 与 null是值相等，类型不相等。
+
 ### 定义变量
 ```JavaScript
-let a = 1; // 推荐方式
-var b = '2';
-const c = true;
-d = null;
+let var; // 声明
+var = 1; // 赋值
+
+// 推荐使用let
+let a = 1; // 声明并赋值
+var b = '2'; 
+const c = true; // 常量
 ```
 
+### 作用域
+作用域是可访问变量的集合。
+
+#### 全局变量
+在函数外声明的变量是全局变量，网页上的所有脚本和函数都能访问它。
+
+#### 生命周期
+局部变量会在函数运行以后被删除，全局变量会在页面关闭后被删除。
+
+#### 全局属性
+如果直接给一个未声明的变量赋值，该变量将被自动作为 window 的一个属性。
+
+
 ### 原则
-* 闲的蛋疼也不要使用包装对象！！！
-* 类型转换
-  * 用parseInt()或parseFloat()来转换任意类型到number。
-  * 用String()来转换任意类型到string。
-  * 通常不必把任意类型转换为boolean再判断，因为可以直接写if (myVar) {...}；  
-  所有的变量都可以做为一个 boolean 类型的变量去使用：0 、null、 undefined、""(空串) 都认为是 false。
-* 类型判断
-  * typeof操作符可以判断出number、boolean、string、function和undefined。
-  * 判断Array要使用Array.isArray(arr)。
-  * 判断null请使用myVar === null。
-  * NaN这与所有其他值都不相等（包括它自己），只能通过isNaN()函数判断。
+闲的蛋疼也不要使用包装对象！！！
 
 不要问为什么，这就是JavaScript代码的乐趣！
+
+#### 类型转换
+* 用parseInt()或parseFloat()来转换任意类型到number。
+* 全局方法 Number() 可以将字符串、布尔值、日期转换为number。
+* 用String()来转换任意类型到string。
+* 通常不必把任意类型转换为boolean再判断，因为可以直接写if (myVar) {...}；  
+所有的变量都可以做为一个 boolean 类型的变量去使用：0 、null、 undefined、""(空串) 都认为是 false。
+#### 类型判断
+* typeof操作符可以判断出number、boolean、string、function、undefined和object。
+* 可通过 instanceof 操作符来判断对象的具体类型。
+* 判断Array要使用Array.isArray(arr)。
+* 判断null请使用myVar === null。
+* NaN这与所有其他值都不相等（包括它自己），只能通过isNaN()函数判断。
+* 通过对象的constructor属性判断对象的类型
+
+```js
+/* 类型判断 */
+
+// constructor 是一个属性，构造函数属性，不同类型的数据，会得到相应不同的值。
+"John".constructor                 // 返回函数 String()  { [native code] }
+(3.14).constructor                 // 返回函数 Number()  { [native code] }
+false.constructor                  // 返回函数 Boolean() { [native code] }
+[1,2,3,4].constructor              // 返回函数 Array()   { [native code] }
+{name:'John', age:34}.constructor  // 返回函数 Object()  { [native code] }
+new Date().constructor             // 返回函数 Date()    { [native code] }
+function () {}.constructor         // 返回函数 Function(){ [native code] }
+
+// 判断是否为Array类型
+function isArray(myArray) {
+    return myArray.constructor.toString().indexOf("Array") > -1;
+}
+
+// 判断是否为Data类型
+function isDate(myDate) {
+    return myDate.constructor.toString().indexOf("Date") > -1;
+}
+```
 
 
 
@@ -91,14 +137,33 @@ d = null;
 ## 流程控制
 ### 条件判断
 ```js
+// if
 var age = 3;
 if (age >= 18) {
-    alert('adult');
+  alert('adult');
 } else if (age >= 6) {
     alert('teenager');
 } else {
     alert('kid');
 }
+
+// switch
+// switch 中 case 的判断是 “===” 
+switch(n)
+{
+  case 1:
+    // 执行代码块 1
+    break;
+  case 2:
+    // 执行代码块 2
+    break;
+  default:
+    // 与 case 1 和 case 2 不同时执行的代码
+}
+/* 
+如果 case 后面有多行语句，也不需要 { }，带不带都行，
+因为 case 是一直执行到下面第一个 break
+*/
 ```
 
 ### 循环
@@ -109,7 +174,7 @@ if (age >= 18) {
   * for(… of …)：以任意顺序迭代对象的可枚举属性，遍历（object）键名
   * for(… in …)：遍历可迭代对象定义要迭代的数据，遍历（iterable）键值
 
-
+可以使用在循环中使用break和continue。
 
 ## 字符串
 ### 定义
@@ -136,6 +201,7 @@ ${str4} ${str3}avaScript!`
 
 
 ## 函数
+在JavaScript里，函数是一等公民，和对象平等。
 ### 定义
 ```js
 命名函数：
@@ -182,6 +248,7 @@ var 变量名 = {
 ```js
 // 读取
 let 属性 = 对象.属性名;
+let 属性 = 对象['属性名']; // 下面的同理，可以用“[]”替换“.”
 let 函数 = 对象.函数名;
 
 // 调用
@@ -199,6 +266,15 @@ let 返回值 = 对象名.函数名();
 * hasOwnProperty()方法（自身拥有的，不是继承得到的）
 
 为了区分对象的类型，我们用typeof操作符获取对象的类型，它总是返回一个字符串。
+
+### this
+this 的多种指向:
+1. 在对象方法中， this 指向调用它所在方法的对象。
+2. 单独使用 this，它指向全局(Global)对象。
+3. 函数使用中，this 指向函数的所属者。
+4. 严格模式下函数是没有绑定到 this 上，这时候 this 是 undefined。
+5. HTML 事件句柄中，this 指向了接收事件的 HTML 元素。
+6. apply 和 call 允许切换函数执行的上下文环境（context），即 this 绑定的对象，可以将 this 引用到任何对象。
 
 
 
@@ -378,10 +454,17 @@ re.exec(s); // null，直到结束仍没有匹配到
 ```
 
 ## JSON
-JSON是一种超轻量级的数据交换格式，是JavaScript的一个子集。
+JSON是一种超轻量级的数据交换格式。
 
-JSON的字符集必须是UTF-8，JSON的字符串规定必须用双引号""，Object的键也必须用双引号""。
+### 语法规则
+* 数据为 键/值 对。
+* 数据由逗号分隔。
+* 大括号保存对象
+* 方括号保存数组
 
+JSON的字符集必须是UTF-8，JSON的字符串规定必须用双引号""，键也必须用双引号""。
+
+### 数据类型
 在JSON中，一共就这么几种数据类型（以及它们的任意组合）：
 * number：和JavaScript的number完全一致；
 * boolean：就是JavaScript的true或false；
@@ -414,11 +497,21 @@ JSON.parse() 方法用于将一个 JSON 字符串转换为对象。
 
 
 
+## void
+void 是 JavaScript 中的关键字，该操作符指定要计算一个表达式但是不返回值。
+
+```js
+// void()仅仅是代表不返回任何值，但是括号内的表达式还是要运行
+javascript:void(alert("Warnning!"));  //“javascript”可省略，但建议加上
+
+javascript:void(0); // 常见用法
+```
+
 ## generator
-TODO
+Pending
 
 ## 面向对象编程
-TODO
-### 创建对象
-### 原型继承
-### class继承
+Pending
+
+## 错误处理
+Pending
