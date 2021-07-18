@@ -146,10 +146,12 @@ request("服务端的url地址");
 
 <!-- 第三步：页面加入该节点后，调用callback函数 -->
 <script src="http://example.com/abc.js">
-/*
 // 服务端返回的内容：callback('hello world!');
-// 这意味着页面生成了一个 <script>callback('hello world!');</script>
+// 这意味着页面生成了一个 <script>callback('hello world!');< /script>
 // 即调用实现定义好的callback函数
-*/
 </script>
 ```
+
+
+## CORS
+CORS全称Cross-Origin Resource Sharing，是HTML5规范定义的如何跨域访问资源。
