@@ -156,5 +156,5 @@ request("服务端的url地址");
 ## CORS
 CORS全称Cross-Origin Resource Sharing（跨域资源共享），是HTML5规范定义的如何跨域访问资源。它允许浏览器向跨源服务器，发出XMLHttpRequest请求，从而克服了AJAX只能同源使用的限制。
 
-[跨域资源共享 CORS 详解](http://www.ruanyifeng.com/blog/2016/04/cors.html)
+[跨域资源共享 CORS 详解](http://www.ruanyifeng.com/blog/2016/04/cors.html)  
 [CORS-官方文档]https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS
