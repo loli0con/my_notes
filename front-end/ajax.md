@@ -100,11 +100,11 @@ function myFunction(xhttp) {
 如需获得来自服务器的响应，请使用 XMLHttpRequest 对象的 responseText（字符串形式的响应数据） 或 responseXML（XML 形式的响应数据） 属性。
 
 ## 安全限制
-上面代码的URL使用的是相对路径。如果你把它改为'http://www.sina.com.cn/'，再运行，肯定报错。在Chrome的控制台里，还可以看到错误信息。
+上面代码的URL使用的是相对路径。如果你把它改为'http://www.sina.com.cn/' ，再运行，肯定报错。在Chrome的控制台里，还可以看到错误信息。
 
 这是因为浏览器的**同源策略**导致的。默认情况下，JavaScript在发送AJAX请求时，URL的域名必须和当前页面完全一致。
 
-完全一致的意思是，域名要相同（www.example.com和example.com不同），协议要相同（http和https不同），端口号要相同（默认是:80端口，它和:8080就不同）。有的浏览器口子松一点，允许端口不同，大多数**浏览器都会严格遵守这个限制**。
+完全一致的意思是，域名要相同（www.example.com 和 example.com 不同），协议要相同（http和https不同），端口号要相同（默认是:80端口，它和:8080就不同）。有的浏览器口子松一点，允许端口不同，大多数**浏览器都会严格遵守这个限制**。
 
 ### 绕过浏览器的安全限制
 #### Flash
