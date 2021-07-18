@@ -39,12 +39,9 @@ xmind格式无法在线阅读，主要用于备份和发布。
 * 不背单词
 
 ### 一
-1. 前端
-   1. ajax
-   2. cookie
+1. 《http图解》
 2. tomcat
    1. servlet
-3. http
 
 ### 一点五
 * Java日志
