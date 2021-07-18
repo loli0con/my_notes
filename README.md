@@ -40,9 +40,11 @@ xmind格式无法在线阅读，主要用于备份和发布。
 
 ### 一
 1. 前端
-   1. html
-   2. css
-   3. javascript
+   1. ajax
+   2. cookie
+2. tomcat
+   1. servlet
+3. http
 
 ### 一点五
 * Java日志
