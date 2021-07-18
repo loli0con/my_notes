@@ -70,3 +70,8 @@ HTTP报文大致可分为报文首部和报文主体两块。两者由最初出�
 
 ## 参考
 * https://www.jb51.net/books/327734.html
+* https://www.runoob.com/http/http-tutorial.html
+* https://www.cnblogs.com/ranyonsue/p/5984001.html
+* https://hit-alibaba.github.io/interview/basic/network/HTTP.html
+* https://www.ruanyifeng.com/blog/2016/08/http.html
+* https://www.liaoxuefeng.com/wiki/1016959663602400/1017804782304672
