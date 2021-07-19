@@ -204,7 +204,7 @@ HttpServletResponse responed;
     * writer.write(字符串类型)
   * response.getOutputStream()：字节流输出
 * 设置响应体的类型，避免乱码
-  * response.setContextType("text/html;charset=utf-8")
+  * response.setContentType("text/html;charset=utf-8")
   * 上面的一句 等价于 下面的两句
   * response.setCharacterEncoding("utf-8");
   * response.setHeader("content-type","text/html;charset=utf-8");
