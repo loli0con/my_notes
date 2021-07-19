@@ -110,6 +110,16 @@ console.log(document.cookie);
 // logs "yummy_cookie=choco; tasty_cookie=strawberry"
 ```
 
+## 扩展
+### 限制
+每个cookie大小限制为4kb，所有超出该限制的cookies都会被截掉并且不会发送至服务器。原始的规范中限定每个域名下不超过20个cookies，现代浏览器对每个域名下存储cookie的个数限制一般50个左右。
+
+### 编码
+原始的文档中指示仅有三种类型的字符必须进行编码：分号，逗号，和空格。规范中提到可以利用URL编码，但是并不是必须。几乎所有的实现方式都对cookie的值进行了一些列的URL编码。
+
+
+
+
 ## 参考
 * https://www.cnblogs.com/ajianbeyourself/p/4900140.html
 * https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Cookies
