@@ -183,8 +183,7 @@ request.getRequestDispatcher("/资源路径").forward(request,response);
 |---|---|
 |location|重定向跳转的地址|
 |content-length|响应体的数据长度|
-|content-Type|设置响应类型;设置浏览器的码表。  
-例如：text/html;charset=utf-8|
+|content-Type|设置响应类型;设置浏览器的码表。例如：text/html;charset=utf-8|
 |refresh|多少秒后跳转;url=重定向跳转的地址|
 |content-disposition|内容的处理方式，可以控制下载。attachment;filename=xxx.xx|
 |content-encoding|压缩方式。gzip|
@@ -218,6 +217,7 @@ request.getRequestDispatcher("/资源路径").forward(request,response);
 
 ### 通用API
 * 写入数据，setAttribute(String key, Object value)
+* 获取所有属性名，getAttributeNames()
 * 读取数据，getAttribute(String key)
 * 删除数据，removeAttribute(String key)
 
