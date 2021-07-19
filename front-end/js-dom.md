@@ -112,3 +112,7 @@ document 对象的理解:
 
 <!-- return true 代表提交表单,否则不提交表单 -->
 ```
+
+
+## cookie
+通过 [Document.cookie 属性](https://www.runoob.com/js/js-cookies.html)可创建新的 Cookie，也可通过该属性访问非HttpOnly标记的Cookie。
