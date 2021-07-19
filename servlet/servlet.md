@@ -169,6 +169,40 @@ request.getRequestDispatcher("/资源路径").forward(request,response);
 
 总结：需要传递数据（request、respond）就使用转发，否则使用重定向。
 
+
+## respond
+### 行
+* setStatus(int status)：设置状态码
+* sendError(int sc, String msg)：发送一个错误码和错误信息
+
+### 头
+* void setHeader(String name, String value)：用给定名称和值设置响应头
+
+#### 常见响应头
+|响应头|描述|
+|---|---|
+|location|重定向跳转的地址|
+|content-length|响应体的数据长度|
+|content-Type|设置响应类型;设置浏览器的码表。  
+例如：text/html;charset=utf-8|
+|refresh|多少秒后跳转;url=重定向跳转的地址|
+|content-disposition|内容的处理方式，可以控制下载。attachment;filename=xxx.xx|
+|content-encoding|压缩方式。gzip|
+
+### 体
+* 获得响应体的输出流
+  * response.getWriter()：字符流输出
+  * response.getOutputStream()：字节流输出
+* 设置响应体的类型
+  * response.setContextType("text/html;charset=utf-8")
+  * 上面的一句 等价于 下面的两句
+  * response.setCharacterEncoding("utf-8");
+  * response.setHeader("content-type","text/html;charset=utf-8");
+* 数据压缩
+  * GZIPOutputStream(OutputStream out)：使用默认缓冲区大小创建新的输出流。
+  * public void write(byte[] b) 将字节数组写入压缩输出流。
+  * void finish() 完成将压缩数据写入输出流的操作，无需关闭底层流。
+
 ## 域对象
 ### 介绍
 域对象就是服务器的内存对象，使用是有范围的。  
@@ -182,7 +216,19 @@ request.getRequestDispatcher("/资源路径").forward(request,response);
 * session会话域
 * servletContext全局上下文域
 
-### API
+### 通用API
 * 写入数据，setAttribute(String key, Object value)
 * 读取数据，getAttribute(String key)
 * 删除数据，removeAttribute(String key)
+
+### servletContext
+#### 读取资源文件
+* String getServletContext().getRealPath(相对路径)：根据相对路径获取项目部署位置上资源的绝对路径
+* InputStream getServletContext().getResourceAsStream(相对路径)：根据项目资源相对路径获取部署资源文件的输入流
+
+#### 读取全局配置参数
+全局配置参数：在web.xml中\<context-param>配置的参数
+
+* Enumeration<String> getInitParameterNames() 得到所有的全局参数名
+* String getInitParameter(java.lang.String name) 指定参数的名字，得到值
+
