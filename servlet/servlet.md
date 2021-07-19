@@ -1,7 +1,9 @@
 # Servelet
 
+
 ## Servlet体系
 ![servlet+20210719092717](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B20210719092717.png%2B2021-07-19-09-27-19)
+
 
 ## 开发方式
 ### web.xml
@@ -41,6 +43,7 @@
 /* Servlet类 */
 ```
 
+
 ## 映射路径
 ### 匹配方式
 * 精确匹配：必须以“/”开头
@@ -77,6 +80,7 @@ init方法值调用一次，说明servlet对象只创建一次，全局唯一对
 
 ### 多例模式
 类实现接口SingleThreadModel后，Servlet对象是多例模式创建。但强烈不建议这么做，这会导致内存浪费。
+
 
 ## 运行原理
 服务器根据url找到类全名，通过反射Class.forName(servlet类全名)创建了servlet对象，服务器将所有请求数据封装到request对象中，所有响应数据封装到response中，将request和response传入service方法，是使用反射调用service方法。
@@ -121,6 +125,7 @@ while(enumeration.hasMoreElements()) {
 }
 ```
 
+
 ## request
 ### 请求数据（行/头/体）
 #### 行
@@ -135,14 +140,12 @@ while(enumeration.hasMoreElements()) {
 #### 头
 * request.getHeaderNames()：得到所有的请求头名称
 * request.getHeader(String headName)：获取指定请求头name对应的值value
-
 ##### 常用请求头
 |请求头|描述|
 |---|---|
 |referer|从哪个页面跳转过来的|
 |if-Modified-Since|客户端缓存静态资源的最后修改时间|
 |user-Agent|描述浏览器的版本信息、浏览器内核、客户端操作系统的信息|
-
 
 #### 数据
 * request.setCharacterEncoding("utf-8")：设置request读取数据的字符集，避免乱码
@@ -191,7 +194,7 @@ request.getRequestDispatcher("/资源路径").forward(request,response);
 * 获得响应体的输出流
   * response.getWriter()：字符流输出
   * response.getOutputStream()：字节流输出
-* 设置响应体的类型
+* 设置响应体的类型，避免乱码
   * response.setContextType("text/html;charset=utf-8")
   * 上面的一句 等价于 下面的两句
   * response.setCharacterEncoding("utf-8");
@@ -200,6 +203,12 @@ request.getRequestDispatcher("/资源路径").forward(request,response);
   * GZIPOutputStream(OutputStream out)：使用默认缓冲区大小创建新的输出流。
   * public void write(byte[] b) 将字节数组写入压缩输出流。
   * void finish() 完成将压缩数据写入输出流的操作，无需关闭底层流。
+
+
+![servlet+1565982684673](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B1565982684673.png%2B2021-07-19-15-01-53)
+[Url编码-百分号编码介绍](../front-end/url-encode.md)
+
+
 
 ## 域对象
 ### 介绍
