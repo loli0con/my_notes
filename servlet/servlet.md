@@ -83,11 +83,10 @@ init方法值调用一次，说明servlet对象只创建一次，全局唯一对
 ![servlet+20210719093753](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B20210719093753.png%2B2021-07-19-09-37-55)
 
 
-## Undetermined
-### ServletConfig
+## ServletConfig
 Servlet配置的设置与使用
-#### 设置
-##### web.xml
+### 设置
+#### web.xml
 ```xml
 <servlet>
     <init-param>
@@ -96,7 +95,7 @@ Servlet配置的设置与使用
     </init-param>
 </servlet>
 ```
-##### 注解
+#### 注解
 ```java
 @WebServlet(
     initParams = {
@@ -105,7 +104,7 @@ Servlet配置的设置与使用
     }
 )
 ```
-#### 使用
+### 使用
 ```java
 // GenericServlet 实例方法 getServletConfig()
 ServletConfig servletConfig = genericServlet.getServletConfig()
