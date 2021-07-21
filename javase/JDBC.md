@@ -287,3 +287,13 @@ doSomething(conn);
 // 释放数据库连接，归还给连接池
 conn.close();
 ```
+
+## jdbc.properties
+一个适用于mysql的🌰
+```properties
+driver=com.mysql.jdbc.Driver
+dbc:mysql://localhost:3306/day11?useSSL=false&useUnicode=true&characterEncoding=utf8
+username=root
+password=root
+poolMaximumActiveConnections=10
+```
