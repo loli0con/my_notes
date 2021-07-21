@@ -292,7 +292,7 @@ conn.close();
 一个适用于mysql的🌰
 ```properties
 driver=com.mysql.jdbc.Driver
-dbc:mysql://localhost:3306/day11?useSSL=false&useUnicode=true&characterEncoding=utf8
+url=jdbc:mysql://localhost:3306/day11?useSSL=false&useUnicode=true&characterEncoding=utf8
 username=root
 password=root
 poolMaximumActiveConnections=10
