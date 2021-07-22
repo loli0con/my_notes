@@ -5,14 +5,15 @@
 ![listener+20210722104517](https://raw.githubusercontent.com/loli0con/picgo/master/images/listener%2B20210722104517.png%2B2021-07-22-10-45-19)
 
 ### ServletContextListener
+ServletContextListener 它可以监听 ServletContext 对象的创建和销毁。
 ```java
 /**
  * 目标：开发第一个监听器，监听上下文域对象的创建与销毁
  */
-@WebListener  // 注解方式配置
+@WebListener  // 【注解方式】配置监听器类
 public class MyServletContextListener implements ServletContextListener {
 
-    //监听上下文域对象的创建的时候调用
+    //在上下文域对象的创建后调用
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         //servletContextEvent.getServletContext() 可以获取到创建的上下文域对象
@@ -22,7 +23,7 @@ public class MyServletContextListener implements ServletContextListener {
         System.out.println("上下文域对象创建的时间："+ time);
     }
 
-    //监听上下文域对象的销毁的前调用
+    //在上下文域对象的销毁前调用
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
         // do something ..., such as ⬇️
@@ -33,6 +34,7 @@ public class MyServletContextListener implements ServletContextListener {
 ```
 #### web.xml方式配置
 ```xml
+<!--【xml方式】配置监听器-->
 <listener>
     <listener-class>
         MyServletContextListener类全名
