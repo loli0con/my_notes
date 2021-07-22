@@ -2,18 +2,23 @@
 
 ## 目录结构
 Tomcat的安装目录`$CATALINA_HOME`:
-* bin命令目录
+* bin - 命令目录
   * catalina.sh
   * startup.sh 启动
   * shudown.sh 停止
-* conf配置目录
+* conf - 配置目录
   * server.xml
-    * 修改端口
+    * 修改端口 <Connector port="端口号" ...>
     * 虚拟目录映射
   * web.xml
     * 欢迎页面的配置
-* logs日志目录
-* webapps发布资源根目录
+* logs - 日志目录
+* lib - 依赖库目录
+* temp - 临时数据目录
+* work - 工作目录
+  * 存放jsp翻译为Servlet的源码
+  * 存放session钝化的文件
+* webapps - 发布资源根目录/web工程部署目录
 
 ## 发布资源
 ### webapps真实目录发布
@@ -48,7 +53,7 @@ Tomcat的安装目录`$CATALINA_HOME`:
 ## 资源结构
 * webapp工程发布目录
   * 资源文件：jsp、html、css、图片等
-  * WEB-INF：web应用目录
+  * WEB-INF：web应用目录（浏览器无法直接访问该目录）
     * classes文件目录
     * lib依赖目录
     * web.xml部署配置文件
