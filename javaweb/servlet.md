@@ -1,5 +1,8 @@
 # Servelet
-
+## 定义
+1. Servlet 是 JavaEE 规范之一。规范就是接口。
+2. Servlet 就 JavaWeb 三大组件之一。
+3. Servlet 是运行在服务器上的一个 java 小程序，它可以接收客户端发送过来的请求，并响应数据给客户端。
 
 ## Servlet体系
 ![servlet+20210719092717](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B20210719092717.png%2B2021-07-19-09-27-19)
@@ -9,26 +12,32 @@
 ### web.xml
 [官方示例](https://tomcat.apache.org/tomcat-8.5-doc/appdev/web.xml.txt)
 ```xml
-<servlet>
-    <servlet-name>servlet名称<servlet-name>
-    <servlet-class>全限定类名<servlet-class>
+<!-- servlet 标签给 Tomcat 配置 Servlet 程序 -->
+<servlet>  
+  <!--servlet-name 标签 Servlet 程序起一个别名(一般是类名) -->
+  <servlet-name>servlet名称<servlet-name>
+  <!--servlet-class 是 Servlet 程序的全类名-->
+  <servlet-class>全限定类名<servlet-class>
 
-    <!-- 更多关于servlet的配置：
-        <description>
-        <init-param>
-            <param-name>  注释： 可有多组name-value
-            <param-value>
-        <load-on-startup>  注释： 取值范围1-6
-     -->
+  <!-- 更多关于servlet的配置：
+    <description>
+    <init-param>
+      <param-name>  注释： 可有多组name-value
+      <param-value>
+    <load-on-startup>  注释： 取值范围1-6
+  -->
 <servlet>
 
+<!--servlet-mapping 标签给 servlet 程序配置访问地址-->
 <!-- 可以有多个servlet-mapping映射到同一个servlet -->
 <servlet-mapping> 
-    <servlet-name>servlet名称</servlet-name>
-    <!-- 可以有多个url-pattern -->
-    <url-pattern>url模式</url-pattern>
+  <!--servlet-name 标签的作用是告诉服务器，我当前配置的地址给哪个 Servlet 程序使用-->
+  <servlet-name>servlet名称</servlet-name>
+  <!--url-pattern 标签配置访问地址-->
+  <!-- 可以有多个url-pattern -->
+  <url-pattern>url模式</url-pattern>
 
-    <!-- 更多关于url映射的配置 -->
+  <!-- 更多关于url映射的配置 -->
 </servlet-mapping>
 ```
 
@@ -61,6 +70,7 @@
 
 ## 生命周期
 ### 相关方法
+0. 构造器方法
 1. init初始化方法，服务器实例Servlet之后调用，调用1次
 2. service处理请求与响应的方法，浏览器请求就会调用，会被调用多次
 3. destroy销毁方法，服务器关闭前销毁Servlet之前调用，调用1次
@@ -87,8 +97,12 @@ init方法值调用一次，说明servlet对象只创建一次，全局唯一对
 ![servlet+20210719093753](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B20210719093753.png%2B2021-07-19-09-37-55)
 
 
-## ServletConfig
-Servlet配置的设置与使用
+## ServletConfig类
+ServletConfig 类是 Servlet 程序的配置信息类；由 Tomcat 负责创建，程序员负责使用；每个 Servlet 程序创建时，就创建一个对应的 ServletConfig 对象。
+### 作用
+1. 可以获取 Servlet 程序的别名 servlet-name 的值
+2. 获取初始化参数 init-param
+3. 获取 ServletContext 对象
 ### 设置
 #### web.xml
 ```xml
@@ -113,7 +127,10 @@ Servlet配置的设置与使用
 // GenericServlet 实例方法 getServletConfig()
 ServletConfig servletConfig = genericServlet.getServletConfig()
 
-// 获取参数
+// 获取 Servlet 程序的别名 servlet-name 的值
+System.out.println("程序的别名是:" + servletConfig.getServletName());
+
+// 获取初始化参数 init-param
 Enumeration<String> enumeration = servletConfig.getInitParameterNames();
 while(enumeration.hasMoreElements()) {
     //获取当前key
@@ -123,6 +140,9 @@ while(enumeration.hasMoreElements()) {
 
     doSomething(key, value);
 }
+
+// 获取 ServletContext 对象
+System.out.println(servletConfig.getServletContext());
 ```
 
 
@@ -130,15 +150,16 @@ while(enumeration.hasMoreElements()) {
 ```java
 HttpServletRequest request;
 ```
+每次只要有请求进入 Tomcat 服务器，Tomcat 服务器就会把请求过来的 HTTP 协议信息解析好封装到 Request 对象中，然后传递到 service 方法(doGet 和 doPost)中给我们使用。我们可以通过 HttpServletRequest 对象，获取到所有请求的信息。
 ### 请求数据（行/头/体）
 #### 行
 * request.getMethod()：获取请求方法
-* request.getRequestURI()：获取URI
-* request.getRequestURL()：获取URL
+* request.getRequestURI()：获取请求的资源路径
+* request.getRequestURL()：获取请求的统一资源定位符(绝对路径)
+* request.getRemoteAddr()：获取客户端ip地址
 * request.getProtocol()：获取协议和版本
 * request.getServletPath()：获取当前Servlet的访问地址
 * request.getContextPath()：获取当前项目的访问地址
-* request.getRemoteAddr()：获取客户端ip地址
 
 #### 头
 * request.getHeaderNames()：得到所有的请求头名称
@@ -170,22 +191,24 @@ HttpServletRequest request;
 区别：
 1. 转发url不变，重定向url会变。
 2. 转发是在服务器内部跳转，重定向是浏览器的跳转，因此转发是1次请求，重定向是2次请求。
-3. 转发跳转前后两个资源是共享request与respond，重定向不共享。
+3. 转发跳转前后两个资源是共享request与response，重定向不共享。
 
 #### 总结
-需要传递数据（request、respond）就使用转发，否则使用重定向。
+需要传递数据（request、response）就使用转发，否则使用重定向。
 
 
-## respond
+## response
 ```java
-HttpServletResponse responed;
+HttpServletResponse response;
 ```
+每次请求进来，Tomcat 服务器都会创建一个 Response 对象传递给 Servlet 程序去使用。我们如果需要设置返回给客户端的信息，都可以通过 HttpServletResponse 对象来进行设置。
+
 ### 行
-* responed.setStatus(int status)：设置状态码
-* responed.sendError(int sc, String msg)：发送一个错误码和错误信息
+* response.setStatus(int status)：设置状态码
+* response.sendError(int sc, String msg)：发送一个错误码和错误信息
 
 ### 头
-* responed.setHeader(String name, String value)：用给定名称和值设置响应头
+* response.setHeader(String name, String value)：用给定名称和值设置响应头
 
 #### 常见响应头
 |响应头|描述|
@@ -205,14 +228,18 @@ HttpServletResponse responed;
   * response.getOutputStream()：字节流输出
 * 设置响应体的类型，避免乱码
   * response.setContentType("text/html;charset=utf-8")
-  * 上面的一句 等价于 下面的两句
+  * 上面的一句(推荐) 等价于 下面的两句
   * response.setCharacterEncoding("utf-8");
   * response.setHeader("content-type","text/html;charset=utf-8");
 * 数据压缩
   * GZIPOutputStream(OutputStream out)：使用默认缓冲区大小创建新的输出流（用于包装response.getOutputStream()）。
   * public void write(byte[] b) 将字节数组写入压缩输出流。
   * void finish() 完成将压缩数据写入输出流的操作，无需关闭底层流。
-
+* 重定向
+  * response.sendRedirect("/项目路径/资源路径")
+  * 上面的一句(推荐) 等价于 下面的两句
+  * response.setStatus(302);
+  * response.setHeader("Location", "/项目路径/资源路径");
 
 ![servlet+1565982684673](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B1565982684673.png%2B2021-07-19-15-01-53)
 [Url编码-百分号编码介绍](../front-end/url-encode.md)  
@@ -242,16 +269,43 @@ HttpServletResponse responed;
 * 删除数据，removeAttribute(String key)
 
 ### servletContext全局上下文域
+
+#### 定义
+1. ServletContext 是一个接口，它表示 Servlet 上下文对象
+2. 一个 web 工程，只有一个 ServletContext 对象实例
+3. ServletContext 在 web 工程部署启动的时候创建，在 web 工程停止的时候销毁
+
+#### 作用
+1. 获取 web.xml 中配置的上下文参数 context-param
+2. 获取当前的工程路径
+3. 获取工程部署后在服务器硬盘上的绝对路径（并获取资源）
+4. 像 Map 一样存取数据
+
+#### 获取方式
 ![servlet+20210719165959](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B20210719165959.png%2B2021-07-19-17-00-00)
 ```java
 ServletContext servletcontext = getServletContext();
 ```
+
 #### 读取资源文件
+* String servletcontext.getContextPath()：获取当前的工程路径
 * String servletcontext.getRealPath(相对路径)：根据相对路径获取项目部署位置上资源的绝对路径
 * InputStream servletcontext.getResourceAsStream(相对路径)：根据项目资源相对路径获取部署资源文件的输入流
 
 #### 读取全局配置参数
-全局配置参数：在web.xml中\<context-param>配置的参数
+全局配置参数是在web.xml中\<context-param>配置的参数，示例如下：
+```xml
+<!--context-param 是上下文参数(它属于整个 web 工程)--> 
+<context-param>
+  <param-name>username</param-name>
+  <param-value>root</param-value>
+</context-param>
+<!--context-param 是上下文参数(它属于整个 web 工程)--> 
+<context-param>
+  <param-name>password</param-name>
+  <param-value>root</param-value>
+</context-param>
+```
 
 * Enumeration\<String> servletcontext.getInitParameterNames() 得到所有的全局参数名
 * String servletcontext.getInitParameter(String name) 指定参数的名字，得到值
@@ -281,7 +335,7 @@ Session 属于服务器端的会话技术，数据保存服务器内存中，Ses
 * setPath(String uri)：设置cookie的访问路径，只有访问这个路径或者它的子路径，浏览器才会将cookie发送给服务器。
 
 ##### 写/读
-* respond.addCookie(Cookie cookie)：将服务器创建的cookie通过响应发送给浏览器
+* response.addCookie(Cookie cookie)：将服务器创建的cookie通过响应发送给浏览器
 * Cookie[] request.getCookies()：服务器得到浏览器发送过来的所有的cookie信息，返回的是一个Cookie的对象数组。如果没有读到任何的Cookie，返回null
 
 ##### 编码
