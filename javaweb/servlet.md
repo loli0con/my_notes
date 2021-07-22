@@ -315,9 +315,12 @@ cookie是用于在客户端浏览器存储会话数据。Cookie 属于客户端�
 
 Session 属于服务器端的会话技术，数据保存服务器内存中，Session 中键是 String，值是 Object 类型。服务器会为每个浏览器（每个用户）都会创建独享的session对象。
 
+#### session和cookie
 通常session技术是依赖cookie技术（Set-Cookie: JSESSIONID=会话ID），但还有[其他方式](https://www.zhihu.com/question/35307626)可选。
 
-#### 对比
+![servlet+20210722165512](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B20210722165512.png%2B2021-07-22-16-55-16)
+
+##### 对比
 |特点|cookie|session|
 |---|---|---|
 |数据存储在哪一端|客户端|服务器端|
@@ -331,7 +334,7 @@ Session 属于服务器端的会话技术，数据保存服务器内存中，Ses
 * Cookie(String name,String value)：构造方法，创建一个Cookie对象
 * String getName()：得到cookie的键
 * String getValue()：得到cookie的值
-* setMaxAge(int expiry)：设置cookie过期事件，单位是秒。正数：设置秒数；负数：浏览器关闭就失效；零：删除cookie。
+* setMaxAge(int expiry)：设置cookie过期时间，单位是秒。正数：设置秒数；负数：浏览器关闭就失效；零：删除cookie。
 * setPath(String uri)：设置cookie的访问路径，只有访问这个路径或者它的子路径，浏览器才会将cookie发送给服务器。
 
 ##### 写/读
@@ -348,12 +351,12 @@ Session 属于服务器端的会话技术，数据保存服务器内存中，Ses
 #### Session相关的API
 ##### HttpSession
 * HttpSession request.getSession()：通过请求对象获得会话对象，不存在就创建，存在就返回。
-* String getId()：得到会话ID，在服务器上唯一的32位的十六进制数
+* String getId()：得到会话ID，在服务器上唯一的32位的十六进制数。作用：“Set-Cookie: JSESSIONID=会话ID”。
 * long getCreationTime()：会话创建的时间，1970-1-1到这个时间的之间相差的毫秒数
 * boolean isNew()：判断是否位新的会话，是的返回ture
 * int getMaxInactiveInterval()：得到服务器上会话最大的非活动时间间隔，默认是1800秒（30分钟）
 * setMaxInactiveInterval(int interval)：设置会话最大活动时间间隔，单位是秒
-* invalidate()：会话立刻失效，一般用于用户退出注销
+* invalidate()：让会话立刻失效，一般用于用户退出注销
 
 ##### 有效期
 session在服务器内存中不是永久的，默认距离上一次请求间隔超过30分钟会被销毁。
@@ -366,6 +369,7 @@ session在服务器内存中不是永久的，默认距离上一次请求间隔�
 </session-config>
 ```
 
+#### 修改JSESSIONID有效期（客户端）
 浏览器关闭时，默认生成的cookie数据JSESSIONID过期了，导致打开浏览器第二次访问服务器不会携带JSESSIONID。只要延长JSESSIONID过期时间，服务器就会获取其对应的旧session返回使用。
 ```java
 //1.创建Session对象
