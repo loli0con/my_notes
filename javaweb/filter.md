@@ -223,7 +223,7 @@ public class Chain2Filter implements Filter {...}
 
 执行顺序：按照过滤器配置的顺序执行。
 
-如果filter配置了注解（即存在两个顺序），则该注解必须使用属性filterName，才能使xml配置的执行顺序覆盖注解中配置的执行顺序。
+如果filter配置了注解（即存在两个顺序），则该注解必须使用属性filterName（对应xml中的filter-name属性），才能使xml配置的执行顺序覆盖注解中配置的执行顺序。
 
 
 ## 常见示例
