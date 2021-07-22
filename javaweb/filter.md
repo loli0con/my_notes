@@ -1,7 +1,5 @@
 # Filter
-javaee体系提供一个Filter接口，实现这个接口后可以对所有资源进行拦截，拦截通过后才会达到目标资源执行。
-
-过滤器主要用于拦截请求与响应，以及在此过程中对请求与响应进行修改。
+javaee体系提供一个Filter接口，主要用于拦截请求与过滤响应。
 
 ## 执行流程
 ![filter+20210722094748](https://raw.githubusercontent.com/loli0con/picgo/master/images/filter%2B20210722094748.png%2B2021-07-22-09-47-50)
@@ -51,15 +49,21 @@ public class DemoFilter implements Filter {
 
 ### web.xml
 ```xml
- <filter>
+<!--filter 标签用于配置一个 Filter 过滤器-->
+<filter>
+    <!--给 filter 起一个别名-->
     <filter-name>filter名字</filter-name>
+    <!--配置 filter 的全类名-->
     <filter-class>filter类全名</filter-class>
 </filter>
 
+<!--filter-mapping 配置 Filter 过滤器的拦截路径-->
 <filter-mapping>
+    <!--表示当前的拦截路径给哪个 filter 使用-->
     <filter-name>filter名字</filter-name>
+    <!--配置拦截路径-->
     <url-pattern>拦截的资源路径1</url-pattern>
-    <!-- <url-pattern>/DemoServlet</url-pattern> -->
+    <!-- eg：<url-pattern>/DemoServlet</url-pattern> -->
     <url-pattern>拦截的资源路径2</url-pattern>
     ...
 </filter-mapping>
@@ -78,14 +82,66 @@ public class DemoFilter implements Filter {
        * *.action,拦截资源访问路径以.action为结尾的所有资源
        * *.do,拦截资源访问路径以.do为结尾的所有资源
 
+Filter 过滤器它只关心请求的地址是否匹配，不关心请求的资源是否存在!!!
 
 ## 生命周期
-1. 过滤器对象什么时候被创建？  
-答：服务器启动时创建
-2. 服务创建过滤器对象创建了几次？  
-答：只创建1次，因为init方法只被调用了1次。所以过滤器当前对象是单例对象，全局唯一，节省内存资源
-3. 什么时候销毁过滤器？  
-答：服务器关闭前会销毁当前过滤器对象释放内存
+Filter 的生命周期包含几个方法：
+1. 构造器方法
+2. init 初始化方法
+   * 启动 web 工程时执行(即Filter创建于服务器启动时)
+   * 过滤器对象只创建1次，因为init方法只被调用了1次
+   * 过滤器对象是单例对象，全局唯一，节省内存资源
+3. doFilter 过滤方法
+   * 每次拦截到请求，就会执行 
+4. destroy 销毁方法
+   * 停止 web 工程的时执行(即Filter销毁于服务器关闭时)
+
+
+## FilterConfig
+FilterConfig是 Filter 过滤器的配置文件类。Tomcat 每次创建 Filter 的时候，也会同时创建一个 FilterConfig 类，这里包含了 Filter 配置文件的配置信息。
+
+### 作用
+FilterConfig 类的作用是获取 filter 过滤器的配置内容：
+1. 获取 Filter 的名称 filter-name 的内容
+2. 获取在 Filter 中配置的 init-param 初始化参数
+3. 获取 ServletContext 对象
+
+### 示例
+#### web.xml
+```xml
+<filter>
+    <filter-name>DemoFilter</filter-name>
+    <filter-class>xxx.xxx.DemoFilter</filter-class>
+
+    <init-param>
+        <param-name>username</param-name>
+        <param-value>root</param-value>
+    <init-param>
+
+    <init-param>
+        <param-name>password</param-name>
+        <param-value>root</param-value>
+    <init-param>
+</filter>
+```
+#### DemoFilter
+```java
+public class DemoFilter implements Filter {
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        // 1、获取 Filter 的名称 filter-name 的内容
+        System.out.println("filter-name 的值是:" + filterConfig.getFilterName());
+        // 2、获取在 web.xml 中配置的 init-param 初始化参数
+        System.out.println("初始化参数username的值是:" + filterConfig.getInitParameter("username"));
+        System.out.println("初始化参数 password 的值是:" + filterConfig.getInitParameter("password"));
+        // 3、获取 ServletContext 对象 
+        System.out.println(filterConfig.getServletContext());
+    }
+
+    ...
+}
+```
+
 
 ## 拦截方式
 filter默认不会拦截转发的目标资源，可以修改**拦截方式**使filter拦截请求转发的目标资源。
@@ -121,6 +177,8 @@ filter默认不会拦截转发的目标资源，可以修改**拦截方式**使f
 ## filter链
 过滤器链：允许一个资源被多个过滤器拦截，过滤器一个接一个串行执行。
 
+![filter+20210722171836](https://raw.githubusercontent.com/loli0con/picgo/master/images/filter%2B20210722171836.png%2B2021-07-22-17-18-39)
+
 ### 注解
 ```java
 // 资源
@@ -137,7 +195,7 @@ public class Chain1Filter implements Filter {...}
 public class Chain2Filter implements Filter {...}
 ```
 
-执行顺序：通过过滤器类的名字（chain1Filter、Chain2Filter）升序继续排序。
+执行顺序：通过过滤器类的名字（Chain1Filter < Chain2Filter）升序继续排序。
 
 ### web.xml
 ```xml
@@ -163,7 +221,9 @@ public class Chain2Filter implements Filter {...}
 </filter-mapping>
 ```
 
-执行顺序：按照过滤器配置的顺序执行。如果filter配置了注解（即存在两个顺序），则该注解必须使用属性filterName，才能使xml配置的执行顺序覆盖注解中配置的执行顺序。
+执行顺序：按照过滤器配置的顺序执行。
+
+如果filter配置了注解（即存在两个顺序），则该注解必须使用属性filterName，才能使xml配置的执行顺序覆盖注解中配置的执行顺序。
 
 
 ## 常见示例
