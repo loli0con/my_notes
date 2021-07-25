@@ -158,3 +158,78 @@ CORS全称Cross-Origin Resource Sharing（跨域资源共享），是HTML5规范
 
 [跨域资源共享 CORS 详解](http://www.ruanyifeng.com/blog/2016/04/cors.html)  
 [CORS-官方文档](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS)
+
+
+
+## JQuery
+jquery是js的框架，可以提高异步开发效率。
+
+### 三种常用的ajax方法
+![ajax+20210725150147](https://raw.githubusercontent.com/loli0con/picgo/master/images/ajax%2B20210725150147.png%2B2021-07-25-15-01-48)
+
+#### get
+jq的get方法异步请求语法：`$.get(url,[data],[callback],[type])`
+* url：设置服务器处理请求资源地址
+* data：设置传递的请求数据，支持2种格式
+  * 格式1：键值对字符串形式，eg:"key1=value1&key2=value2..."
+  * 格式2：json对象格式，eg:{key1:value1,key2:value2,...}
+* callback：回调函数，用于接收服务器返回的数据
+  * 格式：`function(result){...}`，result就是服务器返回的数据(内部已经判断ajax状态为4，http通信状态为200)
+* type：设置服务器返回的数据类型
+  * 类型1：type=text,代表返回文本字符串
+  * 类型2：type=html,代表返回html文本字符串
+  * 类型3：type=script,代表返回javascript文本字符串
+  * 类型4：type=xml,代表返回xml文本字符串
+  * 类型5：type=json,代表返回json文本字符串
+  * 如果不设置默认值：type为服务器响应的正文类型
+
+#### post
+jq的get方法异步请求语法：`$.post(url,[data],[callback],[type])`
+* url：设置服务器处理请求资源地址
+* data：设置传递的请求数据，支持2种格式
+  * 格式1：键值对字符串形式，eg:"key1=value1&key2=value2..."
+  * 格式2：json对象格式，eg:{key1:value1,key2:value2,...}
+* callback：回调函数，用于接收服务器返回的数据
+  * 格式：`function(result){...}`，result就是服务器返回的数据(内部已经判断ajax状态为4，http通信状态为200)
+* type：设置服务器返回的数据类型
+  * 类型1：type=text,代表返回文本字符串
+  * 类型2：type=html,代表返回html文本字符串
+  * 类型3：type=script,代表返回javascript文本字符串
+  * 类型4：type=xml,代表返回xml文本字符串
+  * 类型5：type=json,代表返回json文本字符串
+  * 如果不设置默认值：type为服务器响应的正文类型
+
+#### ajax
+jq的get方法语法：`$.ajax(json对象)`或`$.ajax([settings])`  
+json对象常用属性如下：
+* url：服务器访问地址
+* async：设置后台发送类型，是异步或同步发送。
+  * 默认值：true，异步发送请求
+* data：发送给服务器的数据的格式
+  * 格式1：键=值
+  * 格式2：{键:值} 里面可以有多个键值对
+* method：发送请求的方式
+  * 默认的请求方式，GET方式
+* dataType：服务器返回的数据类型，取值可以是xml、html、script、json、text、_default等
+* success	服务器响应成功以后调用的回调函数（回调函数的参数是服务器返回的数据）
+* error	如果服务器出现异常调用这个函数
+
+##### demo
+```js
+$.ajax({
+    url:"LoginServlet",
+    method:"post",
+    data:{username:name,password:pwd},
+    success:function (result){
+        //result返回值："true" 或 "false"
+        if(result=="true"){
+            alert(name+"登录成功了");
+        }else{
+            alert("登录失败");
+        }
+    },
+    error:function (){
+        alert("服务器忙，请明天再来");
+    }
+})
+```
