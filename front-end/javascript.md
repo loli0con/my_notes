@@ -474,7 +474,19 @@ JSON的字符集必须是UTF-8，JSON的字符串规定必须用双引号""，�
 * array：就是JavaScript的Array表示方式——[]；
 * object：就是JavaScript的{ ... }表示方式。
 
-### 序列化
+### 分类
+1. JSON字符串：用于传输数据的格式，格式为：`'{"key1":value1,"key2":value2,...}'`
+2. JSON对象：是一种js对象，便于在前端解析数据，格式：`{key1:value1,key2:value2,...}`
+
+#### JSON对象
+![javascript+20210725151914](https://raw.githubusercontent.com/loli0con/picgo/master/images/javascript%2B20210725151914.png%2B2021-07-25-15-19-14)
+
+#### 应用场景
+![javascript+20210725151835](https://raw.githubusercontent.com/loli0con/picgo/master/images/javascript%2B20210725151835.png%2B2021-07-25-15-18-37)
+
+
+#### 转换
+##### 序列化
 对象 ---序列化---> JSON格式的字符串
 
 JSON.stringify() 方法用于将 JavaScript 值转换为 JSON 字符串。  
@@ -487,7 +499,7 @@ JSON.stringify() 方法用于将 JavaScript 值转换为 JSON 字符串。
   * 还可以可以给对象本身定义一个toJSON()的方法，直接返回JSON应该序列化的数据。
 * space: 文本添加缩进、空格和换行符，如果 space 是一个数字，则返回值文本在每个级别缩进指定数目的空格，如果 space 大于 10，则文本缩进 10 个空格。space 也可以使用非数字，如：\t
 
-### 反序列化
+##### 反序列化
 JSON格式的字符串 <---反序列化--- 对象
 
 JSON.parse() 方法用于将一个 JSON 字符串转换为对象。  

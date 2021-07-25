@@ -16,3 +16,4 @@
    1. [bom](js-bom.md)
    2. [dom](js-dom.md)
    3. [ajax技术](ajax.md)
+   4. [JSON](javascript.md#json)
