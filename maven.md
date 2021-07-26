@@ -752,6 +752,38 @@ Settings 属性同 POM 属性是一样的，可以用以“settings.”开头的
 ```
 
 
+## lastUpdate
+当使用了本地仓库没有的jar包时，默认会去远程仓库下载。如果在下载过程中网络断了，maven会在本地仓库jar包对应位置生成一个错误标记文件[xxx.lastUpdated](https://www.jianshu.com/p/feae53fcab04)，一旦产生了这个文件，下次网络恢复了，也不会去下载这个这个jar包。
+
+此时需要[清除失败标记文件](https://blog.csdn.net/u011990675/article/details/80066897)xxx.lastUpdated。
+
+### cleanLastUpdated.sh（linux版本）
+```shell 
+# 这里写你的仓库路径
+REPOSITORY_PATH=~/Documents/tools/repository
+
+echo 正在搜索...
+find $REPOSITORY_PATH -name "*lastUpdated*" | xargs rm -fr
+echo 搜索完
+```
+
+### cleanLastUpdated.bat（windows版本）
+```bat
+@echo off
+rem create by NettQun
+  
+rem 这里写你的仓库路径
+set REPOSITORY_PATH=D:\Java\maven-repository\maven-aliyun\repository
+rem 正在搜索...
+for /f "delims=" %%i in ('dir /b /s "%REPOSITORY_PATH%\*lastUpdated*"') do (
+    echo %%i
+    del /s /q "%%i"
+)
+rem 搜索完毕
+pause
+```
+
+
 ## 参考
 * https://www.bilibili.com/video/BV1Ah411S7ZE
 * https://www.runoob.com/maven/maven-tutorial.html
