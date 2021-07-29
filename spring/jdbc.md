@@ -11,6 +11,7 @@ JdbcTemplate是Spring提供的一个模板类，它是对jdbc的封装。用于�
 |public JdbcTemplate(DataSource dataSource)|作用：创建模板对象<br />参数：数据源，从中获取连接对象|
 |public int update(String sql, Object…args)|作用：实现增删改的操作<br />参数1：SQL语句<br />参数2：替换占位符的值<br />返回值：返回影响的行数|
 |\<T> T queryForObject(String sql, <br />RowMapper\<T> rowMapper, Object... args)|作用：查询1条记录<br />参数1：SQL语句<br />参数2：指定映射关系的接口(RowMapper)<br />参数3：替换占位符的值<br />返回值：查询的那条记录的对象|
+|List\<T> query(String sql, RowMapper\<T> rowMapper, Object... args)|查询多条记录|
 
 ### RowMapper接口
 #### 接口方法
