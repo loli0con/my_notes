@@ -45,7 +45,7 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
 ### pom.xml
 ```xml
 <dependencies>
-        <!--Spring支持包-->
+        <!--Spring支持包，统一版本号使用5.2.0-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
