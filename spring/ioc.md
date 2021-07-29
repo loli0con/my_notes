@@ -96,12 +96,19 @@ IOC 是**站着对象的角度上**对象的实例化以及管理从程序员的
 常用的有两种方式：构造方法注入和setter注入
 
 
+***
 
-## 配置
+## 配置方式
+配置的方式可分为三种：
+* xml（纯xml而完全没有注解）
+* 注解（少量xml以导入注解功能支持）
+* 混合使用xml和注解
+* JavaConfig（纯注解而完全没有xml）
 
-### xml
-#### bean标签
+下面将讲解如何在Spring中进行配置。
 
+## xml
+### bean标签
 |属性|说明|
 |---|---|
 |id|容器中唯一的标识|
@@ -112,58 +119,7 @@ IOC 是**站着对象的角度上**对象的实例化以及管理从程序员的
 |destroy-method|销毁对象时，执行的方法；销毁的方法只在单例模式下起作用|
 |lazy-init|是否使用延迟加载，默认是不使用；延迟加载只用于单例对象|
 
-##### scope属性
-|scope取值|作用范围|生命周期|
-||||
-|singleton 单例对象|容器一创建就创建这个对象，只要容器不销毁就一直存在|出生：容器创建就出生<br />活着：只要容器没有销毁就一直存在<br />死亡：容器关闭的时候|
-|prototype 多例对象|每次获取对象就创建一个新的对象，使用完毕会被GC回收|出生：获取对象的时候<br />活着：使用过程中<br />死亡：由GC去回收|
-
-#### alias标签
-```xml
-<!--设置别名：在获取Bean的时候可以使用别名获取-->
-<alias name="userT" alias="userNew"/>
-```
-
-#### import标签
-```xml
-<import resource="路径/beans.xml"/>
-```
-
-
-
-
-
-## API
-### 创建容器
-![ioc+20210728140220](https://i.loli.net/2021/07/28/5CezFtbH4GywS6X.png)
-
-```java
-/** 
-创建：
-    ClassPathXmlApplicationContext
-    方式一：类路径配置文件创建容器
-
-    FileSystemXmlApplicationContext
-    方式二：本地配置文件方式创建容器
-
-    AnnotationConfigApplicationContext
-    方式三：注解的方式创建容器
-*/
-ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
-
-ApplicationContext context = new FileSystemXmlApplicationContext("xxx路径/applicationContext.xml");
-
-ApplicationContext context = new AnnotationConfigApplicationContext(CustomerServiceImpl.class);
-
-//2.从容器中获取对象
-CustomerService customerService = (CustomerService) context.getBean("customerService");
-//3.调用对象的方法
-customerService.doCustomer();
-//4.关闭容器
-context.close();
-```
-
-### 创建对象
+#### 对象的创建
 创建对象方式：
 * 构造方法
   * 无参（默认）
@@ -171,7 +127,7 @@ context.close();
 * 静态工厂方法
 * 实例工厂方法
 
-#### 静态工厂方法
+##### 静态工厂方法
 ```java
 /**
  * 静态工厂
@@ -191,12 +147,12 @@ public class StaticBeanFactory {
 <!--
 使用静态工厂创建
 class: 静态工厂类
-factory-method：静态的获取对象的方法
+factory-method：工厂中的获取对象的静态方法
 id：对象的id  -->
 <bean class="com.itheima.utils.StaticBeanFactory" factory-method="getBean" id="customerService"/>
 ```
 
-#### 实例工厂方法
+##### 实例工厂方法
 ```java
 /**
  * 实例工厂
@@ -219,11 +175,21 @@ public class InstanceBeanFactory {
     2 调用实例工厂的方法创建我们所需的对象
  -->
 <bean class="com.itheima.utils.InstanceBeanFactory" id="instanceBeanFactory"/>
-<!-- 上面的id 等于 下面的factory-bean -->
+<!-- “上面的id” 等于 “下面的factory-bean” 
+    
+    factory-bean：实例工厂对象
+    factory-method：工厂中创建对象的实例方法
+-->
 <bean id="customerService" factory-bean="instanceBeanFactory" factory-method="getBean"/>
 ```
 
-### 依赖注入 - XML
+#### 对象的生命周期
+|scope取值|作用范围|生命周期|
+|---|---|---|
+|singleton 单例对象|容器一创建就创建这个对象，只要容器不销毁就一直存在|出生：容器创建就出生<br />活着：只要容器没有销毁就一直存在<br />死亡：容器关闭的时候|
+|prototype 多例对象|每次获取对象就创建一个新的对象，使用完毕会被GC回收|出生：获取对象的时候<br />活着：使用过程中<br />死亡：由GC去回收|
+
+#### 依赖注入
 ```java
 public class Customer {
     private int id;
@@ -233,18 +199,17 @@ public class Customer {
     // 省略无参构造方法、有参构造方法、getter和setter
 }
 ```
-#### 构造函数
+##### 构造函数
 |constructor-arg标签的属性|描述|
 |---|---|
-|index|构造方法参数的位置|
+|index|构造方法参数的位置，从0开始|
 |name|参数名|
 |type|指定参数的类型|
 |value|赋值简单类型=基本类型+String类型|
 |ref|赋值引用类型|
 
 ```xml
-<!--
-1. 使用构造方法注入
+<!-- 1.使用构造方法注入
 子元素：constructor-arg 构造方法注入
     index：每几个位置，从0开始
     name：指定形参的名字
@@ -263,7 +228,7 @@ public class Customer {
 <bean class="java.util.Date" id="birthday"/>
 ```
 
-##### c命名空间
+###### c命名空间
 ```xml
 <!-- 导入约束：xmlns:c="http://www.springframework.org/schema/c" -->
 
@@ -271,7 +236,7 @@ public class Customer {
 <bean id="user" class="com.kuang.pojo.User" c:name="狂神" c:age="18"/>
  ```
 
-#### set方法
+##### set方法
 |\<property>的属性|描述|
 |---|---|
 |name|属性名|
@@ -293,7 +258,7 @@ public class Customer {
 <bean class="java.util.Date" id="birthday"/>
 ```
 
-##### p命名空间
+###### p命名空间
 ```xml
 <!-- 导入约束：xmlns:p="http://www.springframework.org/schema/p" -->
  
@@ -304,15 +269,15 @@ public class Customer {
 <bean class="java.util.Date" id="birthday"/>
 ```
 
-#### 更多例子
+##### 更多例子
 ```java
 public class Student {
     private String name;  // String
     private Address address;  // 实体，Bean
     private String[] books;  // 数组
     private List<String> hobbys;  // List
-    private Map<String,String> card;  // Map
     private Set<String> games;  // Set
+    private Map<String,String> card;  // Map
     private String wife;  // null
     private Properties info;  //Properties
 
@@ -357,14 +322,6 @@ public class Student {
     </list>
 </property>
 
-<!-- Map -->
-<property name="card">
-    <map>
-        <entry key="中国邮政" value="456456456465456"/>
-        <entry key="建设" value="1456682255511"/>
-    </map>
-</property>
-
 <!-- Set -->
 <property name="games">
     <set>
@@ -372,6 +329,14 @@ public class Student {
         <value>BOB</value>
         <value>COC</value>
     </set>
+</property>
+
+<!-- Map -->
+<property name="card">
+    <map>
+        <entry key="中国邮政" value="456456456465456"/>
+        <entry key="建设" value="1456682255511"/>
+    </map>
 </property>
 
 <!-- null -->
@@ -389,9 +354,36 @@ public class Student {
 </property>
 ```
 
+#### alias标签
+```xml
+<!--设置别名：在获取Bean的时候可以使用别名获取-->
+<alias name="userT" alias="userNew"/>
+```
 
-### 依赖注入 - 注解
-#### xml配置文件指定包
+#### import标签
+```xml
+<import resource="路径/beans.xml"/>
+```
+1. 配置文件会先合并，后解析，也就是说，无论是命名空间还是配置的内容，都会合并处理（合并前的报错请忽略）。
+2. 多个 Spring 配置文件最终会合并到一起，形成一个配置文件，因此这些配置中的 bean 都是可以互相引用的。
+
+#### 读取配置文件
+```xml
+<!-- 读取配置文件(示例中为druid配置文件)，放在容器中，后面我们可以读取其中的属性值 -->
+<context:property-placeholder location="classpath:druid.properties"/>
+
+<!-- 使用配置文件中的属性 -->
+<bean class="com.alibaba.druid.pool.DruidDataSource" id="dataSource">
+    <property name="username" value="${jdbc.username}"/>
+    <property name="password" value="${jdbc.password}"/>
+    <property name="url" value="${jdbc.url}"/>
+    <property name="driverClassName" value="${jdbc.driverClassName}"/>
+</bean>
+```
+
+
+## 注解
+#### xml配置 - 导入注解功能支持
 ```xml
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -412,7 +404,7 @@ public class Student {
 ```
 
 #### @Component
-Component注解放在类上，表示这个类会被创建，并将对象放在容器中。
+Component注解放在类上，表示这个类会被创建，并将对象放在容器中。  
 默认是类名首字母小写做为名字，也可以使用value属性来指定*该类的名字*（相当于配置文件中&lt;bean id="*该类的名字*" class="当前注解的类"/>）。
 
 |创建对象的注解|说明|
@@ -431,7 +423,7 @@ Autowired注解放在成员变量和成员方法上，表示将*相应的值（�
 * 如果有多个匹配的类型，按名字匹配的方式注入
 * 如果找不到匹配的名字，就会抛出异常
 
-@Autowired的属性required：默认为true，表示这个属性是必需的；如果为false，则在容器中找不到这个属性匹配的类型时，不抛出异常，将属性值为null。
+@Autowired的属性required：默认为true，表示这个属性是必需的；如果为false，则匹配失败时，不抛出异常，将属性值为null。
 
 #### @Qualifier
 Autowired是根据类型自动装配的，加上@Qualifier则可以根据byName的方式自动装配：
@@ -448,10 +440,8 @@ Resource注解放在成员变量和成员方法上，表示从容器中寻找值
 * 如果以上都不成功，则按byType的方式自动装配。
 * 都不成功，则报异常。
 
-
-
 #### @Value
-注入一些简单类型，主要用于[读取配置文件中值注入](https://www.cnblogs.com/binghe001/p/13216798.html)。
+注入一些简单类型，也可以[读取配置文件中值注入](https://www.cnblogs.com/binghe001/p/13216798.html)——结合@PropertySource等注解使用。
 ```java
 public Class User{
     @Value("root")
@@ -476,3 +466,119 @@ public Class User{
 
 #### @PreDestroy
 用在方法上，指定这是对象销毁前执行的方法，只适用于单例对象。
+
+
+## 注解（纯注解——JavaConfig）
+JavaConfig 原来是 Spring 的一个子项目，它通过 Java 类的方式提供 Bean 的定义信息，在 Spring4 的版本， JavaConfig 已正式成为 Spring4 的核心功能 。
+
+它完全消除xml配置文件，用纯Java（注解）实现配置。
+
+### 常用注解
+#### @Configuration
+放在类上，表示这是一个配置类。  
+如果要读取配置类，要使用AnnotationConfigApplicationContext加载容器。
+
+#### @ComponentScan
+放在类上，指定要扫描的基包。
+|@ComponentScan的属性|作用|
+|---|---|
+|basePackages|参数是一个字符数组，指定一个或多个基包的名字|
+|value|同上|
+
+#### @Bean
+1. 注解用在方法上
+2. 自动将方法的返回值加入到Spring容器中，方法名就是放在容器中的id。
+3. 如果想指定与方法名不同的id，则使用name属性指定名字，相当于指定id(name属性的别名是value)。
+4. 如果方法有参数，则参数传入的对象从容器中自动按类型匹配的方式去找。
+
+#### @PropertySource
+读取Java的属性文件(.properties)，value[]属性：指定一个或多个属性文件的名字。  
+@PropertySource可以不用写classpath，因为注解默认从类路径下加载
+
+#### @Import
+指定一个或多个类对象，导入另一个配置类
+
+
+### 示例
+#### 实体类
+```java
+@Component  //将这个类标注为Spring的一个组件，放到容器中！
+public class Dog {
+   public String name = "dog";
+}
+```
+
+#### 配置类
+```java
+@Configuration  //代表这是一个配置类
+@PropertySource("druid.properties")  // 加载配置文件
+@Import(OtherConfig.class)  // 导入其他配置类
+@ComponentScan("com.itheima")  // 扫描基包的中类，以支持注解配置功能
+public class MyConfig {
+
+    @Value("${jdbc.username}")  // 使用配置文件中的属性
+    private String username;
+
+    @Value("${jdbc.password}")
+    private String password;
+
+    @Bean //通过方法注册一个bean，这里的返回值就Bean的类型，方法名就是bean的id！
+    public Dog dog(){
+       return new Dog();
+   }
+
+    @Bean
+    public DataSource createDataSource() {
+        /* 省略部分代码 */
+        return ds;
+    }
+
+    @Bean // 方法有参数ds，按类型DataSource匹配的方式从容器中去查找
+    public JdbcTemplate createJdbcTemplate(DataSource ds) {
+        return new JdbcTemplate(ds);
+    }
+}
+```
+
+#### 测试类
+```java
+@Test
+public void test(){
+   ApplicationContext applicationContext =
+           new AnnotationConfigApplicationContext(MyConfig.class);
+   Dog dog = (Dog) applicationContext.getBean("dog");
+   System.out.println(dog.name);
+}
+```
+
+
+## API
+### 创建容器
+<!-- TODO -->
+![ioc+20210728140220](https://i.loli.net/2021/07/28/5CezFtbH4GywS6X.png)
+
+```java
+/** 
+创建：
+    ClassPathXmlApplicationContext
+    方式一：类路径配置文件创建容器
+
+    FileSystemXmlApplicationContext
+    方式二：本地配置文件方式创建容器
+
+    AnnotationConfigApplicationContext
+    方式三：注解的方式创建容器
+*/
+ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+
+ApplicationContext context = new FileSystemXmlApplicationContext("xxx路径/applicationContext.xml");
+
+ApplicationContext context = new AnnotationConfigApplicationContext(CustomerServiceImpl.class);
+
+//2.从容器中获取对象
+CustomerService customerService = (CustomerService) context.getBean("customerService");
+//3.调用对象的方法
+customerService.doCustomer();
+//4.关闭容器
+context.close();
+```
