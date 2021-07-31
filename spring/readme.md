@@ -1,7 +1,8 @@
 # Spring
 
 ## 文档
-* https://docs.spring.io/spring-framework/docs/5.2.16.RELEASE/spring-framework-reference/core.html
+* [官方文档](ioc.mdhttps://docs.spring.io/spring-framework/docs/5.2.16.RELEASE/spring-framework-reference/core.html)
+* [中文文档(非官方)](https://www.docs4dev.com/docs/zh/spring-framework/5.1.3.RELEASE/reference)
 
 ## 下载地址
 https://repo.spring.io/release/org/springframework/spring/
@@ -20,6 +21,8 @@ Spring的核心就是提供了一个IoC容器，它可以管理所有轻量级�
 Spring 有两个核心部分:IOC 和 Aop
 * IOC:控制反转，把创建对象过程交给 Spring 进行管理
 * Aop:面向切面，不修改源代码进行功能增强
+
+IOC的核心是工厂模式，AOP的核心是代理模式。
 
 ## 特点
 Spring的特点： 
