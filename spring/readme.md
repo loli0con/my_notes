@@ -82,13 +82,27 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
             <!-- <version>1.1.12</version> -->
         </dependency>
         
+        <!-- AOP支持 -->
+        <!-- AspectJ切面表达式支持 -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.8.13</version>
+        </dependency>
 
         <!-- 单元测试 -->
-        <!--junit-->
+        <!--junit4-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
+        </dependency>
+        <!--junit5-->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.5.2</version>
+            <scope>test</scope>
         </dependency>
         <!-- spring测试包 -->
         <dependency>
