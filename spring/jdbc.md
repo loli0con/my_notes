@@ -89,3 +89,106 @@ com.alibaba.druid.pool.DruidDataSource
 </bean>
 ```
 
+## 事务
+事务主要用在业务层。业务层中一个方法会多次调用DAO层中增删改，所有的方法必须全部执行成功，如果有一个方法执行失败，就要进行回滚。要么全部成功，要么全部失败。
+
+Spring 的事务控制都是基于 AOP 的，它既可以使用编程的方式实现，也可以使用配置的方式实现。这种基于AOP方式实现的事务称为声明式事务。
+
+Spring 框架为我们提供了一组事务控制的接口，这组接口是在spring-tx-版本.RELEASE.jar中。
+
+![jdbc+20210731152036](https://i.loli.net/2021/07/31/vaoGNbjYMlUp4we.png)
+
+### 编程式事务
+通过编写代码实现的事务管理，包括定义事务的开始，正常执行后事务提交和异常时的事务回滚。
+
+### 声明式事务
+开发者无须通过编程的方式来管理事务，只需在配置文件中进行相关的事务规则声明，就可以将事务规则应用到业务逻辑中。
+
+#### API
+##### PlatformTransactionManager
+事务的顶层接口，提供了操作事务的常用方法，方法由Spring容器去调用：
+* TransactionStatus getTransaction(TransactionDefinition definition)：获取事务状态信息
+* void commit(TransactionStatus status)：提交事务
+* void rollback(TransactionStatus status)：回滚事务
+
+通常使用org.springframework.jdbc.datasource.DataSourceTransactionManager实现类。
+
+##### TransactionDefinition
+定义了事务的隔离级别、传播行为、超时时间等。
+
+###### 事务的隔离级别
+事务指定一个隔离级别，该隔离级别定义一个事务必须与由其他事务进行的资源或数据更改相隔离的程度。
+![jdbc+image-20200228094252193](https://i.loli.net/2021/07/31/dJIhVi6NOl14mCt.png)
+
+###### 事务的传播行为
+事务传播行为（propagation behavior）指的就是当一个事务方法被另一个事务方法调用时，这个事务方法应该如何进行。
+
+TODO，少个图
+
+###### TransactionStatus
+提供了获取事务状态的方法，事务是否是新的，事务是否完成，事务是否是只读等。
+
+#### xml实现
+```xml
+<!-- 配置事务管理器 -->
+<bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="transactionManager">
+    <!--注入数据源(需要先配置好数据源)-->
+    <property name="dataSource" ref="dataSource"/>
+</bean>
+
+<!-- 声明式事务切面的配置，指定事务管理器 -->
+<tx:advice id="interceptor" transaction-manager="transactionManager">
+    <tx:attributes>
+        <!--
+        name：指定哪些方法需要使用事务（可以使用通配符*），
+        以及使用事务的规则：
+            propagation：事务传播行为（默认为REQUIRED）
+            isolation：事务的隔离级别
+            read-only：指定事务是否只读（默认为false）
+            timeout：超时的时间（默认为false）
+            rollback-for：指定触发事务回滚的异常类（如果指定多个类用逗号分隔）
+            no-rollback-for：指定不触发事务回滚的异常类
+        -->
+        <tx:method name="transfer" read-only="false" propagation="REQUIRED" isolation="DEFAULT"/>
+        <tx:method name="find*" read-only="true" propagation="SUPPORTS"/>
+    </tx:attributes>
+</tx:advice>
+
+<!-- AOP的配置 -->
+<aop:config>
+    <!-- 切面表达式的配置 -->
+    <aop:pointcut id="pt" expression="execution(* com.demo.service..*.*(..))"/> <!-- com.demo.service下的所有方法 -->
+    <!-- 配置上面的事务 -->
+    <aop:advisor advice-ref="interceptor" pointcut-ref="pt"/>
+</aop:config>
+```
+
+#### 注解实现
+##### xml配置
+```xml
+<!-- 配置事务管理器 -->
+<bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="transactionManager">
+    <!--注入数据源-->
+    <property name="dataSource" ref="dataSource"/>
+</bean>
+
+<!--配置注解式事务的驱动，指定事务管理器 -->
+<tx:annotation-driven transaction-manager="transactionManager"/>
+```
+
+##### @Transactional
+放在类、接口或方法上，让这个方法使用事务：
+* 类上面：表示这个类中所有的方法都使用事务
+* 方法上面：表示这个方法使用事务
+* 接口：表示只要实现这个接口的所有子类中所有方法都使用事务
+* 接口中方法：表示实现这个接口的子类中这个方法使用事务
+
+| 参数名称      | 描述                                             |
+| ------------- | ------------------------------------------------ |
+| propagation   | 传播行为                                         |
+| isolation     | 隔离级别                                         |
+| readOnly      | 是否只读                                         |
+| timeout       | 超时时间，默认是-1，表示不超时                   |
+| rollbackFor   | 哪些异常会进行回滚，默认只对非运行时异常进行回滚 |
+| noRollbackFor | 哪些异常不进行回滚                               |
+

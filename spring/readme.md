@@ -3,15 +3,32 @@
 ## 文档
 * https://docs.spring.io/spring-framework/docs/5.2.16.RELEASE/spring-framework-reference/core.html
 
+## 下载地址
+https://repo.spring.io/release/org/springframework/spring/
+
 ## 介绍
 * Spring是**分层**的Java SE/**EE应用**的**full-stack** **轻量级**开源**框架**。
-* 它提供了一系列底层容器和**基础设施**
+* 它提供了一系列**底层容器**和**基础设施**
 * 将开源世界中众多优秀的第三方框架和类库**整合**
 
 ### 容器
 容器是一种为某种特定组件的运行提供必要支持的一个软件环境。通常来说，使用容器运行组件，除了提供一个组件运行环境之外，容器还提供了许多底层服务。
 
 Spring的核心就是提供了一个IoC容器，它可以管理所有轻量级的JavaBean组件，提供的底层服务包括组件的生命周期管理、配置和组装服务、AOP支持，以及建立在AOP基础上的声明式事务服务等。
+
+## 核心
+Spring 有两个核心部分:IOC 和 Aop
+* IOC:控制反转，把创建对象过程交给 Spring 进行管理
+* Aop:面向切面，不修改源代码进行功能增强
+
+## 特点
+Spring的特点： 
+* 方便**解耦**，**简化**开发
+* **Aop** 编程支持
+* 方便程序**测试**
+* 方便和其他框架进行**整合**
+* 方便进行**事务**操作
+* 降低 API 开发难度
 
 ## 衍生
 在Spring Framework基础上，又诞生了Spring Boot、Spring Cloud、Spring Data、Spring Security等一系列基于Spring Framework的项目。
@@ -81,13 +98,21 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
             <version>1.1.10</version>
             <!-- <version>1.1.12</version> -->
         </dependency>
-        
+        <!--声明式事务支持-->
+        <dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-tx</artifactId>
+		    <version>5.2.0.RELEASE</version>
+	    </dependency>
+
+
         <!-- AOP支持 -->
         <!-- AspectJ切面表达式支持 -->
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
             <version>1.8.13</version>
+            <!-- <version>1.8.7</version> -->
         </dependency>
 
         <!-- 单元测试 -->
