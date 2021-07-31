@@ -1,25 +1,18 @@
 # AOP
 ## 基本介绍
-AOP（Aspect Oriented Programming）意为：面向切面编程，通过预编译方式和运行期动态代理实现程序功能的统一维护的一种技术。
+AOP（Aspect Oriented Programming）意为：是计算机科学中的一种程序设计思想，旨在将**横切关注点**与业务主体进行进一步分离，以提高程序代码的模块化程度。
 
-### 本质
-AOP的本质是在一系列纵向的控制流程中，把那些相同的子流程提取成一个横向的面。将分散在主流程中相同的代码提取出来，然后在程序编译或运行时，将这些提取出来的切面代码应用到需要执行的地方。
+通过在现有代码基础上增加额外的通知（Advice）机制，能够对被声明为“切点（Pointcut）”的代码块进行统一管理与装饰。
 
-### 织入的方式
-在Java平台上，对于AOP的织入，有3种方式：
-* 编译期：在编译时，由编译器把切面调用编译进字节码，这种方式需要定义新的关键字并扩展编译器，AspectJ就扩展了Java编译器，使用关键字aspect来实现织入；
-* 类加载器：在目标类被装载到JVM时，通过一个特殊的类加载器，对目标类的字节码重新“增强”；
-* 运行期：目标对象和切面都是普通Java类，通过JVM的动态代理功能或者第三方库实现运行期动态织入。
+该思想使得开发人员能够将与代码核心业务逻辑关系不那么密切的功能（如日志功能）添加至程序中，同时又不降低业务代码的可读性。
 
-最简单的方式是第三种，Spring的AOP实现就是基于JVM的动态代理。由于JVM的动态代理要求必须实现接口，如果一个普通类没有业务接口，就需要通过CGLIB或者Javassist这些第三方库实现。
+### 横切关注点
+面向切面的程序设计将代码逻辑切分为不同的模块（即关注点（Concern），一段特定的逻辑功能)。几乎所有的编程思想都涉及代码功能的分类，将各个关注点封装成独立的抽象模块（如函数、过程、模块、类以及方法等），后者又可供进一步实现、封装和重写。部分关注点“横切”程序代码中的数个模块，即在多个模块中都有出现，它们即被称作横切关注点（Cross-cutting concerns, Horizontal concerns）。
 
-### 优点
-利用AOP可以对业务逻辑的各个部分进行隔离，从而使得业务逻辑各部分之间的耦合度降低，提高程序的可重用性，同时提高了开发的效率。
-
-## AOP术语
-* JoinPoint(连接点，*被切入的位置*)：在程序执行过程中的某个阶段点，连接点就是指主业务方法的调用，它是客观存在的。
-* Pointcut(切入点，*描述在哪里注入*)：切入点指的是类或者方法名，满足某一规则的类或方法都是切入点，通过切入点表达式来制定规则。
-* Advice(通知，*描述注入的时机*)：切入点处所要执行的程序代码，即切面类中要执行的公共方法。通知/拦截器的类型有：
+### AOP术语
+* JoinPoint(连接点，**被切入的位置**)：在程序执行过程中的某个阶段点，连接点就是指主业务方法的调用，它是客观存在的。
+* Pointcut(切入点，**描述在哪里注入**)：切入点指的是类或者方法名，满足某一规则的类或方法都是切入点，通过切入点表达式来制定规则。
+* Advice(通知，**描述注入的时机**)：切入点处所要执行的程序代码，即切面类中要执行的公共方法。通知的类型有：
   * 前置通知Before
   * 后置通知After
   * 异常通知AfterThrowing
@@ -30,7 +23,19 @@ AOP的本质是在一系列纵向的控制流程中，把那些相同的子流�
 * Weaving(织入)：织入指的是把新增的功能用于目标对象，创建代理对象的过程，将切面整合到程序的执行流程的过程。
 * Proxy(代理)：一个类被AOP织入增强后产生的结果类，即代理类，是客户端持有的增强后的对象引用。比如动态代理案例中的经纪人或中介。
 
-其实，我们不用关心AOP创造的“术语”，只需要理解AOP本质上只是一种代理模式的实现方式，在Spring的容器中实现AOP特别方便。  
+### 本质
+AOP的本质是在一系列纵向的控制流程中，把那些相同的子流程提取成一个横向的面。将分散在主流程中相同的代码提取出来，然后在程序编译或运行时，将这些提取出来的切面代码应用到需要执行的地方。
+
+### 织入
+在Java平台上，对于AOP的织入，有3种方式：
+* 编译期：在编译时，由编译器把切面调用编译进字节码，这种方式需要定义新的关键字并扩展编译器，AspectJ就扩展了Java编译器，使用关键字aspect来实现织入；
+* 类加载器：在目标类被装载到JVM时，通过一个特殊的类加载器，对目标类的字节码重新“增强”；
+* 运行期：目标对象和切面都是普通Java类，通过JVM的动态代理功能或者第三方库实现运行期动态织入。
+
+最简单的方式是第三种，Spring的AOP实现就是基于JVM的动态代理。由于JVM的动态代理要求必须实现接口，如果一个普通类没有业务接口，就需要通过CGLIB或者Javassist这些第三方库实现（Spring自动完成该过程）。
+
+### 优点
+利用AOP可以对业务逻辑的各个部分进行隔离，从而使得业务逻辑各部分之间的耦合度降低，提高程序的可重用性，同时提高了开发的效率。
 
 ## xml配置
 ### 相关标签
@@ -95,20 +100,26 @@ class BeforeLog2 {
 ```
 
 ### 切入点表达式
+#### 拓展
+* https://blog.csdn.net/qq_38619183/article/details/112359456
+* https://blog.csdn.net/zhengchao1991/article/details/53391244
+* https://blog.csdn.net/buzhimingyue/article/details/106071059
 #### 切入点
 |指示符|作用|
 |---|---|
 |execution|细粒度，精确到方法|
-|within|粗粒度，精确到类|
+|within|粗粒度，只能精确到类|
 |bean|粗粒度，精确到类(从容器中获取)|
 
 ```xml
-<aop:pointcut id="切入点标识符" expression="bean(表达式) "/>
-<aop:pointcut id="切入点标识符" expression="within(表达式) "/>
+<aop:pointcut id="切入点标识符" expression="bean(demoService) "/>
+<!-- 从容器中获取一个id为demoService的bean，匹配该bean中所有方法 -->
+<aop:pointcut id="切入点标识符" expression="within(com.demo..*) "/>
+<!-- 匹配com.demo的包和子包下面所有的类和方法 -->
 <aop:pointcut id="切入点标识符" expression="execution(表达式) "/>
 ```
 
-#### 表达式expression
+#### 表达式
 ![aop+`访问修饰符? 返回类型 包名.类名.?方法名(参数类型) 抛出异常类型?`](https://i.loli.net/2021/07/31/PKowuZSsNymdQf3.png)
 其中：
 * ？表示出现0次或1次
@@ -122,15 +133,15 @@ class BeforeLog2 {
   * .. 表示当前包和子包
 * 逻辑运算符
   * &&(无意义，语法上存在，逻辑上不存在)
-  *||
-    * 示例：execution(* save(..))||execution(* update(..))
+  * ||
+    * 示例：`execution(* save(..))||execution(* update(..))`
     * 解释：匹配方法名是save或update的方法
   * !
-    * 示例：!execution(* save(..))
+    * 示例：`!execution(* save(..))`
     * 解释：除了方法名是save的所有方法
 
 
-### 通知advise
+### 通知
 #### 通知类型
 * 前置通知：在主业务方法前执行
 * 后置通知：在主业务方法后执行
@@ -168,8 +179,42 @@ Spring框架提供了ProceedingJoinPoint接口，作为环绕通知的参数。�
 |proceed()|调用目标方法，使用它原来的参数|
 |getSignature()|获取目标方法其它的信息，如：类名，方法名等|
 
+```java
+//方式二：自定义类来实现AOP
+class LogAspect {
+    /**
+     * 环绕通知方法
+     * @param joinPoint 接口，由Spring注入对象
+     * @return 方法的返回值
+     */
+    public Object around(ProceedingJoinPoint joinPoint){
+        //获取目标方法签名对象
+        Signature signature = joinPoint.getSignature();
+        System.out.println("目标方法名字：" + signature.getName());
+        //获取参数的数组
+        Object[] args = joinPoint.getArgs();
+        System.out.println("目标方法参数：" + Arrays.toString(args));
+        System.out.println("目标对象实现接口的全名：" + signature.getDeclaringTypeName());
+        Object result = null;
+        //修改目标方法参数
+        args[0] = "被修改的值";
+        try {
+            System.out.println("前置通知");
+            //如果修改了参数，要使用带参数的方法。
+            result = joinPoint.proceed(args);  //直接调用目标方法
+            System.out.println("后置通知");
+        } catch (Throwable throwable) {
+            System.out.println("异常通知");
+        } finally {
+            System.out.println("最终通知");
+        }
+        return result;
+    } 
+}
+```
+
 ## 注解
-AspectJ框架为AOP的实现提供了一套注解，用以取代applicationContext.xml文件中配置代码。
+AspectJ框架为AOP的实现提供了一套注解，用以取代在applicationContext.xml文件中进行配置。
 
 ### 开启注解
 在xml中添加如下标签以开启注解配置AOP的支持：
@@ -205,7 +250,7 @@ public class LogAspect {
         System.out.println("---前置通知---");
     }
 
-    @After("execution(* com.demo.service.UserServiceImpl.*(..))") //写表达式
+    @After("execution(* com.demo.service.UserServiceImpl.*(..))") //直接写切入点表达式
     public void after() {
         System.out.println("---最终通知---");
     }

@@ -61,92 +61,107 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
 
 ### pom.xml
 ```xml
+<!-- 常用依赖 -->
 <dependencies>
-        <!--Spring支持包，统一版本号使用5.2.0-->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>5.2.0.RELEASE</version>
-        </dependency>
-        
+    <!--Spring支持包，统一版本号使用5.2.0-->
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>5.2.0.RELEASE</version>
+    </dependency>
+    
 
-        <!-- 数据库访问 -->
-        <!--spring的jdbc支持包-->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <version>5.2.0.RELEASE</version>
-        </dependency>
-        <!--数据库驱动包-->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.30</version>
-            <!-- <version>5.1.22</version> -->
-        </dependency>
-        <!--连接池-->
-        <!-- C3P0数据源 -->
-        <dependency>
-            <groupId>com.mchange</groupId>
-            <artifactId>c3p0</artifactId>
-            <version>0.9.5.4</version>
-        </dependency>
-        <!-- Druid数据源 -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid</artifactId>
-            <version>1.1.10</version>
-            <!-- <version>1.1.12</version> -->
-        </dependency>
-        <!--声明式事务支持-->
-        <dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-tx</artifactId>
-		    <version>5.2.0.RELEASE</version>
-	    </dependency>
+    <!-- 数据库访问 -->
+    <!--spring的jdbc支持包-->
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-jdbc</artifactId>
+        <version>5.2.0.RELEASE</version>
+    </dependency>
+    <!--数据库驱动包-->
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>5.1.30</version>
+        <!-- <version>5.1.22</version> -->
+    </dependency>
+    <!--连接池-->
+    <!-- C3P0数据源 -->
+    <dependency>
+        <groupId>com.mchange</groupId>
+        <artifactId>c3p0</artifactId>
+        <version>0.9.5.4</version>
+    </dependency>
+    <!-- Druid数据源 -->
+    <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>druid</artifactId>
+        <version>1.1.10</version>
+        <!-- <version>1.1.12</version> -->
+    </dependency>
+    <!--声明式事务支持-->
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-tx</artifactId>
+        <version>5.2.0.RELEASE</version>
+    </dependency>
 
 
-        <!-- AOP支持 -->
-        <!-- AspectJ切面表达式支持 -->
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>1.8.13</version>
-            <!-- <version>1.8.7</version> -->
-        </dependency>
+    <!-- AOP支持 -->
+    <!-- AspectJ切面表达式支持 -->
+    <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjweaver</artifactId>
+        <version>1.8.13</version>
+        <!-- <version>1.8.7</version> -->
+    </dependency>
 
-        <!-- 单元测试 -->
-        <!--junit4-->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-        </dependency>
-        <!--junit5-->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.5.2</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- spring测试包 -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>5.2.0.RELEASE</version>
-            <scope>test</scope>
-        </dependency>
-        
+    <!-- 单元测试 -->
+    <!--junit4-->
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+    </dependency>
+    <!--junit5-->
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>5.5.2</version>
+        <scope>test</scope>
+    </dependency>
+    <!-- spring测试包 -->
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-test</artifactId>
+        <version>5.2.0.RELEASE</version>
+        <scope>test</scope>
+    </dependency>
+    
 
-        <!-- 日志 -->
-        <!-- Log4j 依赖 -->
-        <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
-        <version>1.7.7</version>
-        </dependency>
+    <!-- 日志 -->
+    <!-- Log4j 依赖 -->
+    <dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-log4j12</artifactId>
+    <version>1.7.7</version>
+    </dependency>
 
-    </dependencies>
+</dependencies>
+
+<!-- 配置Maven静态资源过滤问题（未经过测试，谨慎使用） -->
+<build>
+   <resources>
+       <resource>
+           <directory>src/main/java</directory>
+           <includes>
+               <include>**/*.properties</include>
+               <include>**/*.xml</include>
+           </includes>
+           <filtering>true</filtering>
+       </resource>
+   </resources>
+</build>
 ```
 
 ### log4j.properties
