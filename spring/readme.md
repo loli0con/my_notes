@@ -185,13 +185,14 @@ jdbc.driverClassName=com.mysql.jdbc.Driver
 
 ### applicationContext.xml
 ```xml
-<!-- 全部用到的 -->
+<!-- 常用的命名空间 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -203,7 +204,23 @@ jdbc.driverClassName=com.mysql.jdbc.Driver
        http://www.springframework.org/schema/p/spring-p.xsd
        http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
        http://www.springframework.org/schema/mvc
        https://www.springframework.org/schema/mvc/spring-mvc.xsd
        ">
+
+
+<!-- 容易遗漏的 -->
+
+<!-- 开启属性注解支持 -->
+<context:annotation-config/>
+<!-- 包下注解扫描 -->
+<context:component-scan base-package="com.itheima"/>
+<!-- 读取配置文件(示例中为druid配置文件)，使用文件中的属性值 -->
+<context:property-placeholder location="classpath:druid.properties"/>
+<!-- 开启生成代理对象 -->
+<aop:aspectj-autoproxy>
+<!--配置注解式事务的驱动，指定事务管理器 -->
+<tx:annotation-driven transaction-manager="transactionManager"/>
 ```
