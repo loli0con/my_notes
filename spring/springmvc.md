@@ -1,11 +1,21 @@
 # SpringMVC
-Spring MVC是Spring Framework的一部分，是基于Java实现MVC的轻量级Web框架。
+Spring MVC是Spring Framework的一部分，是基于Java实现MVC的轻量级Web框架；  
+它通过一套注解，让一个简单的 Java 类成为处理请求的控制器，而无须实现任何接口；  
+同时它还支持RESTful 编程风格的请求。
 
-## 参考
-* https://mp.weixin.qq.com/s?__biz=Mzg2NTAzMTExNg==&mid=2247483970&idx=1&sn=352e571ee88957ce391e972344e2a3d7&scene=19
-* https://www.cnblogs.com/xiaoxi/p/6164383.html
-* http://www.51gjie.com/javaweb/911.html
-* https://www.jianshu.com/p/8a20c547e245
+![springmvc+20210801120809](https://i.loli.net/2021/08/01/ri85DZILefMl9oO.png)
+
+## 优点
+|序号|优点|详情|
+|---|---|---|
+|1|清晰的角色划分|前端控制器（DispatcherServlet）<br/>处理器映射器（HandlerMapping）<br/>处理器适配器（HandlerAdapter）<br/>视图解析器（ViewResolver）<br/>处理器（Controller）<br/>验证器（Validator）<br/>命令对象（Command 请求参数绑定到的对象就叫命令对象）<br/>表单对象（Form Object 提供给表单展示和表单提交的对象）|
+|2|可扩展性好|可以很容易扩展，虽然几乎不需要|
+|3|与Spring 框架无缝集成|这是其它web框架不具备的|
+|4|可适配性好|通过 HandlerAdapter 可以支持任意的类作为处理器|
+|5|可定制性好|处理器映射器HandlerMapping和<br />视图解析器ViewResolver 能够非常简单的定制|
+|6|单元测试方便|能够非常简单的进行 Web 层单元测试|
+|7|本地化、主题的解析支持|使我们更容易进行国际化和主题的切换|
+|8|JSP标签库|强大的 JSP 标签库，使 JSP 编写更容易|
 
 ## 架构
 Spring的web框架围绕DispatcherServlet（调度Servlet）设计，DispatcherServlet的作用是将请求分发到不同的处理器。
@@ -23,7 +33,7 @@ HandlerMapping负责根据用户请求找到Handler即处理器，springmvc提�
 
 #### HandlerAdapter 处理器适配器
 作用：按照特定规则（HandlerAdapter要求的规则）去执行Handler  
-通过HandlerAdapter对处理器进行执行，这是适配器模式的应用，通过扩展适配器可以对更多类型的处理器进行执行。
+通过HandlerAdapter对处理器进行执行，这是适配器模式的应用，通过扩展适配器可以对更多类型的处理器进行执行。（因为不同的处理器有不同的实现方式，有注解的方式实现的，有配置文件的实现的。）
 
 #### Handler 处理器
 Handler 是继DispatcherServlet前端控制器的后端控制器，在DispatcherServlet的控制下Handler对具体的用户请求进行处理。
@@ -31,7 +41,7 @@ Handler 是继DispatcherServlet前端控制器的后端控制器，在Dispatcher
 
 #### ViewResolver 视图解析器
 作用：进行视图解析，根据逻辑视图名解析成真正的视图（view）
-View Resolver负责将处理结果生成View视图，View Resolver首先根据逻辑视图名解析成物理视图名即具体的页面地址，再生成View视图对象，最后返回试图对象。
+View Resolver负责将处理结果生成View视图，View Resolver首先根据逻辑视图名解析成物理视图名即具体的页面地址，再生成View视图对象，最后返回视图对象。
 
 
 
@@ -239,6 +249,15 @@ public class IndexController{
 ### @RequestMapping
 @RequestMapping注解用于映射url到控制器类或一个特定的处理程序方法。可用于类或方法上。用于类上，表示类中的所有响应请求的方法都是以该地址作为父路径。
 
+@RequestMapping的属性：
+* path/value：指定访问地址
+* method：限制请求的方法
+* param：限制提交的参数
+  * {"id","name"} **必须有**这两个参数的名字，否则会出现400错误
+  * {"id=1","name=newboy"} 不但要有这些参数，而且**值还有限制**
+  * {"id!=1"} id**不等于**1的值都可以
+
+
 #### @PathVariable
 @PathVariable 注解，让方法参数的值对应绑定到一个URI模板变量上。
 
@@ -264,12 +283,21 @@ public class DemoController {
 * @DeleteMapping
 * @PatchMapping
 
+
 ### 使用servlet对象
 在Controller里面，可以直接使用servlet对象：
-* 请求对象
-* 响应对象
-* 会话对象
+* 请求对象HttpServletRequest
+* 响应对象HttpServletResponse
+* 会话对象HttpSession
 它们作为方法的参数声明，并由SpringMVC负责注入。
+
+```java
+@RequestMapping("/test")
+public String test(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+    doSomething(request, response, session);
+}
+```
+
 
 ### 转发和重定向
 ```java
@@ -292,21 +320,25 @@ public class DemoController {
 
 ### 数据处理
 #### 处理提交数据
-##### 提交的域名称和处理方法的参数名一致
-* 提交数据 : http://localhost:8080/hello?name=kuangshen
-* 处理方法 :
+使用包装类可以减少错误的发生：
+* 包装类型没有值就为null
+* 简单类型没有值会出现500错误（尝试将一个null转成int，所以报错）
+
+##### 简单类型
+1. 提交数据 : http://localhost:8080/hello?name=kuangshen&age=18
+2. 处理方法 :
 ```java
 @RequestMapping("/hello")
-public String hello(String name){
-   System.out.println(name);
+public String hello(String name, Integer age){
+   System.out.println(name+age);
    return "hello";
 }
 ```
-* 后台输出 : kuangshen
+3. 后台输出 : kuangshen18
 
-##### 提交的域名称和处理方法的参数名不一致
-* 提交数据 : http://localhost:8080/hello?username=kuangshen
-* 处理方法 :
+###### 参数名不一致
+1. 提交数据 : http://localhost:8080/hello?username=kuangshen
+2. 处理方法 : 使用@RequestParam注解
 ```java
 //@RequestParam("username") : username提交的域的名称
 @RequestMapping("/hello")
@@ -315,22 +347,41 @@ public String hello(@RequestParam("username") String name){
    return "hello";
 }
 ```
-* 后台输出 : kuangshen
+3. 后台输出 : kuangshen
 
-##### 提交的是一个对象
-要求提交的表单域和对象的属性名一致（否则就是null），参数使用对象即可。
+|@RequestParam属性|应用场景：用于提交的参数名与方法的形参不同的情况|
+|---|---|
+|name/value|指定提交的参数名|
+|required|是否是必须的|
+|defaultValue|如果没有值，使用这个默认值|
+
+##### 数组/集合
+1. 提交数据 : http://localhost:8080/hello?arr=1&arr=2&list=aa&list=bb
+2. 处理方法 :
+```java
+@RequestMapping("/hello")
+public String hello(@RequestParam ArrayList<String> list,Integer[] nums) { //需要指定@RequestParam注解在集合形参前
+    //输出集合中元素
+    System.out.print(list);
+    System.out.print(Arrays.toString(nums));
+    return "hello";
+}
+```
+3. 后台输出 : \[aa, bb]\[1, 2]
+
+##### 对象类型
+请求参数名称要和对象的属性名一致（否则就是null），参数使用对象即可。
 1. 实体类
 ```java
 public class User {
-   private int id;
    private String name;
-   private int age;
+   private Integer age;
    //构造
    //get/set
    //tostring()
 }
 ```
-2. 提交数据 : http://localhost:8080/mvc04/user?name=kuangshen&id=1&age=15
+2. 提交数据 : http://localhost:8080/user?name=kuangshen&age=15
 3. 处理方法
 ```java
 @RequestMapping("/user")
@@ -339,12 +390,111 @@ public String user(User user){
    return "hello";
 }
 ```
-4. 后台输出 : User { id=1, name='kuangshen', age=15 }
+4. 后台输出 : User(name=奇魔猪, age=18)
+
+##### 复杂对象
+1. 实体类
+```java
+public class User {
+    private String name;
+    private Integer age;
+    //实体类中包含了其它的实体类
+    private Address address;
+    //简单类型的集合
+    private List<String> hobby;  //爱好
+    //POJO类型的List集合
+    private List<Address> addressList;
+    //POJO类型的Map集合
+    private Map<String,Address> map;
+}
+class Address {
+    private String province;
+    private String city;
+}
+```
+2. 提交数据（注意需要*url编码*） : http://localhost:8080/user?name=奇魔猪&age=18&address.province=广东&address.city=广州&hobby=唱歌&hobby=跳舞&addressList\[0].province=浙江&addressList\[0].city=杭州&addressList\[1].province=湖北&addressList\[1].city=武汉&map\["pig"].province=广东&map\["pig"].city=佛山&map\["dog"].province=广东&map\["dog"].city=深圳
+3. 处理方法
+```java
+@RequestMapping("/user")
+public String user(User user){
+   System.out.println(user);
+   return "hello";
+}
+```
+4. 后台输出 : User(id=null, name=奇魔猪, age=18, address=Address(province=广东, city=广州), hobby=[唱歌, 跳舞], addressList=[Address(province=浙江, city=杭州), Address(province=湖北, city=武汉)], map={dog=Address(province=广东, city=深圳), pig=Address(province=广东, city=佛山)})
+
+对象的属性中如果是POJO类型的集合：
+* List：list\[0].属性名
+* Map：map\['键'].属性名
+
 
 #### 数据显示到前端
-1. 通过ModelAndView
-2. 通过ModelMap
-3. 通过Model
+1. 通过Map：用put()方法向请求域中添加键和值
+2. 通过Model：用addAttribute()方法向请求域中添加键和值
+3. 通过ModelMap：用addAttribute()方法向请求域中添加键和值
+4. 通过ModelAndView：用addAttribute()方法向请求域中添加键和值
+
+```java
+@RequestMapping("/sport")
+public String sport(Map<String,Object> map) {
+    //如果向Map中添加键和值，就相当于向请求域中添加了键和值
+    map.put("id", 100);
+    map.put("name", "李四");
+    System.out.println(map);
+    return "success";
+}
+
+@RequestMapping("/swim")
+public String swim(Model model) {
+    //支持链式写法，可以添加多个键和值。也是添加到请求域中
+    model.addAttribute("id", 200).addAttribute("name", "孙悟空");
+    return "success";
+}
+
+@RequestMapping("/draw")
+public String draw(ModelMap model) {
+    //支持链式写法，可以添加多个键和值。也是添加到请求域中
+    model.addAttribute("id", 300).addAttribute("name", "猪八戒");
+    return "success";
+```
+
+#### 获取头/体/Cookie
+##### @RequestBody
+* 作用：用于获取请求体的数据（String类型）
+* 位置：放在方法的参数前面
+* 注意：只能出现1次，因为每次请求只有一个请求体，只能用于POST请求，因为GET请求没有请求体
+* 属性：
+  * required：请求体中的数据是否必须
+
+##### @RequestHeader
+* 作用：用于获取请求头的值（String类型）
+* 位置：放在方法的参数前面
+* 属性：
+  * value：指定请求头的名字
+
+```java
+@RequestMapping("/header")
+public String header(@RequestHeader("user-agent") String header) {
+    System.out.println("请求头：" + header );
+    return "success";
+}
+```
+
+##### @CookieValue
+* 作用：用于获取Cookie的值（String类型）
+* 位置：放在方法的参数前面
+* 属性：
+  * value：指定Cookie的名字
+
+```java
+@RequestMapping("/cookie")
+public String cookie(@CookieValue("JSESSIONID") String cookieValue) {
+    System.out.println("获取Cookie的值：" + cookieValue);
+    return "success";
+}
+```
+
+
 
 ### Json交互
 #### @ResponseBody
@@ -466,17 +616,19 @@ public String downloads(HttpServletResponse response ,HttpServletRequest request
 ### Spring提供的过滤器
 Spring提供的过滤器，在web.xml中配置
 ```xml
+<!-- 配置spring写的汉字乱码的过滤器 -->
 <filter>
-   <filter-name>encoding</filter-name>
-   <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-   <init-param>
-       <param-name>encoding</param-name>
-       <param-value>utf-8</param-value>
-   </init-param>
+    <filter-name>encodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <!-- 指定编码 -->
+    <init-param>
+        <param-name>encoding</param-name>
+        <param-value>utf-8</param-value>
+    </init-param>
 </filter>
 <filter-mapping>
-   <filter-name>encoding</filter-name>
-   <url-pattern>/*</url-pattern>
+    <filter-name>encodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
 </filter-mapping>
 ```
 
@@ -641,3 +793,12 @@ public class MyInterceptor implements HandlerInterceptor {
     </mvc:interceptor>
 </mvc:interceptors>
 ```
+
+
+
+
+## 参考
+* https://mp.weixin.qq.com/s?__biz=Mzg2NTAzMTExNg==&mid=2247483970&idx=1&sn=352e571ee88957ce391e972344e2a3d7&scene=19
+* https://www.cnblogs.com/xiaoxi/p/6164383.html
+* http://www.51gjie.com/javaweb/911.html
+* https://www.jianshu.com/p/8a20c547e245

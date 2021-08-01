@@ -66,13 +66,20 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
 ```xml
 <!-- 常用依赖 -->
 <dependencies>
-    <!--Spring支持包，统一版本号使用5.2.0-->
+    <!-- Spring -->
+    <!--Spring基础包，统一版本号使用5.2.0-->
     <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-context</artifactId>
         <version>5.2.0.RELEASE</version>
     </dependency>
-    
+    <!--SpringMVC-->
+    <!-- 会间接依赖spring-context, spring-web等 -->
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-webmvc</artifactId>
+        <version>5.2.0.RELEASE</version>
+    </dependency>
 
     <!-- 数据库访问 -->
     <!--spring的jdbc支持包-->
@@ -166,11 +173,12 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
         <artifactId>commons-fileupload</artifactId>
         <version>1.3.3</version>
     </dependency>
-    <!--servlet-api导入高版本的-->
+    <!--servlet-api-->
     <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>javax.servlet-api</artifactId>
         <version>4.0.1</version>
+        <!-- <version>3.1.0</version> -->
     </dependency>
 
 </dependencies>
@@ -249,4 +257,8 @@ jdbc.driverClassName=com.mysql.jdbc.Driver
 <aop:aspectj-autoproxy>
 <!--配置注解式事务的驱动，指定事务管理器 -->
 <tx:annotation-driven transaction-manager="transactionManager"/>
+<!-- 让Spring MVC不处理静态资源 -->
+<mvc:default-servlet-handler />
+<!-- mvc注解驱动 -->
+<mvc:annotation-driven />
 ```
