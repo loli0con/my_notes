@@ -179,12 +179,18 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
         <artifactId>commons-fileupload</artifactId>
         <version>1.3.3</version>
     </dependency>
+    <!--文件下载操作流使用-->
+    <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>2.6</version>
+    </dependency>
     <!--servlet-api-->
     <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>javax.servlet-api</artifactId>
-        <version>4.0.1</version>
-        <!-- <version>3.1.0</version> -->
+        <version>3.1.0</version>
+        <!-- <version>4.0.1</version> -->
     </dependency>
 
 </dependencies>

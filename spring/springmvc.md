@@ -60,10 +60,10 @@ View Resolver负责将处理结果生成View视图，View Resolver首先根据�
    <servlet>
        <servlet-name>springmvc</servlet-name>
        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-       <!--关联一个springmvc的配置文件（名字自取，统一即可）: springmvc-servlet.xml-->
+       <!--关联一个springmvc的配置文件（名字自取，统一即可）: springMVC.xml-->
        <init-param>
            <param-name>contextConfigLocation</param-name>
-           <param-value>classpath:springmvc-servlet.xml</param-value>
+           <param-value>classpath:springMVC.xml</param-value>
        </init-param>
        <!--启动级别1：服务器启动时就创建中央控制器-->
        <load-on-startup>1</load-on-startup>
@@ -83,7 +83,7 @@ View Resolver负责将处理结果生成View视图，View Resolver首先根据�
 </web-app>
 ```
 
-### springmvc-servlet.xml
+### springMVC.xml
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -146,7 +146,7 @@ ${msg}
 ## SecondDemo
 对FirstDemo进行简化，描述了实际开发中代码：需要手动配置视图解析器，而处理器映射器和处理器适配器只需要开启注解驱动即可，而省去了大段的xml配置。
 
-### springmvc-servlet.xml
+### springMVC.xml
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -521,10 +521,12 @@ public class UserConverter implements Converter<String, User> {
 ```
 
 #### 数据显示到前端
+##### 操作请求域
 1. 通过Map：用put()方法向请求域中添加键和值
 2. 通过Model：用addAttribute()方法向请求域中添加键和值
 3. 通过ModelMap：用addAttribute()方法向请求域中添加键和值
 4. 通过ModelAndView：用addAttribute()方法向请求域中添加键和值
+5. 通过ServletAPI：直接操作操作request对象
 
 ```java
 @RequestMapping("/sport")
@@ -589,10 +591,28 @@ public String cookie(@CookieValue("JSESSIONID") String cookieValue) {
 
 
 ### Json交互
+下面的注解需要jackson包支持
+#### @RequestBody
+在处理器方法形参上使用，把请求体的json格式数据，转换成java对象。
+
 #### @ResponseBody
+把控制器方法返回值Java对象转换为Json字符串给到前端，前端获取到是json对象。
+
+#### Demo
 ```java
 @Controller
 public class UserController {
+
+    //produces:指定响应体返回类型和编码(避免乱码)
+    @RequestMapping(value="/json2",produces = "application/json;charset=utf-8")
+    @ResponseBody
+    public User jsonData(@RequestBody User user){
+        System.out.println("name:"+user.getName());
+        System.out.println("age:"+user.getAge());
+        System.out.println("sex:"+user.getSex());
+        return user;
+    }
+
     //produces:指定响应体返回类型和编码(避免乱码)
     @RequestMapping(value = "/json1",produces = "application/json;charset=utf-8")
     @ResponseBody
@@ -670,10 +690,10 @@ CommonsMultipartFile的常用方法：
 ##### 标准模版
 ```java
 @RequestMapping(value="/download")
-public String downloads(HttpServletResponse response ,HttpServletRequest request) throws Exception{
+public void downloads(HttpServletResponse response ,HttpServletRequest request) throws Exception{
     //要下载的图片地址
-    String  path = request.getServletContext().getRealPath("/upload");
-    String  fileName = "基础语法.jpg";
+    String path = request.getServletContext().getRealPath("/upload");
+    String fileName = "基础语法.jpg";
 
     //1、设置response 响应头
     response.reset(); //设置页面不缓存,清空buffer
@@ -685,20 +705,24 @@ public String downloads(HttpServletResponse response ,HttpServletRequest request
 
     File file = new File(path,fileName);
     //2、 读取文件--输入流
-    InputStream input=new FileInputStream(file);
+    InputStream input = new FileInputStream(file);
     //3、 写出文件--输出流
     OutputStream out = response.getOutputStream();
 
+    //  4a/4b 二选一即可
+
+    //4a、执行输出操作（工具包）
+    IOUtils.copy(input,out);
+    
+    //4b、执行写出操作（Java原生）
     byte[] buff =new byte[1024];
     int index=0;
-    //4、执行 写出操作
     while((index= input.read(buff))!= -1){
         out.write(buff, 0, index);
         out.flush();
     }
     out.close();
     input.close();
-    return null;
 }
 ```
 
@@ -724,7 +748,7 @@ Spring提供的过滤器，在web.xml中配置
 </filter-mapping>
 ```
 
-### 自定义过滤器
+#### 自定义过滤器
 网上大神写的
 ```java
 import javax.servlet.*;
@@ -887,6 +911,62 @@ public class MyInterceptor implements HandlerInterceptor {
 ```
 
 
+## 静态资源访问
+### 问题描述
+springMVC中，项目配置的DispatcherServlet（这个Servlet不能处理静态资源）的拦截请求路径是“/”，覆盖了tomcat提供的默认servlet（在$CATALINA_HOME/conf/web.xml中）。该默认servlet用于处理静态资源，它被覆盖就会导致静态资源访问不了。
+
+
+![springmvc+20210801235435](https://i.loli.net/2021/08/01/UgGz85p9TVSckKL.png)
+### 处理静态资源方案1
+在项目的web.xml中将静态资源的处理交换给全局配置的默认的Servlet。
+```xml
+<!--静态资源处理方案1-->
+<servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.html</url-pattern>
+    <url-pattern>*.js</url-pattern>
+    <url-pattern>*.css</url-pattern>
+    <url-pattern>*.jpg</url-pattern>
+</servlet-mapping>
+```
+### 处理静态资源方案2
+SpringMVC提供了\<mvc:resources/>标签，用于解决该问题。
+
+\<mvc:resources/> 让Spring MVC框架自己处理静态资源，传统Web容器的静态资源只能放在Web容器的根路径下，而<mvc:resources/>允许静态资源放在任何地方，如：WEB-INF目录下、类路径下等。它有如下两个属性：
+* location：指定静态资源的位置，可以使用诸如"classpath:"等的资源前缀指定资源位置。可以同时指定多个路径使用逗号分隔，路径要以/结束
+* mapping：映射地址(即访问地址)，以/**结尾，它表示映射目录下所有的URL，包括子孙路径的资源
+
+#### springMVC.xml
+```xml
+<!--
+    解决静态资源直接访问的方案2：通过标签<mvc:resources>解决
+    注意点：
+        1.mapping属性：配置映射的任何静态资源，注意必须是2个*号
+        2.location：配置直接访问的资源路径
+            第一个"/"，代表直接访问webapp目录下的静态资源文件
+            第二个"classpath:static/"，代表直接访问resources/static目录下的静态资源文件
+            第三个“/WEB-INF/”,代表访问webapp/WEB-INF/目录下的静态资源文件
+            多个路径之间使用逗号隔开，路径必须以“/”结束
+-->
+<mvc:resources mapping="/**" location="/,classpath:static/,/WEB-INF/">
+```
+### 处理静态资源方案3
+在spring-mvc.xml中配置\<mvc:default-servlet-handler />后，会在Spring MVC容器中定义一个
+org.springframework.web.servlet.resource.DefaultServletHttpRequestHandler
+它会像一个检查员，对进入DispatcherServlet的URL进行筛查，如果发现是静态资源的请求，就将该请求转由Web应用服务器默认的Servlet处理，如果不是静态资源的请求，才由DispatcherServlet继续处理。
+![springmvc+20210802001303](https://i.loli.net/2021/08/02/nVS1KCajOB4xckv.png)
+
+#### springMVC.xml
+```xml
+<!--
+    解决静态资源直接访问的方案3：通过标签<mvc:default-servlet-handler/>交给tomcat默认的DefaultServlet处理
+    注意：
+        1.所有的静态资源都必须放在webapp目录下
+        2.不同的服务器，默认的Servlet名字都不一样。当前默认名字不是default的时候，必须通过default-servlet-name属性指明具体的名字
+            例如：webLogic服务器，就需需要default-servlet-name="FileServlet"
+-->
+<mvc:default-servlet-handler default-servlet-name="default">
+```
 
 
 ## 参考
