@@ -145,9 +145,32 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
     <!-- 日志 -->
     <!-- Log4j 依赖 -->
     <dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-log4j12</artifactId>
-    <version>1.7.7</version>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>1.7.7</version>
+    </dependency>
+
+
+    <!-- JSON工具 -->
+    <!-- Jackson -->
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.9.8</version>
+    </dependency>
+
+
+    <!--文件上传-->
+    <dependency>
+        <groupId>commons-fileupload</groupId>
+        <artifactId>commons-fileupload</artifactId>
+        <version>1.3.3</version>
+    </dependency>
+    <!--servlet-api导入高版本的-->
+    <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>4.0.1</version>
     </dependency>
 
 </dependencies>
