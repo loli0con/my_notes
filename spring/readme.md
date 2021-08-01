@@ -64,6 +64,12 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
 
 ### pom.xml
 ```xml
+<!-- 使用Jdk8 -->
+<properties> 
+    <maven.compiler.source>8</maven.compiler.source>  
+    <maven.compiler.target>8</maven.compiler.target> 
+</properties>
+
 <!-- 常用依赖 -->
 <dependencies>
     <!-- Spring -->

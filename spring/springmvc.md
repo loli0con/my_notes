@@ -60,20 +60,24 @@ View Resolver负责将处理结果生成View视图，View Resolver首先根据�
    <servlet>
        <servlet-name>springmvc</servlet-name>
        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-       <!--关联一个springmvc的配置文件:【servlet-name】-servlet.xml-->
+       <!--关联一个springmvc的配置文件（名字自取，统一即可）: springmvc-servlet.xml-->
        <init-param>
            <param-name>contextConfigLocation</param-name>
            <param-value>classpath:springmvc-servlet.xml</param-value>
        </init-param>
-       <!--启动级别-1-->
+       <!--启动级别1：服务器启动时就创建中央控制器-->
        <load-on-startup>1</load-on-startup>
    </servlet>
 
    <!--/ 匹配所有的请求；（不包括.jsp）-->
-   <!--/* 匹配所有的请求；（包括.jsp）-->
+   <!--/ 匹配所有的请求；（包括.jsp）-->
    <servlet-mapping>
        <servlet-name>springmvc</servlet-name>
+       <!--配置DispatcherServlet处理所有请求（不包括.jsp）-->
        <url-pattern>/</url-pattern>
+
+       <!--配置DispatcherServlet处理.do结尾的请求-->
+       <!-- <url-pattern>*.do</url-pattern> -->
    </servlet-mapping>
 
 </web-app>
@@ -117,7 +121,7 @@ public class HelloController implements Controller {
        //封装对象，放在ModelAndView中。Model
        mv.addObject("msg","HelloSpringMVC!");
        //封装要跳转的视图，放在ModelAndView中
-       mv.setViewName("hello"); //被试图解析器拼接称 /WEB-INF/jsp/hello.jsp
+       mv.setViewName("hello"); //被视图解析器拼接称 /WEB-INF/jsp/hello.jsp
        return mv;
   }
 }
@@ -193,7 +197,7 @@ public class HelloController {
    public String sayHello(Model model){
        //向模型中添加属性msg与值，可以在JSP页面中取出并渲染
        model.addAttribute("msg","hello,SpringMVC");
-       return "hello"; //被试图解析器拼接称 /WEB-INF/jsp/hello.jsp
+       return "hello"; //被视图解析器拼接称 /WEB-INF/jsp/hello.jsp
   }
 }
 ```
@@ -247,10 +251,22 @@ public class IndexController{
 ```
 
 ### @RequestMapping
-@RequestMapping注解用于映射url到控制器类或一个特定的处理程序方法。可用于类或方法上。用于类上，表示类中的所有响应请求的方法都是以该地址作为父路径。
+@RequestMapping注解用于映射url到控制器类或一个特定的处理程序方法。可用于类或方法上。用于类上，表示类中的所有响应请求的方法都是以该地址作为父路径，举个例子：
+1. 配置在方法上
+   * 方法映射路径：@RequestMapping("/save.do")
+   * 浏览器访问路径：http://localhost:8080/项目路径/save.do
+2. 配置在类上和方法上 【推荐，可以区别不同的controller】
+   * 类上映射路径：@RequestMapping("/order")
+   * 方法映射路径：@RequestMapping("/save.do")
+   * 浏览器访问路径： http://localhost:8080/项目路径/order/save.do
+
 
 @RequestMapping的属性：
 * path/value：指定访问地址
+  * 格式1：@RequestMapping("/save.do") 完整写法
+  * 格式2：@RequestMapping("/save") 去掉扩展名写法，依然可以映射save.do的请求路径【推荐方式】
+  * 格式3：@RequestMapping("save")  省略 / 写法，依然可以映射save.do的请求路径
+  * 格式4：@RequestMapping("save.do")
 * method：限制请求的方法
 * param：限制提交的参数
   * {"id","name"} **必须有**这两个参数的名字，否则会出现400错误
@@ -284,13 +300,16 @@ public class DemoController {
 * @PatchMapping
 
 
-### 使用servlet对象
+### 使用servletAPI
 在Controller里面，可以直接使用servlet对象：
 * 请求对象HttpServletRequest
 * 响应对象HttpServletResponse
 * 会话对象HttpSession
 它们作为方法的参数声明，并由SpringMVC负责注入。
 
+如果要操作会话域session\操作cookie\上下文域\设置响应头\设置响应行数据必须使用原生servletapi
+
+使用servlet的原生api推荐控制器方法返回值为void，就不会走视图。
 ```java
 @RequestMapping("/test")
 public String test(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
@@ -324,6 +343,18 @@ public class DemoController {
 * 包装类型没有值就为null
 * 简单类型没有值会出现500错误（尝试将一个null转成int，所以报错）
 
+SpringMVC参数绑定的规则：
+1. Servlet对象：请求，响应，会话
+2. 简单类型：直接绑定 (八种基本类型+字符串类型)
+3. 简单类型的数组和集合：
+   1. 数组：直接绑定
+   2. 集合：要设置@RequestParam注解
+4. POJO对象类型
+   1. 普通属性：直接绑定
+   2. 简单类型的属性集合：直接绑定
+   3. POJO属性集合：对象名\[0].属性名
+   4. POJO属性的Map：对象名\['键'].属性名
+
 ##### 简单类型
 1. 提交数据 : http://localhost:8080/hello?name=kuangshen&age=18
 2. 处理方法 :
@@ -336,7 +367,7 @@ public String hello(String name, Integer age){
 ```
 3. 后台输出 : kuangshen18
 
-###### 参数名不一致
+###### 参数名不一致的情况
 1. 提交数据 : http://localhost:8080/hello?username=kuangshen
 2. 处理方法 : 使用@RequestParam注解
 ```java
@@ -369,7 +400,21 @@ public String hello(@RequestParam ArrayList<String> list,Integer[] nums) { //需
 ```
 3. 后台输出 : \[aa, bb]\[1, 2]
 
-##### 对象类型
+##### 日期类型
+1. 提交数据 : http://localhost:8080/search?birth=2011-11-11
+2. 处理方法 :
+```java
+// java.sql.Date可兼容
+// java.util.Date会报错
+@RequestMapping("/search")
+public String search(Date birth) { 
+    System.out.print(birth);
+    return "hello";
+}
+```
+3. 后台输出 : 2011-11-11
+
+##### POJO类型
 请求参数名称要和对象的属性名一致（否则就是null），参数使用对象即可。
 1. 实体类
 ```java
@@ -392,7 +437,7 @@ public String user(User user){
 ```
 4. 后台输出 : User(name=奇魔猪, age=18)
 
-##### 复杂对象
+##### 复合POJO类型（类中类）
 1. 实体类
 ```java
 public class User {
@@ -427,6 +472,53 @@ public String user(User user){
 * List：list\[0].属性名
 * Map：map\['键'].属性名
 
+##### 自定义类型转换器
+1. 创建一个类实现Converter接口<源类型(通常为String), 目标类型> 
+2. 重写convert方法，进行类型转换（参数是要转换的源对象，返回转换好的目标对象）
+3. 配置springMVC.xml文件
+
+###### Demo
+```java
+// 转换器
+public class UserConverter implements Converter<String, User> {
+    /**
+     * 重写转换方法
+     * @param source 源的值
+     * @return 目标的对象
+     */
+    @Override
+    public User convert(String source) {
+        // 查询字符串为：xxx?user=1000,NewBoy,广东省,广州市
+
+        //封装成user对象
+        User user = new User();
+        Address address = new Address();
+        //将源切割成多个元素
+        String[] split = source.split(",");
+        //手动封装成对象
+        user.setId(Integer.valueOf(split[0]));
+        user.setName(split[1]);
+        address.setProvince(split[2]);
+        address.setCity(split[3]);
+        user.setAddress(address);
+        return user;
+    }
+}
+```
+
+```xml
+<!-- 1. 配置转换服务工厂类ConversionServiceFactoryBean -->
+<bean class="org.springframework.context.support.ConversionServiceFactoryBean"  id="factoryBean">
+    <!-- 2. 指定converters属性，这是一个set集合，可以引用多个转换器对象。 -->
+    <property name="converters">
+        <set>
+            <bean class="com.itheima.converter.UserConverter"/>
+        </set>
+    </property>
+</bean>
+<!-- 3. 注解`mvc:annotation-driven`指定`conversion-service`属性，指定上面的转换器工厂类 -->
+<mvc:annotation-driven conversion-service="factoryBean"/>
+```
 
 #### 数据显示到前端
 1. 通过Map：用put()方法向请求域中添加键和值
