@@ -677,17 +677,59 @@ public class UserController {
    <property name="defaultEncoding" value="utf-8"/>
    <!-- 上传文件大小上限，单位为字节（10485760=10M） -->
    <property name="maxUploadSize" value="10485760"/>
+   <!-- <property name="maxUploadSize"  value="#{1024*1024*10}"/> -->
    <property name="maxInMemorySize" value="40960"/>
 </bean>
 ```
 ##### API
-CommonsMultipartFile的常用方法：
+MultipartFile(接口)/CommonsMultipartFile(实现类)的常用方法：
 * String getOriginalFilename()：获取上传文件的原名
 * InputStream getInputStream()：获取文件流
 * void transferTo(File dest)：将上传文件保存到一个目录文件中
 
+##### Demo
+```java
+@RequestMapping("/uploadFile")
+public String  uploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws IOException {
+
+    //1.生成一个文件唯一文件名（防止不同用户上传相同文件名覆盖）
+    //文件名格式：xxxx.jpg
+    //1.1 生成一个唯一值（使用jdk提供的UUID，通用唯一码，利用系统当前时间+系统中网卡的mac地址进行组合生成的唯一值，生成一个32字符长度的字符串）
+    String uuid = UUID.randomUUID().toString();
+    //1.2 获取上传文件的扩展名
+    String originalFilename = imgFile.getOriginalFilename();//获取上传的文件名,例如：6.jpg
+    //1.3 拼接文件完整名
+    String fileExtName = originalFilename.substring(originalFilename.lastIndexOf("."));  //获取到：".jpg"
+    String fileName = uuid + fileExtName;  //xxxxxxxxxxx.jpg
+
+    System.out.println("上传的唯一文件名："+fileName);
+
+    //2.获取服务器上传文件的位置
+    //2.1 定义上传文件的相对路径
+    String realPath = "/upload/"+new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+    //2.2 使用ServletContext根据相对路径获取绝对路径
+    String path = request.getServletContext().getRealPath(realPath);
+    //2.3 判断upload和日期目录是否存在，不存在就创建
+    File file = new File(path);
+    //判断父目录是否存在
+    if(!file.getParentFile().exists()){
+        //创建父目录
+        file.getParentFile().mkdir();
+    }
+    //判断日期子目录是否存在
+    if(!file.exists()){
+        file.mkdir();
+    }
+
+    //3.实现文件写入到上传文件位置
+    imgFile.transferTo(new File(path,fileName));
+
+    return "success";
+}
+```
+
 #### 文件下载
-##### 标准模版
+##### Demo
 ```java
 @RequestMapping(value="/download")
 public void downloads(HttpServletResponse response ,HttpServletRequest request) throws Exception{
@@ -869,26 +911,26 @@ SpringMVC的处理器拦截器类似于Servlet开发中的过滤器Filter，用�
   * 在url-pattern中配置了/*之后，可以对所有要访问的资源进行拦截
 * 拦截器 
   * 拦截器是SpringMVC框架自己的，只有使用了SpringMVC框架的工程才能使用
-  * 拦截器只会拦截访问的控制器方法， 如果访问的是jsp/html/css/image/js是不会进行拦截的
+  * 拦截器只会拦截访问的控制器方法，如果访问的是jsp/html/css/image/js是不会进行拦截的
 
 ### 自定义拦截器
 #### 拦截器代码
 ```java
 public class MyInterceptor implements HandlerInterceptor {
-    //在请求处理的方法之前执行
-    //如果返回true执行下一个拦截器
-    //如果返回false就不执行下一个拦截器
+    //在控制器的方法之前执行
+    //如果返回true执行下一个拦截器/控制器，即放行
+    //如果返回false就不执行下一个拦截器/控制器，即不放行
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         System.out.println("------------处理前------------");
         return true;
     }
 
-    //在请求处理方法执行之后执行
+    //在控制器方法执行之后执行（没有发生异常时才会执行）
     public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) throws Exception {
         System.out.println("------------处理后------------");
     }
 
-    //在dispatcherServlet处理后执行,做清理工作.
+    //在dispatcherServlet处理后执行，做清理工作（无论是否发生异常都会执行）
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
         System.out.println("------------清理------------");
     }
@@ -898,9 +940,20 @@ public class MyInterceptor implements HandlerInterceptor {
 #### 配置bean
 ```xml
 <!--关于拦截器的配置-->
+
+<!-- 可以配置多个拦截器，
+执行的顺序参照配置的顺序
+-->
 <mvc:interceptors>
+    <!-- 配置指定1个拦截器 -->
     <mvc:interceptor>
-        <!--/** 包括路径及其子路径-->
+        <!-- 
+        配置拦截指定控制器方法路径
+        path="拦截路径"
+        精确匹配：path="/dept/save" 拦截dept/save控制器方法
+        模糊匹配：path="/dept/**" 拦截dept开头的所有控制器方法, 注意“**”代表任意长度字符，不支持一个"*" 
+        -->
+
         <!--/admin/* 拦截的是/admin/add等等这种，/admin/add/user不会被拦截-->
         <!--/admin/** 拦截的是/admin/下的所有-->
         <mvc:mapping path="/**"/>
@@ -909,6 +962,9 @@ public class MyInterceptor implements HandlerInterceptor {
     </mvc:interceptor>
 </mvc:interceptors>
 ```
+
+#### 运行流程
+![springmvc+20210802091610](https://i.loli.net/2021/08/02/ya1xpkf5eG93UlA.png)
 
 
 ## 静态资源访问
@@ -967,6 +1023,66 @@ org.springframework.web.servlet.resource.DefaultServletHttpRequestHandler
 -->
 <mvc:default-servlet-handler default-servlet-name="default">
 ```
+
+
+## 异常处理
+在三层架构中，如果Dao持久层有异常可以抛出到调用方(Service)，Service有异常可以抛出到Controller，但是Controller有异常，不建议抛出到客户端(用户)，因为用户看不懂异常，无法进行处理会导致用户体验非常差。
+
+异常处理的原则：出现异常要给用户友好提示，自动跳转到友好提示页面。
+
+### 自定义异常过滤器
+```java
+@WebFilter("/*")
+public class ExceptionFilter implements Filter {
+   public void doFilter(ServletRequest request, ServletResponse response,
+FilterChain chain){
+       try{
+           chain.doFilter(request, response);
+       }catch(Exception e){
+           // 异常处理，跳转到友好页面
+       }
+   }
+}
+```　
+
+### 自定义SpringMVC异常处理类
+只需要写一个类实现HandlerExceptionResolver接口，就可以捕获controller中的异常：
+```java
+@Component
+public class CustomException implements HandlerExceptionResolver {
+    @Override
+    public ModelAndView resolveException(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) {
+
+        //处理异常目标：让开发人员看到异常信息 和 让用户看到友好信息
+        //参数中Exception e 就是捕获到的异常对象
+        e.printStackTrace(); //以后专业的做法，写入日志文件
+
+        //实例ModelAndView
+        ModelAndView mv = new ModelAndView();
+
+        //友好信息写入到请求域中
+        mv.addObject("errorMsg","服务器忙，请明天再来！"+e.getMessage());
+
+        //返回视图页面：/pages/error.jsp
+        mv.setViewName("error");
+        return mv;
+    }
+}
+```
+
+### web.xml配置友好页面
+```xml
+<!--错误页面配置-->
+<error-page>
+   <error-code>404</error-code>
+   <location>/pages/404.jsp</location>
+</error-page>
+<error-page>
+   <error-code>400</error-code>
+   <location>/pages/400.jsp</location>
+</error-page>
+```
+
 
 
 ## 参考
