@@ -1,7 +1,7 @@
 # Spring
 
 ## 文档
-* [官方文档](ioc.mdhttps://docs.spring.io/spring-framework/docs/5.2.16.RELEASE/spring-framework-reference/core.html)
+* [官方文档](https://docs.spring.io/spring-framework/docs/5.2.16.RELEASE/spring-framework-reference/core.html)
 * [中文文档(非官方)](https://www.docs4dev.com/docs/zh/spring-framework/5.1.3.RELEASE/reference)
 
 ## 下载地址
