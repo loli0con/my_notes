@@ -58,5 +58,5 @@ Tomcat的安装目录`$CATALINA_HOME`:
     * lib依赖目录
     * web.xml部署配置文件
 
-## 组建
+## 组件
 ![tomcat+20210722094529](https://raw.githubusercontent.com/loli0con/picgo/master/images/tomcat%2B20210722094529.png%2B2021-07-22-09-45-31)
