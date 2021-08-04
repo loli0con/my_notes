@@ -322,6 +322,7 @@ jdbc.maxActive=10
     <url-pattern>/</url-pattern>
 </servlet-mapping>
 
+
 <!--配置乱码过滤器-->
 <filter>
     <filter-name>CharacterEncodingFilter</filter-name>
