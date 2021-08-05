@@ -244,25 +244,26 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
 
 </dependencies>
 
-<!-- 配置Maven静态资源导出（非必要，只是用于预防静态资源导出失败） -->
+<!-- 配置Maven静态资源导出（非必要） -->
 <build>
    <resources>
-       <resource>
-           <directory>src/main/java</directory>
-           <includes>
-               <include>**/*.properties</include>
-               <include>**/*.xml</include>
-           </includes>
-           <filtering>false</filtering>
-       </resource>
-       <resource>
-           <directory>src/main/resources</directory>
-           <includes>
-               <include>**/*.properties</include>
-               <include>**/*.xml</include>
-           </includes>
-           <filtering>false</filtering>
-       </resource>
+        <resource>
+            <!-- 把src/main/java目录下的配置也导出 -->
+            <directory>src/main/java</directory>
+            <includes>
+                <include>**/*.properties</include>
+                <include>**/*.xml</include>
+            </includes>
+            <filtering>false</filtering>
+        </resource>
+        <resource>
+            <directory>src/main/resources</directory>
+            <includes>
+                <include>**/*.properties</include>
+                <include>**/*.xml</include>
+            </includes>
+            <filtering>false</filtering>
+        </resource>
    </resources>
 </build>
 ```
