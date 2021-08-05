@@ -676,19 +676,66 @@ Maven 依赖调解原则有两个：一个是路径优先原则；另一个是�
 ##### 声明优先原则
 如果有个项目 A，它有两个依赖：A→B→T（1.0），A→C→T（2.0）。这时候两条路径都是一样的长度 2，Maven 会判断哪个依赖在 pom.xml 中先声明，选择引入先声明的依赖。
 
+#### 可选依赖
+父项目中的依赖设置成可选依赖，在子项目中再具体指定使用哪个依赖：
+```xml
+<!-- 父项目 -->
+<dependencies>
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>5.1.34</version>
+        <!--
+            目标：可选依赖
+            介绍：optional，含义“可选的”，即不传递（需要手动写）
+                值1：<optional>true</optional>, 不进行依赖传递
+                值2：<optional>false</optional>, 进行依赖传递,也是默认值
+        -->
+        <optional>true</optional>
+    </dependency>
+    <dependency>
+        <groupId>oracle</groupId>
+        <artifactId>ojdbc14</artifactId>
+        <version>10.2.0.4</version>
+        <optional>true</optional>
+    </dependency>
+</dependencies>
+
+
+<!-- 子项目 -->
+<dependencies>
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>5.1.34</version>
+    </dependency>
+</dependencies>
+```
+
 ### 依赖的排除
 在依赖的配置里面添加 exclusions→exclusion 元素，指定要排除依赖的 groupId 和 artifactId，这样可以排除依赖。
 ```xml
 <dependency>
-    <groupId>org.hibernate</groupId>
-    <artifactId>hibernate-core</artifactId>
-    <version>${project.build.hibernate.version}</version>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-context</artifactId>
+    <version>5.2.0.RELEASE</version>
+    <!--依赖排除
+        介绍：就是排除指定的间接依赖jar包
+            <exclusions> 可以排除多个依赖
+            <exclusion> 排除指定的一个依赖
+        目标：排除spring-core：5.2.0        排除后的结果：spring-core：5.1.0 有效
+    -->
     <exclusions>
         <exclusion>
-            <groupId>xxx</groupId>
-            <artifactId>xxx</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
         </exclusion>
     </exclusions>
+</dependency>
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-webmvc</artifactId>
+    <version>5.1.0.RELEASE</version>
 </dependency>
 ```
 
