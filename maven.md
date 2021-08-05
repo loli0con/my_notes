@@ -811,8 +811,17 @@ Maven 的继承是为了消除重复配置（子类使用父类的配置）而�
 <version>1.0-SNAPSHOT</version>
 <packaging>pom<packaging/>
 
-<!-- 父项目的依赖管理，子项目可以从这里选择自己所需的依赖，这样的好处是子模块可以有选择行的继承，而不需要全部继承。
- -->
+<!-- 自动继承：子项目自动能获取到父项目的依赖 -->
+<dependencies>
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+
+<!-- 手动继承：父项目的依赖管理，子项目可以从这里选择自己所需的依赖，这样的好处是子模块可以有选择行的继承，而不需要全部继承。 -->
 <dependencyManagement>
     <dependencies>
         <dependency>
@@ -821,6 +830,7 @@ Maven 的继承是为了消除重复配置（子类使用父类的配置）而�
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+    </dependencies>
 </dependencyManagement>
 ```
 ##### 子项目
