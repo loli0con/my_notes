@@ -19,7 +19,7 @@
 没错，正是kmp比暴力算法多一个金刚钻，那么金刚钻到底是什么呢？
 
 ### 示例
-文本串：a a b a a b a a f
+文本串：a a b a a b a a f  
 模式串：a a b a a f
 
 ![kmp+20210805131911](https://i.loli.net/2021/08/05/9XtS5hYvfbV6ijn.png)
