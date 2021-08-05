@@ -755,6 +755,7 @@ Maven 依赖调解原则有两个：一个是路径优先原则；另一个是�
 
 ### POM 属性
 用户可以通过 POM 属性，引用 POM 文件中对应元素的值，比如＄{project.artifactId}就对应 project→artifactId 元素的值。这些属性都在 pom 中有对应的元素，常用的 POM 属性包括以下方面：
+* ${project.build.sourceEncoding}：表示主源码的编码格式。
 * ＄{project.build.sourceDirectory}：项目的主源码目录，默认是 src/main/java。
 * ＄{project.build.testSourceDirectory}：项目的测试源码目录，默认是 src/test/java。
 * ＄{project.build.directory}：项目构建输出目录，默认是 target。
@@ -798,6 +799,66 @@ Settings 属性同 POM 属性是一样的，可以用以“settings.”开头的
 </testResources>
 ```
 
+## 项目管理
+### 继承
+Maven 的继承是为了消除重复配置（子类使用父类的配置）而存在的，可以被继承的元素：groupId、version、description、organization、inceptionYear、url、developers、contributors、distributionManagement、issueManagement、ciManagement、scm、mailingLists、properties、dependencies、dependencyManagement、repositories、build、reporting。
+
+#### 配置
+##### 父项目
+```xml
+<groupId>com.taobao</groupId>
+<artifactId>taobao-parent</artifactId>
+<version>1.0-SNAPSHOT</version>
+<packaging>pom<packaging/>
+
+<!-- 父项目的依赖管理，子项目可以从这里选择自己所需的依赖，这样的好处是子模块可以有选择行的继承，而不需要全部继承。
+ -->
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+</dependencyManagement>
+```
+##### 子项目
+```xml
+<!-- parent 元素声明 该项目的父项目 -->
+<parent>
+    <groupId>com.taobao</groupId>
+    <artifactId>taobao-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <!-- relativePath可选（非必配），建议配 -->
+    <!-- 以当前问项目的pom.xml为基准，父项目pom.xml的相对路径 -->
+    <relativePath>../Parent/pom.xml</relativePath>
+</parent>
+```
+
+### 聚合
+Maven 的聚合是为了快速构建项目（一次构建多个项目模块）而存在的。
+
+#### 配置
+##### 父项目
+```xml
+<modules>
+    <!-- module的路径为相对路径 -->
+    <!-- 对项目的HelloFriend、MakeFriends这三个模块进行聚合 -->
+    <module>../模块1</module>
+    <!-- <module>../HelloFriend</module> -->
+    <module>../模块2</module>
+    <!-- <module>../MakeFriends</module> -->
+</modules>
+```
+
+### 总结
+对于聚合模块来说，它知道哪些被聚合的模块（通过modules元素），但那些被聚合的模块不知道这个聚合模块的存在。
+
+对于继承关系的父 POM 来说，它不知道哪些子模块继承于它，但那些子模块都必须知道自己的父 POM 是什么。
+
+在实际项目中，“一个 pom 即是聚合 pom 又是父 pom”，这么做主要是为了方便。
 
 ## lastUpdate
 当使用了本地仓库没有的jar包时，默认会去远程仓库下载。如果在下载过程中网络断了，maven会在本地仓库jar包对应位置生成一个错误标记文件[xxx.lastUpdated](https://www.jianshu.com/p/feae53fcab04)，一旦产生了这个文件，下次网络恢复了，也不会去下载这个这个jar包。
@@ -829,6 +890,7 @@ for /f "delims=" %%i in ('dir /b /s "%REPOSITORY_PATH%\*lastUpdated*"') do (
 rem 搜索完毕
 pause
 ```
+
 
 
 ## 参考
