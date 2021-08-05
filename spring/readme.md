@@ -299,6 +299,8 @@ jdbc.maxActive=10
 <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>classpath:applicationContext.xml</param-value>
+    <!-- classpath*: 除了在当前项目的classpath中查找，也会从依赖项目中的classpath中查找 -->
+    <!-- <param-value>classpath*:applicationContext.xml</param-value> -->
 </context-param>
 <!--配置ContextLoaderListener会在服务器最早启动的时候读取全局参数contextConfigLocation的配置创建spring框架IOC容器-->
 <listener>
