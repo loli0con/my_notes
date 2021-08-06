@@ -39,16 +39,18 @@ xmind格式无法在线阅读，主要用于备份和发布。
 * 不背单词
 
 ### 一
-1. servlet综合练习
-2. 数据结构
-   1. 概述
+1. redis笔记
+2. AOP&Spring事务复习
+3. 数据结构
+   1. 树
+4. servlet案例复习
+5. git笔记整理
 
 ### 一点五
 * Java日志
 * Java网络编程
-* git笔记整理
+* 前端
 * linux就该这么学
-* 数据结构
 * OOAD
 * [idea技巧](https://blog.csdn.net/qq_27093465/article/details/77449117)
 
