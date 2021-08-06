@@ -241,7 +241,11 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
         <scope>provided</scope>
     </dependency>
 
-
+    <dependency>
+        <groupId>redis.clients</groupId>
+        <artifactId>jedis</artifactId>
+        <version>2.9.0</version>
+    </dependency>
 </dependencies>
 
 <!-- 配置Maven静态资源导出（非必要） -->
