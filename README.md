@@ -46,12 +46,9 @@ xmind 格式无法在线阅读，主要用于备份和发布。
 - 不背单词
 
 ### 一
-1. git 笔记整理
-   1. 服务器上的git
-2. AOP&Spring 事务复习
-3. 数据结构
+1. 数据结构
    1. 树
-4. servlet 案例复习
+2. servlet 案例复习
 
 ### 一点五
 * Java日志
@@ -59,7 +56,6 @@ xmind 格式无法在线阅读，主要用于备份和发布。
 * 前端
 * linux就该这么学
 * OOAD
-* [idea技巧](https://blog.csdn.net/qq_27093465/article/details/77449117)
 
 ### 二
 * 计算机网络
