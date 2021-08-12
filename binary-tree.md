@@ -18,3 +18,65 @@
    1. 如果i=1，则结点i是二叉树的根，无双亲；如果i>1，则其**双亲是⌊i/2⌋**。
    2. 如果2i>n，则结点i为叶子结点，无左孩子；否则，其**左孩子是结点2i**。
    3. 如果2i+1>n，则结点i无右孩子；否则，其**右孩子是结点2i+1**。
+
+## 遍历
+![binary-tree+20210812113655](https://i.loli.net/2021/08/12/uQfTCHhz5ZeA8Rp.png)
+
+### 顺序
+
+若规定**先左后右**，则有三种情况：
+* 先序遍历：**根**-左-右
+* 中序遍历：左-**根**-右
+* 后序遍历：左-右-**根**
+
+```
+先序序列：A B D G C E H F
+中序序列：D G B A E H C F
+后序序列：G D B H E F C A
+```
+
+### 根据遍历序列确定二叉树
+中序序列 + ( 先序序列 | 后序序列 ) => 二叉树
+
+#### 分析
+先序序列 | 后序序列 -> 可以确定*根的位置*  
+中序序列 -> 利用*根的位置*，可以确定*左子树*和*右子树*
+
+### 算法 - 递归
+```c++
+// 二叉树先序遍历算法
+Status PreOrderTraverse(BiTree T){
+   if(T==NULL) return OK;//空二叉树
+   else{
+      visit(T);//访问根结点
+      PreOrderTraverse(T->lchild);//递归遍历左子树
+      PreOrderTraverse(T->rchild);//递归遍历右子树
+   }
+}
+
+// 二叉树中序遍历算法
+Status InOrderTraverse(BiTree T){
+   if(T==NULL) return OK;//空二叉树
+   else{
+      InOrderTraverse(T->lchild);//递归遍历左子树
+      visit(T);//访问根结点
+      InOrderTraverse(T->rchild);//递归遍历右子树
+   }
+}
+
+// 二叉树后序遍历算法
+Status PostOrderTraverse(BiTree T){
+   if(T==NULL) return OK;//空二叉树
+   else{
+      PostOrderTraverse(T->lchild);//递归遍历左子树
+      PostOrderTraverse(T->rchild);//递归遍历右子树
+      visit(T);//访问根结点
+   }
+}
+```
+
+#### 分析
+![binary-tree+20210812121755](https://i.loli.net/2021/08/12/j9dJieAn7sWRXCa.png)
+
+* 时间效率：O(n) - 每个结点只访问一次
+* 空间效率：O(n) - 栈占用的最大辅助空间（最坏情况：单枝树）
