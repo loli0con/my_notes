@@ -256,7 +256,7 @@ public class LogAspect {
 
     }
 
-    @Before("pt()")  //写方法的名字
+    @Before("pt()")  // 方法的签名
     public void before() {
         System.out.println("---前置通知---");
     }
