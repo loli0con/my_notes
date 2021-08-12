@@ -89,6 +89,8 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
         <version>${spring_version}</version>
     </dependency>
 
+
+
     <!-- 数据库访问 -->
     <!--spring的jdbc支持包-->
     <dependency>
@@ -96,7 +98,13 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
         <artifactId>spring-jdbc</artifactId>
         <version>${spring_version}/version>
     </dependency>
-    <!--数据库驱动包-->
+    <!-- redis数据库驱动包 -->
+    <dependency>
+        <groupId>redis.clients</groupId>
+        <artifactId>jedis</artifactId>
+        <version>2.9.0</version>
+    </dependency>
+    <!--mysql数据库驱动包-->
     <dependency>
         <groupId>mysql</groupId>
         <artifactId>mysql-connector-java</artifactId>
@@ -123,17 +131,27 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
         <artifactId>spring-tx</artifactId>
         <version>${spring_version}</version>
     </dependency>
+    <!--mybatis-->
     <dependency>
         <groupId>org.mybatis</groupId>
         <artifactId>mybatis</artifactId>
         <version>3.5.2</version>
     </dependency>
+    <!-- 引入mybatis的 pagehelper 分页插件 -->
+    <dependency>
+        <groupId>com.github.pagehelper</groupId>
+        <artifactId>pagehelper</artifactId>
+        <version>5.1.2</version>
+    </dependency>
+    <!-- spring-mybatis支持包 -->
     <dependency>
         <groupId>org.mybatis</groupId>
         <artifactId>mybatis-spring</artifactId>
         <version>2.0.2</version>
         <!-- <version>1.3.2</version> -->
     </dependency>
+
+
 
     <!-- AOP支持 -->
     <!-- AspectJ切面表达式支持 -->
@@ -144,6 +162,8 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
         <!-- <version>1.8.7</version> -->
         <scope>runtime</scope>
     </dependency>
+
+
 
     <!-- 单元测试 -->
     <!--junit4-->
@@ -168,14 +188,14 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
     </dependency>
     
 
+
     <!-- 日志 -->
     <!-- Log4j 依赖 -->
     <dependency>
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
-        <version>1.6.4</version>
-        <scope>test</scope>
+        <version>1.7.30</version>
     </dependency>
     <dependency>
         <groupId>log4j</groupId>
@@ -184,15 +204,36 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
     </dependency>
 
 
-    <!-- JSON工具 -->
-    <!-- Jackson -->
+
+    <!-- ================  spring   整合  Redis================== -->
+    <!-- 1、java连接Redis的jar包，也就是使用jedis -->
+    <dependency>
+        <groupId>redis.clients</groupId>
+        <artifactId>jedis</artifactId>
+        <version>2.9.3</version>
+    </dependency>
+    <!-- 2、spring整合Redis的jar包，注意版本的对应关系 -->
+    <dependency>
+        <groupId>org.springframework.data</groupId>
+        <artifactId>spring-data-redis</artifactId>
+        <version>2.1.6.RELEASE</version>
+    </dependency>
+    <!-- JSON工具：jackson-->
     <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
-        <version>2.9.8</version>
+        <version>2.9.9</version>
+    </dependency>
+    <!--jackson xml的转换工具 -->
+    <dependency>
+        <groupId>com.fasterxml.jackson.dataformat</groupId>
+        <artifactId>jackson-dataformat-xml</artifactId>
+        <version>2.9.9</version>
     </dependency>
 
 
+
+    <!-- commons -->
     <!--文件上传-->
     <dependency>
         <groupId>commons-fileupload</groupId>
@@ -205,6 +246,19 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
         <artifactId>commons-io</artifactId>
         <version>2.6</version>
     </dependency>
+    <!--字符串处理工具类包-->
+    <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.5</version>
+    </dependency>
+    <!-- commons-beanutils -->
+    <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>1.9.3</version>
+    </dependency>
+    
 
 
     <!--servlet-api，文件操作、Jackson都依赖它-->
@@ -234,17 +288,14 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
         <version>1.2</version>
     </dependency>
 
+
+
+
     <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok</artifactId>
         <version>1.18.12</version>
         <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-        <groupId>redis.clients</groupId>
-        <artifactId>jedis</artifactId>
-        <version>2.9.0</version>
     </dependency>
 </dependencies>
 
@@ -276,7 +327,7 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
 ```properties
 log4j.rootLogger=debug, stdout
 
-log4j.category.org.springframework=debug
+log4j.category.org.springframework=info
 
 log4j.appender.stdout=org.apache.log4j.ConsoleAppender
 log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
@@ -290,7 +341,7 @@ jdbc.password=root
 # mysql8+需要额外配置时区参数 
 # serverTimezone=Asia/Shanghai
 # serverTimezone=utc
-jdbc.url=jdbc:mysql://localhost:3306/day666?useSSL=true&useUnicode=true&characterEncoding=utf8
+jdbc.url=jdbc:mysql://localhost:3306/day666?useSSL=false&useUnicode=true&characterEncoding=utf8
 jdbc.driverClassName=com.mysql.jdbc.Driver
 jdbc.initialSize=3
 jdbc.maxActive=10
@@ -400,6 +451,7 @@ jdbc.maxActive=10
 
 
 
+
 <!--
 spring整合mybatis的步骤
     1.加载外部jdbc.properties配置文件
@@ -463,4 +515,37 @@ spring整合mybatis的步骤
     <aop:advisor advice-ref="txAdvice" pointcut="execution(* com..service.impl.*.*(..))"></aop:advisor>
 </aop:config>
 
+
+
+
+<!-- 整合redis -->
+<!--1. 创建redis的独立配置类，配置主机与端口-->
+<bean id="standaloneConfiguration" class="org.springframework.data.redis.connection.RedisStandaloneConfiguration">
+    <!--redis的主机ip-->
+    <property name="hostName" value="localhost"/>
+    <!--redis使用的端口-->
+    <property name="port" value="6379"/>
+</bean>
+<!--2. 创建Jedis连接工厂-->
+<bean id="factory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+    <constructor-arg ref="standaloneConfiguration"/>
+</bean>
+<!--3创建redisTemplate模板对象，使用该对象可以操作redis-->
+<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+    <!--1.配置连接工厂-->
+    <property name="connectionFactory" ref="factory"/>
+    <!--2. 配置键序列化器-->
+    <property name="keySerializer">
+        <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+    </property>
+
+    <!--2. 配置值序列化器-->
+    <property name="valueSerializer">
+        <bean class="org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer"/>
+    </property>
+</bean>
+
+
+
+</beans>
 ```
