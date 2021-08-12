@@ -42,7 +42,7 @@
 先序序列 | 后序序列 -> 可以确定*根的位置*  
 中序序列 -> 利用*根的位置*，可以确定*左子树*和*右子树*
 
-### 算法 - 递归
+### 遍历算法 - 递归
 ```c++
 // 二叉树先序遍历算法
 Status PreOrderTraverse(BiTree T){
@@ -80,3 +80,53 @@ Status PostOrderTraverse(BiTree T){
 
 * 时间效率：O(n) - 每个结点只访问一次
 * 空间效率：O(n) - 栈占用的最大辅助空间（最坏情况：单枝树）
+
+
+### 遍历算法 - 非递归
+```c++
+// 二叉树中序遍历算法
+Status InOrderTraverse(BiTree T){
+   BiTree p; InitStack(S); p = T;
+   while(p || !StackEmpty(S)){
+      if(p) {Push(S,p); p = p -> lchild;}
+      else {Pop(S,p); visit(p); p = p -> rchild;}
+   }
+   return OK;
+}
+
+// 二叉树层序遍历算法
+void LevelOrder(BTNode *b){
+   BTNode *p; SqQueue *qu;
+   InitQueue(qu);//初始化队列
+   enQueue(qu,b);//根结点入队
+   while(!QueueEmpty(qu)){//队列不为空，则循环
+      deQueue(qu,p);//出队结点p
+      visit(p);//访问p
+      if(p->lchild!=NULL) enQueue(qu,p->lchild);//p有左孩子，则左孩子入队
+      if(p->rchild!=NULL) enQueue(qu,p->rchild);//p有右孩子，则右孩子入队
+   }
+}
+```
+
+### 遍历算法的应用
+
+### 建立二叉树 - 先序 
+![binary-tree+20210812150428](https://i.loli.net/2021/08/12/lqvTLzjKxYesWco.png)
+
+### 复制二叉树 - 先序
+![binary-tree+20210812150849](https://i.loli.net/2021/08/12/tkLxVANPX8BSqcY.png)
+
+### 计算二叉树深度 - 后序
+![binary-tree+20210812151235](https://i.loli.net/2021/08/12/eu94AJOylY1RiDV.png)
+
+### 计算二叉树结点总数 - 后序
+![binary-tree+20210812151819](https://i.loli.net/2021/08/12/UR6yAK1Hg5NCjub.png)
+
+### 计算二叉树叶子总数 - 后序
+![binary-tree+20210812151922](https://i.loli.net/2021/08/12/sUVgb8wv9j3O6H7.png)
+
+## 二叉线索树
+利用二叉链表中的空的指针域：  
+如果某个结点的左孩子为空，则将左孩子指针域改为**指向其前驱**；如果某结点的右孩子为空，则将空的右孩子指针域改为**指向其后继**。  
+————这种**改变指向的指针**成为“**线索**”，加上了线索的二叉树称为**线索二叉树**，对二叉树按某种遍历次序，使其变为线索二叉树的过程叫做**线索化**。
+
