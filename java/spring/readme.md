@@ -342,7 +342,8 @@ jdbc.password=root
 # serverTimezone=Asia/Shanghai
 # serverTimezone=utc
 jdbc.url=jdbc:mysql://localhost:3306/day666?useSSL=false&useUnicode=true&characterEncoding=utf8
-jdbc.driverClassName=com.mysql.jdbc.Driver
+# jdbc.driverClassName=com.mysql.jdbc.Driver
+jdbc.driver=com.mysql.jdbc.Driver
 jdbc.initialSize=3
 jdbc.maxActive=10
 ```
