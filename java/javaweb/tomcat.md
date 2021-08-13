@@ -12,7 +12,19 @@ Tomcat的安装目录`$CATALINA_HOME`:
     * 虚拟目录映射
   * web.xml
     * 欢迎页面的配置
-* logs - 日志目录
+* logs - [日志](http://xstarcd.github.io/wiki/Java/tomcat_log.html)目录
+  * 服务器⽇志 - catalina.${date}.out
+    * 是tomcat的标准输出(stdout)和标准出错(stderr)
+    * 这是在tomcat的启动脚本里指定的，如果没有修改的话stdout和stderr会重定向到这里。所以我们在应用里使用System.out打印的东西都会到这里来。
+    * 另外，如果我们在应用里使用其他的日志框架，配置了向Console输出的，则也会在这里出现。
+    * 比如以logback为例，如果配置ch.qos.logback.core.ConsoleAppender则会输出到catalina.out里。
+  * Web 应⽤⽇志 - localhost.${date}.log
+    * 程序异常没有被捕获的时候抛出的地方
+    * Tomcat下内部代码丢出的日志（jsp页面内部错误的异常，org.apache.jasper.runtime.HttpJspBase.service类丢出的，日志信息就在该文件！）
+    * 应用初始化(listener, filter, servlet)未处理的异常最后被tomcat捕获而输出的日志，而这些未处理异常最终会导致应用无法启动。
+  * HTTP 访问⽇志 - localhost_access_log.${date}.log
+  * 管理日志 - manager.${date}.log
+  * 虚拟主机日志 - host-manager.${date}.log
 * lib - 依赖库目录
 * temp - 临时数据目录
 * work - 工作目录
