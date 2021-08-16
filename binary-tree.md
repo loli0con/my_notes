@@ -85,6 +85,16 @@ Status PostOrderTraverse(BiTree T){
 ### 遍历算法 - 非递归
 ```c++
 // 二叉树中序遍历算法
+Status PreOrderTraverse(BiTree T){
+   BiTree p; InitStack(S); p = T;
+   while(p || !StackEmpty(S)){
+      if(p) {Push(S,p); visit(p); p = p -> lchild;}
+      else {Pop(S,p); p = p -> rchild;}
+   }
+   return OK;
+}
+
+// 二叉树中序遍历算法
 Status InOrderTraverse(BiTree T){
    BiTree p; InitStack(S); p = T;
    while(p || !StackEmpty(S)){
@@ -106,6 +116,10 @@ void LevelOrder(BTNode *b){
       if(p->rchild!=NULL) enQueue(qu,p->rchild);//p有右孩子，则右孩子入队
    }
 }
+```
+
+```c++
+// 二叉树后序遍历算法
 ```
 
 ### 遍历算法的应用
