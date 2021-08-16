@@ -10,16 +10,19 @@
 ## vmoptions
 ```
 -server
--Xms1024m
--Xmn1024m
+# 促使内存
+-Xms1536m
+# 最大可用内存
 -Xmx2048m
--XX:ReservedCodeCacheSize=1024m
+# 年轻代大小
+-Xmn768m
 
-
-# https://www.jianshu.com/p/ba2d613df94f
+# 设置持久代初始值
 -XX:MetaspaceSize=256m
+# 设置持久代最大值
 -XX:MaxMetaspaceSize=512m
 
+-XX:ReservedCodeCacheSize=256m
 -XX:+UseConcMarkSweepGC
 -XX:+UseParNewGC
 -XX:+CMSParallelRemarkEnabled
