@@ -17,3 +17,14 @@
 4. 通过简单的**XML**来进行配置
 
 ![introduction+mybatis-mybaits简介](https://raw.githubusercontent.com/loli0con/picgo/master/images/introduction%2Bmybatis-mybaits%E7%AE%80%E4%BB%8B.png%2B2021-07-05-23-06-10)
+
+## 开发过程
+![introduction+mybatis-demo](https://i.loli.net/2021/08/18/rihTQBog6PSKtIx.png)
+
+## 核心概念
+每个基于 MyBatis 的应用都是以一个 **SqlSessionFactory** 的实例为核心的。  
+SqlSessionFactory 的实例可以通过 **SqlSessionFactoryBuilder** 获得。  
+而 SqlSessionFactoryBuilder 则可以从 **XML 配置文件**或一个预先配置的 Configuration 实例来构建出 SqlSessionFactory 实例。
+
+
+既然有了 SqlSessionFactory，顾名思义，我们可以从中获得 **SqlSession** 的实例。SqlSession 提供了在数据库执行 SQL 命令所需的所有方法。你可以通过 SqlSession 实例来直接执行已映射的 **SQL 语句**。
