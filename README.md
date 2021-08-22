@@ -46,14 +46,12 @@ xmind 格式无法在线阅读，主要用于备份和发布。
 - 不背单词
 
 ### 一
-1. 复习(修订笔记)
-   1. 异常处理
-   2. JavaWeb开发
-   3. mybatis
-   4. vue
-   5. servlet综合
+1. SpringBoot
 2. 数据结构
    1. 树
+3. 综合案例整理
+   1. JavaWeb
+   2. SpringMVC
 
 ### 一点五
 * Java日志
