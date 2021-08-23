@@ -4,6 +4,11 @@
 要掌握SpringBoot关键在于掌握SpringBoot里面的预设配置，  
 要学习SpringBoot重点就是学习配置的艺术！
 
+
+## ⚠️⚠️⚠️⚠️⚠️⚠️须知⚠️⚠️⚠️⚠️⚠️⚠️
+限于本人对SpringBoot的了解程序，本笔记尚未最终完成，因此可能会有误。
+
+
 ## 配置的艺术
 
 ### 开箱即用的pom
@@ -74,6 +79,7 @@ public class SpringbootApplication {
 这是一个简单的启动类，但它并不简单，它的复杂性暗藏于@SpringBootApplication中。
 
 #### @SpringBootApplication
+这个注解用来标注某一个类为SpringBoot的应用程序
 ```java
 @SpringBootConfiguration
 @EnableAutoConfiguration
@@ -93,7 +99,7 @@ public @interface SpringBootApplication {
     // ......
 }
 ```
-
+从源码可知：  
 SpringBootApplication = ComponentScan + EnableAutoConfiguration + SpringBootConfiguration
 
 #### @ComponentScan
@@ -205,19 +211,35 @@ private static Map<String, List<String>> loadSpringFactories(@Nullable ClassLoad
 这些自动配置类，顾名思义，它们自动地帮我们完成了配置的步骤，简化了我们开发的工作。
 
 ##### 举例
-![kernel+20210822205908](https://raw.githubusercontent.com/loli0con/picgo/master/images/kernel%2B20210822205908.png%2B2021-08-22-20-59-11)
-在SpringBoot中有一个*WebMvcAutoConfiguration配置类*（负责整个WebMVC的配置），  
-WebMvcAutoConfiguration配置类里面有个*WebMvcAutoConfigurationAdapter配置类*（负债总额部分WebMVC的配置），  
-WebMvcAutoConfigurationAdapter配置类上的注解中的*WebMvcProperties类*描述了配置的内容（配置项以及配置值）。
+![core+20210823181014](https://raw.githubusercontent.com/loli0con/picgo/master/images/core%2B20210823181014.png%2B2021-08-23-18-10-18)
 
-这些都是JavaConfig配置类（它们都有@Configuration注解），都是SpringBoot提供的默认配置。
+![core+20210823183346](https://raw.githubusercontent.com/loli0con/picgo/master/images/core%2B20210823183346.png%2B2021-08-23-18-33-49)
+
+xxxxAutoConfigurartion是JavaConfig类（它有@Configuration注解），是SpringBoot提供的默认配置。xxxxProperties里则封装配置文件中相关属性。
+
 
 #### 结论
-1. SpringBoot在启动的时候从类路径下的META-INF/spring.factories中获取EnableAutoConfiguration指定的值。
-2. 将这些值作为自动配置类导入容器（通过反射示例化配置类），自动配置类就生效，帮我们进行自动配置工作；
+1. SpringBoot在启动的时候从类路径下的META-INF/spring.factories中获取EnableAutoConfiguration指定的值，加载大量的自动配置类。
+2. 将这些值作为自动配置类导入容器（通过反射实例化配置类），自动配置类生成，帮我们进行自动配置工作；
 3. 整个J2EE的整体解决方案和自动配置都在springboot-autoconfigure的jar包中；
-4. 它会给容器中导入非常多的自动配置类（xxxAutoConfiguration），就是给容器中导入这个场景需要的所有组件，并配置好这些组件；
+4. 它会给容器中导入非常多的自动配置类（xxxAutoConfiguration），也就是给容器中导入这个场景需要的所有组件，并配置好这些组件；
 5. 有了自动配置类，免去了我们手动编写配置注入功能组件等的工作；
 
 
-### 自动
+### 生效条件
+自动配置类必须在一定的条件下才能生效
+#### @Conditional派生注解
+@Conditional派生注解 基于 Spring原生注解@Conditional 实现。
+
+使用@Conditional派生注解来指定条件，只有当条件成立，才给容器中添加组件，配置配里面的所有内容才生效
+
+![core+20210823204720](https://raw.githubusercontent.com/loli0con/picgo/master/images/core%2B20210823204720.png%2B2021-08-23-20-47-21)
+
+
+#### 查看生效的配置
+我们可以通过启用 debug=true属性（在配置文件中），来让控制台打印自动配置报告，这样我们就可以很方便的知道哪些自动配置类生效。
+
+在输出的日志中，会有如下结果：
+* Positive matches:（自动配置类启用的：正匹配）
+* Negative matches:（没有启动，没有匹配成功的自动配置类：负匹配）
+* Unconditional classes:（没有条件的类）
