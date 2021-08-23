@@ -83,32 +83,34 @@ IOC 是**站着对象的角度上**对象的实例化以及管理从程序员的
 
 
 ## IOC的运用
+
+### Bean
+在 Spring 中，**构成应用程序主干**并**由Spring IoC容器管理的对象**称为bean。bean是一个由Spring IoC容器实例化、组装和管理的对象。
+
+### BeanDefinition
+BeanDefinition 描述了 Bean 的定义。我们定义的关于 Bean 的生命周期、销毁、初始化等操作总得有一个对象来承载，那么这个对象就是BeanDefinition。
+
+这些被我们定义的Bean的元数据，会先加载到 BeanDefinition 上，然后SpringIoc容器通过 BeanDefinition 来生成一个Bean。从这个角度来说，BeanDefinition 和 Bean 的关系有点类似于类和对象的关系。
+
+Spring容器，就是一个ApplicationContex对象，而启动Spring容器就是初始化这个对象，步骤可以分为两大部分：其一是通过各种手段获取到BeanDefinition，其二是通过获取到的BeanDefinition创建Bean。
+
 ### 配置的方式
-因为IoC容器要负责实例化所有的组件，因此，有必要告诉容器如何创建组件，以及各组件的依赖关系。  
+Spring允许我们通过多种形式来定义Bean的元数据：
+* 基于 **XML文件** 的配置方式
+* 基于 **注解** 的配置方式
+* 基于 **Java配置类** 的配置方式
 
-配置的方式：
-* 通过xml文件来实现
-* 通过注解来实现
-* 混合使用xml文件和注解
+这些元数据，都被放在SpringFactory里面，以一个Map的形式：Map<String,BeanDefinition>。
 
-
-### 依赖注入方式
+### 依赖注入的方式
 常用的有两种方式：构造方法注入和setter注入
 
 
-***
 
-## 配置方式
-配置的方式可分为三种：
-* xml（纯xml而完全没有注解）
-* 注解（少量xml以导入注解功能支持）
-* 混合使用xml和注解
-* JavaConfig（纯注解而完全没有xml）
+## xml文件 的 配置方式
 
-下面将讲解如何在Spring中进行配置。
-
-## xml
-### bean标签
+### bean标签 - 简介
+bean标签用于描述被IOC管理的对象，它有如下几个最常用的属性：
 |属性|说明|
 |---|---|
 |id|容器中唯一的标识|
@@ -118,6 +120,10 @@ IOC 是**站着对象的角度上**对象的实例化以及管理从程序员的
 |init-method|创建对象时，执行的初始化的方法|
 |destroy-method|销毁对象时，执行的方法；销毁的方法只在单例模式下起作用|
 |lazy-init|是否使用延迟加载，默认是不使用；延迟加载只用于单例对象|
+
+bean标签的内容（子标签）主要适用于描述该对象的依赖对象。
+
+### bean标签 - 详解
 
 #### 对象的创建
 创建对象方式：
@@ -189,7 +195,7 @@ public class InstanceBeanFactory {
 |singleton 单例对象|容器一创建就创建这个对象，只要容器不销毁就一直存在|出生：容器创建就出生<br />活着：只要容器没有销毁就一直存在<br />死亡：容器关闭的时候|
 |prototype 多例对象|每次获取对象就创建一个新的对象，使用完毕会被GC回收|出生：获取对象的时候<br />活着：使用过程中<br />死亡：由GC去回收|
 
-#### 依赖注入
+#### 依赖的注入
 ```java
 public class Customer {
     private int id;
@@ -354,6 +360,8 @@ public class Student {
 </property>
 ```
 
+### 其他标签
+
 #### alias标签
 ```xml
 <!--设置别名：在获取Bean的时候可以使用别名获取-->
@@ -382,8 +390,9 @@ public class Student {
 ```
 
 
-## 注解
-#### xml配置 - 导入注解功能支持
+## 注解 的 配置方式
+### 启用注解功能支持
+需要在xml配置文件中做如下配置：
 ```xml
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -392,16 +401,23 @@ public class Student {
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context
        https://www.springframework.org/schema/context/spring-context.xsd">
+    
+    <!-- 开启属性注解支持 -->
+    <context:annotation-config/>
 
     <!-- 扫描哪个包下所有的类（寻找注解），
     指定基包的名字（可以使用逗号分隔多个基包），
     使用context命名空间 -->
     <context:component-scan base-package="com.itheima"/>
     
-    <!-- 开启属性注解支持 -->
-    <context:annotation-config/>
 </beans>
 ```
+即两个配置：
+1. 开启注解功能支持
+2. 指定扫描组件的位置（去该位置下寻找Bean）
+
+
+### 常用注解
 
 #### @Component
 Component注解放在类上，表示这个类会被创建，并将对象放在容器中。  
@@ -414,10 +430,10 @@ Component注解放在类上，表示这个类会被创建，并将对象放在�
 |@Service|放在业务对象|
 |@Repository|放在持久层|
 
-以上四个注解的功能一样，只是语义上区别。
+以上四个注解（@Component是另三个注解的父注解）的功能一样，只是语义上区别。
 
 #### @Autowired
-Autowired注解放在成员变量和成员方法上，表示将*相应的值（从容器中寻找）*注入该属性。  
+Autowired注解放在成员变量和成员方法上，表示将*相应的值*注入该属性（从容器中寻找合适的被依赖资源）。  
 *相应的值*：
 * 按类型匹配的方式从容器中去查找对应的值注入
 * 如果有多个匹配的类型，按名字匹配的方式注入
@@ -468,15 +484,17 @@ public Class User{
 用在方法上，指定这是对象销毁前执行的方法，只适用于单例对象。
 
 
-## 注解（纯注解——JavaConfig）
-JavaConfig 原来是 Spring 的一个子项目，它通过 Java 类的方式提供 Bean 的定义信息，在 Spring4 的版本， JavaConfig 已正式成为 Spring4 的核心功能 。
 
-它完全消除xml配置文件，用纯Java（注解）实现配置。
+
+## JavaConfig类 的 配置方式
+JavaConfig 原来是 Spring 的一个子项目，它通过 Java 类的方式提供 Bean 的定义信息，在 Spring4 的版本， JavaConfig 已正式成为 Spring4 的核心功能 。
 
 ### 常用注解
 #### @Configuration
-放在类上，表示这是一个配置类。  
+放在类上，表示这是一个配置类（等价于beans.xml）。  
 如果要读取配置类，要使用AnnotationConfigApplicationContext加载容器。
+
+被@Configuration标注的类，也会被Spring容器接管并注册到容器当中，因为它也是一个@Component。
 
 #### @ComponentScan
 放在类上，指定要扫描的基包。
@@ -495,8 +513,17 @@ JavaConfig 原来是 Spring 的一个子项目，它通过 Java 类的方式提�
 读取Java的属性文件(.properties)，value[]属性：指定一个或多个属性文件的名字。  
 @PropertySource可以不用写classpath，因为注解默认从类路径下加载
 
+#### @ImportResource
+导入Spring的配置文件（beans.xml），让配置文件里面的内容生效
+
 #### @Import
-指定一个或多个类对象，导入另一个配置类
+@Import是一个功能强大的注解，它通过指定一个或多个类对象，实现了如下的功能：
+* 导入其他的配置类：在已有的Bean上，使用@Import注解，导入一个不在@ComponentScan扫描范围内的配置类
+* 直接/间接将其他类导入到容器中
+  * 直接指定其他的类的：在已有的Bean上，使用@Import注解，导入一个普通类。
+  * 指定实现ImportSelector的类：在已有的Bean上，使用@Import注解，导入一个ImportSelector的实现类。该实现类在重写的selectImports方法中，返回的类全路径（以String[]的形式），返回值中的所有的类都会变成Bean。
+  * 指定实现ImportBeanDefinitionRegistrar的类：已有的Bean上，使用@Import注解，导入一个ImportBeanDefinitionRegistrar的实现类，在重写的方法中注册BeanDefinition到Spring容器。
+
 
 
 ### 示例
@@ -552,11 +579,9 @@ public void test(){
 ```
 
 
-## API
-### 创建容器
-<!-- TODO -->
+## 容器API
 ![ioc+20210728140220](https://i.loli.net/2021/07/28/5CezFtbH4GywS6X.png)
-
+### 示例
 ```java
 /** 
 创建：
@@ -573,7 +598,7 @@ ApplicationContext context = new ClassPathXmlApplicationContext("applicationCont
 
 ApplicationContext context = new FileSystemXmlApplicationContext("xxx路径/applicationContext.xml");
 
-ApplicationContext context = new AnnotationConfigApplicationContext(CustomerServiceImpl.class);
+ApplicationContext context = new AnnotationConfigApplicationContext(MyConfig.class);
 
 //2.从容器中获取对象
 CustomerService customerService = (CustomerService) context.getBean("customerService");
