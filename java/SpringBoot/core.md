@@ -17,7 +17,7 @@
 <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.2.5.RELEASE</version>
+    <version>2.1.6.RELEASE</version>
     <relativePath/> <!-- lookup parent from repository -->
 </parent>
 ```
@@ -32,11 +32,13 @@ spring-boot-starter-parent项目的pom
 </parent>
 ```
 
-**spring-boot-dependencies**才是真正管理SpringBoot应用里面所有依赖版本的地方，它是SpringBoot的版本控制中心。它提供了许多的默认构建（默认版本）以供实际项目使用。
+**spring-boot-dependencies**才是真正管理SpringBoot应用里面所有依赖版本的地方，它是SpringBoot的版本控制中心。
 
+从这里我们可以知道：  
+SpringBoot为我们提供了一套最优的依赖包版本搭配组合，并且使用了传递依赖功能。我们想使用哪个功能（比如Redis），只需要在pom文件加入一个启动器依赖的坐标（不需要指定版本号），它会自动帮我们把相关的所有依赖包都传递依赖进来，且不会存在版本冲突问题。
 
 #### 启动器starter
-SpringBoot将所有的功能场景都抽取出来，做成一个个的starter（启动器）。在项目中引入这些starter，所有相关的依赖都会导入进来，因此要用什么功能就导入什么样的场景启动器即可。我们未来也可以自己自定义starter。
+SpringBoot将所有的功能场景都抽取出来，做成一个个的starter（启动器）。在项目中引入这些starter，所有相关的依赖都会导入进来，因此要用什么功能就导入什么样的场景启动器即可。我们也可以自己自定义starter。
 
 **项目的需求 *==对应到==>*  要实现的功能  *==抽象为==>*  场景  *==封装为==>*  启动器**
 
@@ -48,7 +50,7 @@ SpringBoot将所有的功能场景都抽取出来，做成一个个的starter（
     <artifactId>spring-boot-starter</artifactId>
 </dependency>
 
-<!-- web -->
+<!--web启动器，将项目变成web项目，集成了springMVC、tomcat、json等相关功能支持-->
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-web</artifactId>
@@ -81,9 +83,9 @@ public class SpringbootApplication {
 #### @SpringBootApplication
 这个注解用来标注某一个类为SpringBoot的应用程序
 ```java
-@SpringBootConfiguration
-@EnableAutoConfiguration
-@ComponentScan(
+@SpringBootConfiguration // 指定类是配置类
+@EnableAutoConfiguration // 开启自动配置功能
+@ComponentScan( // 组件扫描，扫描指定包路径，若路径下的类添加了Spring注解，则生成Bean
     excludeFilters = {
         @Filter(
             type = FilterType.CUSTOM,
@@ -104,6 +106,8 @@ SpringBootApplication = ComponentScan + EnableAutoConfiguration + SpringBootConf
 
 #### @ComponentScan
 作用：组件扫描，自动扫描并加载符合条件的组件或者bean，将这个bean定义加载到IOC容器中。
+
+源码中的@ComponentScan没有指定包路径，则默认扫描当前类所在的包路径。因此我们编写的包/类/代码最好都放在启动类所在的目录下。
 
 #### @SpringBootConfiguration
 作用：SpringBoot的配置类，标注在某个类上，表示这是一个SpringBoot的配置类。
@@ -143,66 +147,16 @@ public @interface AutoConfigurationPackage {
 Registrar.class作用：将主启动类的所在包及包下面所有子包里面的所有组件扫描到Spring容器。
 
 ##### AutoConfigurationImportSelector
-AutoConfigurationImportSelector：自动配置导入选择器，这个类中有一个这样的方法：
-```java
+AutoConfigurationImportSelector：自动配置导入选择器。该类实现了ImportSelector接口，重写了selectImports方法，用于导入和自动配置相关的类。
 
-// 获得候选的配置
-protected List<String> getCandidateConfigurations(AnnotationMetadata metadata, AnnotationAttributes attributes) {
-    //这里的getSpringFactoriesLoaderFactoryClass（）方法
-    //返回的就是我们最开始看的启动自动导入配置文件的注解类；EnableAutoConfiguration
-    List<String> configurations = SpringFactoriesLoader.loadFactoryNames(this.getSpringFactoriesLoaderFactoryClass(), this.getBeanClassLoader());
-    Assert.notEmpty(configurations, "No auto configuration classes found in META-INF/spring.factories. If you are using a custom packaging, make sure that file is correct.");
-    return configurations;
-}
-```
-这个方法又调用了SpringFactoriesLoader类的静态方法loadFactoryNames()：
-```java
-public static List<String> loadFactoryNames(Class<?> factoryClass, @Nullable ClassLoader classLoader) {
-    String factoryClassName = factoryClass.getName();
-    //这里它又调用了 loadSpringFactories 方法
-    return (List)loadSpringFactories(classLoader).getOrDefault(factoryClassName, Collections.emptyList());
-}
+![core+20210825105947](https://raw.githubusercontent.com/loli0con/picgo/master/images/core%2B20210825105947.png%2B2021-08-25-10-59-50)
 
-private static Map<String, List<String>> loadSpringFactories(@Nullable ClassLoader classLoader) {
-    //获得classLoader ， 我们返回可以看到这里得到的就是EnableAutoConfiguration标注的类本身
-    MultiValueMap<String, String> result = (MultiValueMap)cache.get(classLoader);
-    if (result != null) {
-        return result;
-    } else {
-        try {
-            //去获取一个资源 "META-INF/spring.factories"
-            Enumeration<URL> urls = classLoader != null ? classLoader.getResources("META-INF/spring.factories") : ClassLoader.getSystemResources("META-INF/spring.factories");
-            LinkedMultiValueMap result = new LinkedMultiValueMap();
+![core+20210825111234](https://raw.githubusercontent.com/loli0con/picgo/master/images/core%2B20210825111234.png%2B2021-08-25-11-12-35)
 
-            //将读取到的资源遍历，封装成为一个Properties
-            while(urls.hasMoreElements()) {
-                URL url = (URL)urls.nextElement();
-                UrlResource resource = new UrlResource(url);
-                Properties properties = PropertiesLoaderUtils.loadProperties(resource);
-                Iterator var6 = properties.entrySet().iterator();
+![core+20210825120340](https://raw.githubusercontent.com/loli0con/picgo/master/images/core%2B20210825120340.png%2B2021-08-25-12-03-42)
 
-                while(var6.hasNext()) {
-                    Entry<?, ?> entry = (Entry)var6.next();
-                    String factoryClassName = ((String)entry.getKey()).trim();
-                    String[] var9 = StringUtils.commaDelimitedListToStringArray((String)entry.getValue());
-                    int var10 = var9.length;
+![core+20210825133931](https://raw.githubusercontent.com/loli0con/picgo/master/images/core%2B20210825133931.png%2B2021-08-25-13-39-32)
 
-                    for(int var11 = 0; var11 < var10; ++var11) {
-                        String factoryName = var9[var11];
-                        result.add(factoryClassName, factoryName.trim());
-                    }
-                }
-            }
-
-            cache.put(classLoader, result);
-            return result;
-        } catch (IOException var13) {
-            throw new IllegalArgumentException("Unable to load factories from location [META-INF/spring.factories]", var13);
-        }
-    }
-}
-```
-可以看到，获取了一个spring.factories资源。
 
 #### spring.factories
 ![kernel+20210822210935](https://raw.githubusercontent.com/loli0con/picgo/master/images/kernel%2B20210822210935.png%2B2021-08-22-21-09-38)
