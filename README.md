@@ -47,11 +47,14 @@ xmind 格式无法在线阅读，主要用于备份和发布。
 
 ### 一
 1. SpringBoot
-2. 数据结构
+2. redis笔记
+3. MongoDB
+4. RocketMQ
+5. 数据结构
    1. 树
-3. 综合案例整理
-   1. JavaWeb
-   2. SpringMVC
+6.  综合案例整理
+   2. JavaWeb
+   3. SpringMVC
 
 ### 一点五
 * Java日志
@@ -59,6 +62,8 @@ xmind 格式无法在线阅读，主要用于备份和发布。
 * 前端
 * linux就该这么学
 * OOAD
+* 分布式系统
+* bash脚本
 
 ### 二
 * 计算机网络
