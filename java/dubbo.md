@@ -72,14 +72,14 @@ Apache Dubbo |ˈdʌbəʊ| 提供了六大核心能力：
 <!-- 由于我们使用zookeeper作为注册中心，所以需要操作zookeeper
 dubbo 2.6及以后的版本引入curator操作zookeeper
 -->
-<!-- zookeeper的api管理依赖 -->
+<!-- zookeeper的api管理依赖，封装了一些高级特性 -->
 <dependency>
     <groupId>org.apache.curator</groupId>
     <artifactId>curator-recipes</artifactId>
     <version>4.2.0</version>
 </dependency>
 
-<!-- 不太懂这个和上面那个的区别 -->
+<!-- 提供了高级的API来简化ZooKeeper的使用 -->
 <dependency>
     <groupId>org.apache.curator</groupId>
     <artifactId>curator-framework</artifactId>
