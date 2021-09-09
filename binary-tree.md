@@ -408,3 +408,103 @@ BinTree Delete(ElementType X, BinTree BST)
   * Insert( MaxHeap H, ElementType item ):将元素item插入最大堆H。
   * Boolean IsEmpty( MaxHeap H ):判断最大堆H是否为空。
   * ElementType DeleteMax( MaxHeap H ):返回H中最大元素(高优先级)。
+
+```c++
+typedef struct HeapStruct *MaxHeap;
+struct HeapStruct {
+    ElementType *Elements; /* 存储堆元素的数组 */
+    int Size; /* 堆的当前元素个数 */
+    int Capacity; /* 堆的最大容量 */
+};
+
+MaxHeap Create( int MaxSize )
+{
+    /* 创建容量为MaxSize的空的最大堆 */
+    MaxHeap H = malloc( sizeof( struct HeapStruct ) );
+    H->Elements = malloc( (MaxSize+1) * sizeof(ElementType));
+    H->Size = 0;
+    H->Capacity = MaxSize;
+    H->Elements[0] = MaxData;
+    /* 定义“哨兵”为大于堆中所有可能元素的值，便于以后更快操作 */
+    return H;
+}
+
+// T (N) = O ( log N )
+void Insert( MaxHeap H, ElementType item )
+{ 
+    /* 将元素item 插入最大堆H，其中H->Elements[0]已经定义为哨兵 */
+    int i;
+    if ( IsFull(H) )
+    {
+        printf("最大堆已满");
+        return;
+    }
+    i = ++H->Size; /* i指向插入后堆中的最后一个元素的位置 */
+    for ( ; H->Elements[i/2] < item; i/=2 )
+        H->Elements[i] = H->Elements[i/2]; /* 向下过滤结点 */ 
+    H->Elements[i] = item; /* 将item 插入 */
+}
+
+// T (N) = O ( log N )
+ElementType DeleteMax( MaxHeap H )
+{ 
+    /* 从最大堆H中取出键值为最大的元素，并删除一个结点 */ 
+    int Parent, Child;
+    ElementType MaxItem, temp;
+    if ( IsEmpty(H) ) 
+    {
+        printf("最大堆已为空");
+        return; 
+    }
+    MaxItem = H->Elements[1]; /* 取出根结点最大值 */
+    /* 用最大堆中最后一个元素从根结点开始向上过滤下层结点 */ 
+    temp = H->Elements[H->Size--];
+    for( Parent=1; Parent*2<=H->Size; Parent=Child ) 
+    {
+        Child = Parent * 2;
+        if( (Child!= H->Size) && (H->Elements[Child] < H->Elements[Child+1]) )
+            Child++; /* Child指向左右子结点的较大者 */
+
+        if( temp >= H->Elements[Child] )
+            break;
+        else /* 移动temp元素到下一层 */
+            H->Elements[Parent] = H->Elements[Child];
+    }
+    H->Elements[Parent] = temp;
+    return MaxItem;
+}
+```
+
+### 建堆时间复杂度O(n)
+假设目标堆是一个满堆，即第 k 层节点数为 2ᵏ。输入数组规模为 n, 堆的高度为 h, 那么 n 与 h 之间满足 n=2ʰ⁺¹ - 1，可化为 h=log₂(n+1) - 1。 (层数 k 和高度 h 均从 0 开始，即只有根节点的堆高度为0，空堆高度为 -1)。
+
+备注：n与h的关系，可以根据[二叉树的性质](#二叉树的性质)中的第二点得出。
+
+建堆过程中每个节点需要一次下滤操作，交换的次数等于该节点到叶节点的深度。那么每一层中所有节点的交换次数为节点个数乘以叶节点到该节点的深度（如第一层的交换次数为 2⁰ · h，第二层的交换次数为 2¹ · (h-1)，如此类推）。从堆顶到最后一层的交换次数 Sn 进行求和：  
+Sn = 2⁰ · h + 2¹ · (h - 1) + 2² · (h - 2) + ...... + 2ʰ⁻² · 2 + 2ʰ⁻¹ · 1 + 2ʰ · 0
+
+把首尾两个元素简化，记为①式：  
+①: Sn = h + 2¹ · (h - 1) + 2² · (h - 2) + ...... + 2ʰ⁻² · 2 + 2ʰ⁻¹
+
+对①等于号左右两边乘以2，记为②式：  
+②: 2Sn = 2¹ · h + 2² · (h - 1) + 2³ · (h - 2) + ...... + 2ʰ⁻¹ · 2 + 2ʰ
+
+那么用②式减去①式，其中②式的操作数右移一位使指数相同的部分对齐（即错位相减法）：  
+![binary-tree+20210909150920](https://raw.githubusercontent.com/loli0con/picgo/master/images/binary-tree%2B20210909150920.png%2B2021-09-09-15-09-21)
+
+化简可得③式：  
+③ = Sn = -h + 2¹ + 2² + 2³ + ...... + 2ʰ⁻¹ + 2ʰ
+
+对指数部分使用等比数列求和公式：
+![binary-tree+20210909151043](https://raw.githubusercontent.com/loli0con/picgo/master/images/binary-tree%2B20210909151043.png%2B2021-09-09-15-10-44)
+
+化简为④式：  
+④ = Sn = 2ʰ⁺¹ - (h + 2)
+
+在前置条件中已得到堆的节点数 n 与高度 h 满足条件 n=2ʰ⁺¹ - 1（即 2ʰ⁺¹=n+1） 和 h=log₂(n+1) - 1，分别代入④式中的 2ʰ⁺¹ 和 h，因此：
+![binary-tree+20210909151113](https://raw.githubusercontent.com/loli0con/picgo/master/images/binary-tree%2B20210909151113.png%2B2021-09-09-15-11-13)
+
+化简后为：  
+Sn = n - log₂(n + 1)
+
+因此最终可得渐进复杂度为 O(n).
