@@ -1,14 +1,19 @@
 # Servelet
 ## 定义
-1. Servlet 是 JavaEE 规范之一。规范就是接口。
+1. Servlet 是 **JavaEE 规范**之一。规范就是接口。
 2. Servlet 就 JavaWeb 三大组件之一。
-3. Servlet 是运行在服务器上的一个 java 小程序，它可以接收客户端发送过来的请求，并响应数据给客户端。
+3. Servlet 是运行在服务器上的一个 java 小程序，它可以**接收客户端发送过来的请求，并响应数据给客户端**。
 
 ## Servlet体系
 ![servlet+20210719092717](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B20210719092717.png%2B2021-07-19-09-27-19)
 
 
 ## 开发方式
+我们需要开发自己的Servlet程序，并将Servlet程序注册/告诉到tomcat，让tomcat使用我们开发的Servlet程序处理请求并响应数据。
+
+有两种方式开发方式：
+* 基于配置：在web.xml中配置自己的编写好的Servlet程序，以供tomcat读取
+* 基于注解：在Servlet上用注解修饰，以供tomcat扫描
 ### web.xml
 [官方示例](https://tomcat.apache.org/tomcat-8.5-doc/appdev/web.xml.txt)
 ```xml
@@ -42,7 +47,6 @@
 ```
 
 ### 注解
-![servlet+20210719094845](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B20210719094845.png%2B2021-07-19-09-48-46)
 ```java
 // 在自己编写的servlet类上进行注解
 
@@ -51,6 +55,9 @@
 )
 /* Servlet类 */
 ```
+
+在@WebServlet中可以配置如下可选参数：
+![servlet+20210719094845](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B20210719094845.png%2B2021-07-19-09-48-46)
 
 
 ## 映射路径
@@ -165,18 +172,18 @@ HttpServletRequest request;
 * request.getHeaderNames()：得到所有的请求头名称
 * request.getHeader(String headName)：获取指定请求头name对应的值value
 ##### 常用请求头
-|请求头|描述|
-|---|---|
-|referer|从哪个页面跳转过来的|
-|if-Modified-Since|客户端缓存静态资源的最后修改时间|
-|user-Agent|描述浏览器的版本信息、浏览器内核、客户端操作系统的信息|
+| 请求头            | 描述                                                   |
+| ----------------- | ------------------------------------------------------ |
+| referer           | 从哪个页面跳转过来的                                   |
+| if-Modified-Since | 客户端缓存静态资源的最后修改时间                       |
+| user-Agent        | 描述浏览器的版本信息、浏览器内核、客户端操作系统的信息 |
 
 #### 数据
 * request.setCharacterEncoding("utf-8")：设置request读取数据的字符集，避免乱码
 * Enumeration\<String> request.getParameterNames()：获取所有参数名
 * Map\<String,String\[]> request.getParameterMap()：获取所有参数键和值
-* String request.getParameter(String name)：通过参数名获得参数值
-* String[] request.getParameterValues(String name)：通过参数名获得一组同名的值（多选项目）
+* String request.getParameter(String name)：通过参数名获得参数值（参数值为单值/一个字符串）
+* String[] request.getParameterValues(String name)：通过参数名获得一组同名的值（参数值为一个字符串数组）
 ##### 封装
 根据Map集合数据自动封装数据到JavaBean中，步骤如下：
 1. 导入beanutils的jar包
@@ -211,14 +218,14 @@ HttpServletResponse response;
 * response.setHeader(String name, String value)：用给定名称和值设置响应头
 
 #### 常见响应头
-|响应头|描述|
-|---|---|
-|location|重定向跳转的地址|
-|content-length|响应体的数据长度|
-|content-type|设置响应类型;设置浏览器的码表。例如：text/html;charset=utf-8|
-|refresh|多少秒后跳转;url=重定向跳转的地址|
-|content-disposition|内容的处理方式，可以控制下载。attachment;filename=xxx.xx|
-|content-encoding|压缩方式。gzip|
+| 响应头              | 描述                                                         |
+| ------------------- | ------------------------------------------------------------ |
+| location            | 重定向跳转的地址                                             |
+| content-length      | 响应体的数据长度                                             |
+| content-type        | 设置响应类型;设置浏览器的码表。例如：text/html;charset=utf-8 |
+| refresh             | 多少秒后跳转;url=重定向跳转的地址                            |
+| content-disposition | 内容的处理方式，可以控制下载。attachment;filename=xxx.xx     |
+| content-encoding    | 压缩方式。gzip                                               |
 
 ### 体
 * 获得响应体的输出流，输出数据
@@ -256,11 +263,11 @@ HttpServletResponse response;
 实现动态资源之间传递数据
 
 ### Servlet的三大域
-|作用域对象|作用域范围|应用场景|
-|---|---|---|
-|request请求域|一次请求内|请求转发跳转页面传递数据|
-|session会话域|一个会话内|存储验证码，存储用户登录数据|
-|servletcontext全局上下文域|整个应用程序内|统计全局的数据，这个数据全局共享，所有用户共享，例如统计登录人数|
+| 作用域对象                 | 作用域范围     | 应用场景                                                         |
+| -------------------------- | -------------- | ---------------------------------------------------------------- |
+| request请求域              | 一次请求内     | 请求转发跳转页面传递数据                                         |
+| session会话域              | 一个会话内     | 存储验证码，存储用户登录数据                                     |
+| servletcontext全局上下文域 | 整个应用程序内 | 统计全局的数据，这个数据全局共享，所有用户共享，例如统计登录人数 |
 
 ### 通用API
 * 写入数据，setAttribute(String key, Object value)
@@ -321,13 +328,13 @@ Session 属于服务器端的会话技术，数据保存服务器内存中，Ses
 ![servlet+20210722165512](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B20210722165512.png%2B2021-07-22-16-55-16)
 
 ##### 对比
-|特点|cookie|session|
-|---|---|---|
-|数据存储在哪一端|客户端|服务器端|
-|数据大小是否有限制|4kb|没有|
-|存储存储什么类型数据|string|object|
-|存储的数据默认有效期|会话结束|会话结束或者是非活动时间30分钟|
-|存储数据安全吗？|不安全|安全|
+| 特点                 | cookie   | session                        |
+| -------------------- | -------- | ------------------------------ |
+| 数据存储在哪一端     | 客户端   | 服务器端                       |
+| 数据大小是否有限制   | 4kb      | 没有                           |
+| 存储存储什么类型数据 | string   | object                         |
+| 存储的数据默认有效期 | 会话结束 | 会话结束或者是非活动时间30分钟 |
+| 存储数据安全吗？     | 不安全   | 安全                           |
 
 #### Cookie相关的API
 ##### Cookie
