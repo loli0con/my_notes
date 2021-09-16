@@ -6,16 +6,16 @@ Spring MVC是Spring Framework的一部分，是基于Java实现MVC的轻量级We
 ![springmvc+20210801120809](https://i.loli.net/2021/08/01/ri85DZILefMl9oO.png)
 
 ## 优点
-|序号|优点|详情|
-|---|---|---|
-|1|清晰的角色划分|前端控制器（DispatcherServlet）<br/>处理器映射器（HandlerMapping）<br/>处理器适配器（HandlerAdapter）<br/>视图解析器（ViewResolver）<br/>处理器（Controller）<br/>验证器（Validator）<br/>命令对象（Command 请求参数绑定到的对象就叫命令对象）<br/>表单对象（Form Object 提供给表单展示和表单提交的对象）|
-|2|可扩展性好|可以很容易扩展，虽然几乎不需要|
-|3|与Spring 框架无缝集成|这是其它web框架不具备的|
-|4|可适配性好|通过 HandlerAdapter 可以支持任意的类作为处理器|
-|5|可定制性好|处理器映射器HandlerMapping和<br />视图解析器ViewResolver 能够非常简单的定制|
-|6|单元测试方便|能够非常简单的进行 Web 层单元测试|
-|7|本地化、主题的解析支持|使我们更容易进行国际化和主题的切换|
-|8|JSP标签库|强大的 JSP 标签库，使 JSP 编写更容易|
+| 序号 | 优点                   | 详情                                                                                                                                                                                                                                                                                                      |
+| ---- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | 清晰的角色划分         | 前端控制器（DispatcherServlet）<br/>处理器映射器（HandlerMapping）<br/>处理器适配器（HandlerAdapter）<br/>视图解析器（ViewResolver）<br/>处理器（Controller）<br/>验证器（Validator）<br/>命令对象（Command 请求参数绑定到的对象就叫命令对象）<br/>表单对象（Form Object 提供给表单展示和表单提交的对象） |
+| 2    | 可扩展性好             | 可以很容易扩展，虽然几乎不需要                                                                                                                                                                                                                                                                            |
+| 3    | 与Spring 框架无缝集成  | 这是其它web框架不具备的                                                                                                                                                                                                                                                                                   |
+| 4    | 可适配性好             | 通过 HandlerAdapter 可以支持任意的类作为处理器                                                                                                                                                                                                                                                            |
+| 5    | 可定制性好             | 处理器映射器HandlerMapping和<br />视图解析器ViewResolver 能够非常简单的定制                                                                                                                                                                                                                               |
+| 6    | 单元测试方便           | 能够非常简单的进行 Web 层单元测试                                                                                                                                                                                                                                                                         |
+| 7    | 本地化、主题的解析支持 | 使我们更容易进行国际化和主题的切换                                                                                                                                                                                                                                                                        |
+| 8    | JSP标签库              | 强大的 JSP 标签库，使 JSP 编写更容易                                                                                                                                                                                                                                                                      |
 
 ## 架构
 Spring的web框架围绕DispatcherServlet（调度Servlet）设计，DispatcherServlet的作用是将请求分发到不同的处理器。
@@ -47,8 +47,9 @@ View Resolver负责将处理结果生成View视图，View Resolver首先根据�
 
 
 ## FirstDemo
-这个Demo展示了SpringMVC的原理，但实际开发中不会这么写，有更简单的写法（注解版）。
+这个Demo很标准地展示了SpringMVC的原理，但实际开发中不会这么写，有更简单的写法（注解版）。
 ### web.xml
+在web.xml中配置DispatcherServlet前端控制器，接管所有的请求。
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
@@ -56,34 +57,38 @@ View Resolver负责将处理结果生成View视图，View Resolver首先根据�
         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
         version="4.0">
 
-   <!--1.注册DispatcherServlet-->
-   <servlet>
-       <servlet-name>springmvc</servlet-name>
-       <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-       <!--关联一个springmvc的配置文件（名字自取，统一即可）: springMVC.xml-->
-       <init-param>
-           <param-name>contextConfigLocation</param-name>
-           <param-value>classpath:springMVC.xml</param-value>
-       </init-param>
-       <!--启动级别1：服务器启动时就创建中央控制器-->
-       <load-on-startup>1</load-on-startup>
-   </servlet>
+    <!-- 配置SpringMVC的前端控制器，对浏览器发送的请求统一进行处理 -->
+    <servlet>
+        <servlet-name>springmvc</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <!-- 通过初始化参数指定SpringMVC配置文件的位置和名称 -->
+        <!-- 关联一个springmvc的配置文件（名字自取，统一即可）: springMVC.xml-->
+        <init-param>
+            <!-- contextConfigLocation为固定值 -->
+            <param-name>contextConfigLocation</param-name>
+            <!-- 使用classpath:表示从类路径查找配置文件 -->
+            <param-value>classpath:springMVC.xml</param-value>
+        </init-param>
+        <!--启动级别1：服务器启动时就创建中央控制器-->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
 
-   <!--/ 匹配所有的请求；（不包括.jsp）-->
-   <!--/ 匹配所有的请求；（包括.jsp）-->
-   <servlet-mapping>
-       <servlet-name>springmvc</servlet-name>
-       <!--配置DispatcherServlet处理所有请求（不包括.jsp）-->
-       <url-pattern>/</url-pattern>
+    
+    <servlet-mapping>
+        <servlet-name>springmvc</servlet-name>
+        <!-- / 所匹配的请求可以是/login或.html或.js或.css方式的请求路径，但是/不能匹配.jsp请求路径的请求 -->
+        <!-- /* 匹配所有的请求（包括.jsp）-->
+        <url-pattern>/</url-pattern>
 
-       <!--配置DispatcherServlet处理.do结尾的请求-->
-       <!-- <url-pattern>*.do</url-pattern> -->
-   </servlet-mapping>
+        <!--配置DispatcherServlet处理.do结尾的请求-->
+        <!-- <url-pattern>*.do</url-pattern> -->
+    </servlet-mapping>
 
 </web-app>
 ```
 
 ### springMVC.xml
+将HandlerMapping 处理器映射器、HandlerAdapter 处理器适配器、Handler 处理器、ViewResolver 视图解析器注册到SpringIOC容器中。
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -105,7 +110,7 @@ View Resolver负责将处理结果生成View视图，View Resolver首先根据�
         <property name="suffix" value=".jsp"/>
     </bean>
     
-    <!--在SpringIOC容器，注册bean（在下面创建的）-->
+    <!--在SpringIOC容器，注册bean；这是自己编写的 Handler 处理器；id参数定义了要处理的请求的路径-->
     <bean id="/hello" class="com.demo.controller.HelloController"/>
 
 </beans>
@@ -203,18 +208,14 @@ public class HelloController {
 ```
 
 
-
-
-
-
 ## Controller
-* 控制器复杂提供访问应用程序的行为，通常通过接口定义或注解定义两种方法实现。
+* 控制器提供访问应用程序的行为，通常通过接口定义或注解定义两种方法实现。
 * 控制器负责解析用户的请求并将其转换为一个模型。
 * 在Spring MVC中一个控制器类可以包含多个方法
 * 在Spring MVC中，对于Controller的配置方式有很多种.
 
 ### 实现Control
-#### 实现Controller接口
+#### 实现Controller接口 - 不推荐
 Controller是一个接口，在org.springframework.web.servlet.mvc包下，接口中只有一个方法：
 
 ```java
@@ -227,7 +228,7 @@ public interface Controller {
 
 实现接口Controller定义控制器是较老的办法；一个控制器中只有一个方法，如果要多个方法则需要定义多个Controller；定义的方式比较麻烦。
 
-#### 使用注解@Controller
+#### 使用注解@Controller - 推荐
 Spring使用扫描机制来找到应用程序中所有基于注解的控制器类，为了保证Spring能找到你的控制器，需要在配置文件中声明组件扫描。
 
 ```xml
@@ -250,8 +251,9 @@ public class IndexController{
   }
 ```
 
-### @RequestMapping
-@RequestMapping注解用于映射url到控制器类或一个特定的处理程序方法。可用于类或方法上。用于类上，表示类中的所有响应请求的方法都是以该地址作为父路径，举个例子：
+### 路径处理
+#### @RequestMapping - 路径映射配置
+@RequestMapping注解将请求和处理请求的控制器关联起来，建立映射关系。可用于控制器的类或方法上。用于类上时，表示类中的所有响应请求的方法都是以该地址作为父路径，举个例子：
 1. 配置在方法上
    * 方法映射路径：@RequestMapping("/save.do")
    * 浏览器访问路径：http://localhost:8080/项目路径/save.do
@@ -260,102 +262,149 @@ public class IndexController{
    * 方法映射路径：@RequestMapping("/save.do")
    * 浏览器访问路径： http://localhost:8080/项目路径/order/save.do
 
+在路径中(即value属性)可以使用如下占位符：
+* ？：表示任意的单个字符
+* *：表示任意的0个或多个字符
+* \\**：表示任意的一层或 多层目录（只能使用/\*\*/xxx的方式）
 
+##### 属性详解
 @RequestMapping的属性：
-* path/value：指定访问地址
+* path/value：指定访问地址（value属性是一个字符串类型的数组），不满足value->404
   * 格式1：@RequestMapping("/save.do") 完整写法
   * 格式2：@RequestMapping("/save") 去掉扩展名写法，依然可以映射save.do的请求路径【推荐方式】
   * 格式3：@RequestMapping("save")  省略 / 写法，依然可以映射save.do的请求路径
   * 格式4：@RequestMapping("save.do")
-* method：限制请求的方法
-* param：限制提交的参数
+* method：限制请求的方法（method属性是一个RequestMethod类型的数组），满足value不满足method->405
+* param：限制提交的参数（params属性是一个字符串类型的数组），满足value&method不满足param->400
   * {"id","name"} **必须有**这两个参数的名字，否则会出现400错误
+  * {"!id","!name"} **必须没有**这两个参数的名字，否则会出现400错误
   * {"id=1","name=newboy"} 不但要有这些参数，而且**值还有限制**
   * {"id!=1"} id**不等于**1的值都可以
 
 
-#### @PathVariable
-@PathVariable 注解，让方法参数的值对应绑定到一个URI模板变量上。
-
-```java
-@Controller
-public class DemoController {
-   //映射访问路径
-   @RequestMapping("/commit/{p1}/{p2}")
-   public String commit(@PathVariable int p1, @PathVariable int p2, Model model){
-       int result = p1+p2;
-       //Spring MVC会自动实例化一个Model对象用于向视图中传值
-       model.addAttribute("msg", "结果："+result);
-       //返回视图位置
-       return "test";
-  }
-}
-```
-
-#### 方法变体
+##### 派生注解
 * @GetMapping等价于@RequestMapping(method=RequestMethod.GET) 
 * @PostMapping
 * @PutMapping
 * @DeleteMapping
 * @PatchMapping
 
+#### @PathVariable - 路径参数提取
+在@RequestMapping注解的value属性中使用占位符`{xxx}`表示传输的数据，再通过@PathVariable注解，将占位符所表示的数据赋值给控制器方法的形参。
 
-### 使用servletAPI
+```java
+@Controller
+public class DemoController {
+    //映射访问路径
+    @RequestMapping("/commit/{p1}/{p2}")
+    public String commit(@PathVariable int p1, @PathVariable("p2") int p3, Model model){
+        //默认使用根据形参的名字进行匹配并赋值，也通过可以指定value属性来改变默认行为
+        int result = p1+p3;
+        //Spring MVC会自动实例化一个Model对象用于向视图中传值
+        model.addAttribute("msg", "结果："+result);
+        //返回视图位置
+        return "test";
+    }
+}
+```
+
+### 获取请求参数
+本小节描述如何获取请求参数：
+* url
+  * url的部分（上文）
+  * QueryString（本文）
+* 请求头
+* 请求体
+
+#### 通过ServletAPI获取
 在Controller里面，可以直接使用servlet对象：
 * 请求对象HttpServletRequest
 * 响应对象HttpServletResponse
 * 会话对象HttpSession
+
 它们作为方法的参数声明，并由SpringMVC负责注入。
 
-如果要操作会话域session\操作cookie\上下文域\设置响应头\设置响应行数据必须使用原生servletapi
+如果要操作会话域session\操作cookie\上下文域\设置响应头\设置响应行数据必须使用原生servletAPI。
 
-使用servlet的原生api推荐控制器方法返回值为void，就不会走视图。
+使用servlet的原生API推荐控制器方法返回值为void，就不会走视图。
+
 ```java
 @RequestMapping("/test")
 public String test(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+    // String username = request.getParameter("username");
+    // String password = request.getParameter("password");
     doSomething(request, response, session);
 }
 ```
 
+#### 控制器方法的形参获取请求参数
+在控制器方法的形参位置，设置和请求参数同名的形参，当浏览器发送请求，匹配到请求映射时，在DispatcherServlet中就会将请求参数赋值给/绑定到相应的形参。
 
-### 转发和重定向
+##### 用到的注解
+它们共有的三个属性：value、required、defaultValue
+###### @RequestParam
+作用：@RequestParam是将请求参数（包括QueryString和请求体中的 x-www-form-urlencoded类型的数据）和控制器方法的形参创建映射关系
+
+| @RequestParam属性 | 应用场景：用于提交的参数名与方法的形参不同的情况 |
+| ----------------- | ------------------------------------------------ |
+| name/value        | 指定提交的参数名                                 |
+| required          | 是否是必须的                                     |
+| defaultValue      | 如果没有值，使用这个默认值                       |
+
+
+###### @RequestHeader
+* 作用：用于获取请求头的值（String类型）
+* 位置：放在方法的参数前面
+* 属性：
+  * value：指定请求头的名字
+
 ```java
-@Controller
-public class DemoController {
-   @RequestMapping("/t1")
-   public String test1(){
-       //转发
-       return "test";
-  }
-
-   @RequestMapping("/t2")
-   public String test2(){
-       //重定向
-       return "redirect:/index.jsp";
-       //return "redirect:hello.do"; //hello.do为另一个请求/
-  }
+@RequestMapping("/header")
+public String header(@RequestHeader("user-agent") String header) {
+    System.out.println("请求头：" + header );
+    return "success";
 }
 ```
 
-### 数据处理
-#### 处理提交数据
-使用包装类可以减少错误的发生：
-* 包装类型没有值就为null
-* 简单类型没有值会出现500错误（尝试将一个null转成int，所以报错）
+###### @RequestBody
+* 作用：用于获取请求体的数据（String类型）
+* 位置：放在方法的参数前面
+* 注意：只能出现1次，因为每次请求只有一个请求体，只能用于POST请求，因为GET请求没有请求体
+* 属性：
+  * required：请求体中的数据是否必须
 
+###### @CookieValue
+* 作用：用于获取Cookie的值（String类型）
+* 位置：放在方法的参数前面
+* 属性：
+  * value：指定Cookie的名字
+
+```java
+@RequestMapping("/cookie")
+public String cookie(@CookieValue("JSESSIONID") String cookieValue) {
+    System.out.println("获取Cookie的值：" + cookieValue);
+    return "success";
+}
+```
+
+##### 赋值/绑定的规则
 SpringMVC参数绑定的规则：
 1. Servlet对象：请求，响应，会话
 2. 简单类型：直接绑定 (八种基本类型+字符串类型)
 3. 简单类型的数组和集合：
    1. 数组：直接绑定
    2. 集合：要设置@RequestParam注解
-4. POJO对象类型
+4. POJO对象类型（可以在控制器方法的形参位置设置一个实体类类型的形参，此时若浏览器传输的请求参数的参数名和实体类中的属性名一致，那么请求参数就会为此属性赋值）
    1. 普通属性：直接绑定
    2. 简单类型的属性集合：直接绑定
    3. POJO属性集合：对象名\[0].属性名
    4. POJO属性的Map：对象名\['键'].属性名
 
 ##### 简单类型
+使用包装类可以减少错误的发生：
+* 包装类型没有值就为null
+* 简单类型没有值会出现500错误（尝试将一个null转成int，所以报错）
+
 1. 提交数据 : http://localhost:8080/hello?name=kuangshen&age=18
 2. 处理方法 :
 ```java
@@ -379,12 +428,6 @@ public String hello(@RequestParam("username") String name){
 }
 ```
 3. 后台输出 : kuangshen
-
-|@RequestParam属性|应用场景：用于提交的参数名与方法的形参不同的情况|
-|---|---|
-|name/value|指定提交的参数名|
-|required|是否是必须的|
-|defaultValue|如果没有值，使用这个默认值|
 
 ##### 数组/集合
 1. 提交数据 : http://localhost:8080/hello?arr=1&arr=2&list=aa&list=bb
@@ -520,14 +563,24 @@ public class UserConverter implements Converter<String, User> {
 <mvc:annotation-driven conversion-service="factoryBean"/>
 ```
 
-#### 数据显示到前端
-##### 操作请求域
+### 数据显示到前端
+#### 操作域对象
+请求域：
 1. 通过Map：用put()方法向请求域中添加键和值
 2. 通过Model：用addAttribute()方法向请求域中添加键和值
 3. 通过ModelMap：用addAttribute()方法向请求域中添加键和值
-4. 通过ModelAndView：用addAttribute()方法向请求域中添加键和值
-5. 通过ServletAPI：直接操作操作request对象
+4. 通过ModelMap：用addAttribute()方法向请求域中添加键和值
+5. 通过ModelAndView：用addAttribute()方法向请求域中添加键和值
+6. 通过ServletAPI：直接操作request对象
 
+session域：
+1. 通过HttpSession
+
+application域：
+1. 通过ServletContext
+·
+
+#### demo
 ```java
 @RequestMapping("/sport")
 public String sport(Map<String,Object> map) {
@@ -550,53 +603,53 @@ public String draw(ModelMap model) {
     //支持链式写法，可以添加多个键和值。也是添加到请求域中
     model.addAttribute("id", 300).addAttribute("name", "猪八戒");
     return "success";
-```
 
-#### 获取头/体/Cookie
-##### @RequestBody
-* 作用：用于获取请求体的数据（String类型）
-* 位置：放在方法的参数前面
-* 注意：只能出现1次，因为每次请求只有一个请求体，只能用于POST请求，因为GET请求没有请求体
-* 属性：
-  * required：请求体中的数据是否必须
+@RequestMapping("/testSession")
+public String testSession(HttpSession session){
+    session.setAttribute("testSessionScope", "hello,session");
+    return "success";
 
-##### @RequestHeader
-* 作用：用于获取请求头的值（String类型）
-* 位置：放在方法的参数前面
-* 属性：
-  * value：指定请求头的名字
-
-```java
-@RequestMapping("/header")
-public String header(@RequestHeader("user-agent") String header) {
-    System.out.println("请求头：" + header );
+@RequestMapping("/testApplication")
+public String testApplication(HttpSession session){
+	ServletContext application = session.getServletContext();
+    application.setAttribute("testApplicationScope", "hello,application");
     return "success";
 }
 ```
 
-##### @CookieValue
-* 作用：用于获取Cookie的值（String类型）
-* 位置：放在方法的参数前面
-* 属性：
-  * value：指定Cookie的名字
 
+### 转发和重定向
 ```java
-@RequestMapping("/cookie")
-public String cookie(@CookieValue("JSESSIONID") String cookieValue) {
-    System.out.println("获取Cookie的值：" + cookieValue);
-    return "success";
+@Controller
+public class DemoController {
+    @RequestMapping("/t1")
+    public String test1(){
+        //转发
+        return "test";
+        //return "forward:/test";
+    }
+
+    @RequestMapping("/t2")
+    public String test2(){
+        //重定向
+        return "redirect:/index.jsp";
+        //return "redirect:hello.do"; //hello.do为另一个请求/
+    }
 }
 ```
-
 
 
 ### Json交互
-下面的注解需要jackson包支持
+下面的注解需要jackson包支持，同时在SpringMVC的核心配置文件中开启mvc的注解驱动。
 #### @RequestBody
 在处理器方法形参上使用，把请求体的json格式数据，转换成java对象。
 
+注解@RequestBody接收的参数是来自requestBody中，即请求体。一般用于处理非 Content-Type: application/x-www-form-urlencoded编码格式的数据，比如：application/json、application/xml等类型的数据。
+
+[和RequestParam的区别](https://blog.csdn.net/weixin_38004638/article/details/99655322)
+
 #### @ResponseBody
-把控制器方法返回值Java对象转换为Json字符串给到前端，前端获取到是json对象。
+在处理器方法上使用@ResponseBody注解进行标识，将Java对象直接作为控制器方法的返回值返回，就会自动转换为Json格式的字符串。
 
 #### Demo
 ```java
@@ -666,6 +719,7 @@ public class UserController {
 </mvc:annotation-driven>
 ```
 
+
 ### 文件
 #### 上传
 ##### 配置bean
@@ -697,7 +751,7 @@ public String  uploadFile(@RequestParam("file") MultipartFile file, HttpServletR
     //1.1 生成一个唯一值（使用jdk提供的UUID，通用唯一码，利用系统当前时间+系统中网卡的mac地址进行组合生成的唯一值，生成一个32字符长度的字符串）
     String uuid = UUID.randomUUID().toString();
     //1.2 获取上传文件的扩展名
-    String originalFilename = imgFile.getOriginalFilename();//获取上传的文件名,例如：6.jpg
+    String originalFilename = file.getOriginalFilename();//获取上传的文件名,例如：6.jpg
     //1.3 拼接文件完整名
     String fileExtName = originalFilename.substring(originalFilename.lastIndexOf("."));  //获取到：".jpg"
     String fileName = uuid + fileExtName;  //xxxxxxxxxxx.jpg
@@ -710,19 +764,19 @@ public String  uploadFile(@RequestParam("file") MultipartFile file, HttpServletR
     //2.2 使用ServletContext根据相对路径获取绝对路径
     String path = request.getServletContext().getRealPath(realPath);
     //2.3 判断upload和日期目录是否存在，不存在就创建
-    File file = new File(path);
+    File f = new File(path);
     //判断父目录是否存在
-    if(!file.getParentFile().exists()){
+    if(!f.getParentFile().exists()){
         //创建父目录
-        file.getParentFile().mkdir();
+        f.getParentFile().mkdir();
     }
     //判断日期子目录是否存在
-    if(!file.exists()){
-        file.mkdir();
+    if(!f.exists()){
+        f.mkdir();
     }
 
     //3.实现文件写入到上传文件位置
-    imgFile.transferTo(new File(path,fileName));
+    file.transferTo(new File(path,fileName));
 
     return "success";
 }
@@ -768,9 +822,35 @@ public void downloads(HttpServletResponse response ,HttpServletRequest request) 
 }
 ```
 
+## RESTful
+### HiddenHttpMethodFilter
+由于浏览器只支持发送get和post方式的请求，SpringMVC 提供了 **HiddenHttpMethodFilter** 帮助我们**将 POST 请求转换为 DELETE 或 PUT 请求**。
+
+**HiddenHttpMethodFilter** 处理put和delete请求的条件：
+1. 当前请求的请求方式必须为post
+2. 当前请求必须传输请求参数_method
+
+满足以上条件，**HiddenHttpMethodFilter** 过滤器就会将当前请求的请求方式转换为请求参数_method的值，因此请求参数\_method的值才是最终的请求方式。
+
+### 配置
+在web.xml中注册**HiddenHttpMethodFilter**：
+```xml
+<!-- 在web.xml中注册时，必须先注册CharacterEncodingFilter，再注册HiddenHttpMethodFilter -->
+<filter>
+    <filter-name>HiddenHttpMethodFilter</filter-name>
+    <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>HiddenHttpMethodFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+```
 
 
-## 乱码问题
+## 参数乱码问题
+解决**获取请求参数**的乱码问题，可以使用SpringMVC提供的编码过滤器CharacterEncodingFilter（或者第三方的），记得须在web.xml中进行注册。
+
+SpringMVC中处理编码的过滤器一定要配置到其他过滤器之前，否则无效。
 ### Spring提供的过滤器
 Spring提供的过滤器，在web.xml中配置
 ```xml
@@ -790,7 +870,7 @@ Spring提供的过滤器，在web.xml中配置
 </filter-mapping>
 ```
 
-#### 自定义过滤器
+### 自定义过滤器
 网上大神写的
 ```java
 import javax.servlet.*;
@@ -957,6 +1037,8 @@ public class MyInterceptor implements HandlerInterceptor {
         <!--/admin/* 拦截的是/admin/add等等这种，/admin/add/user不会被拦截-->
         <!--/admin/** 拦截的是/admin/下的所有-->
         <mvc:mapping path="/**"/>
+        <!-- 通过mvc:exclude-mapping设置需要排除的请求，即不需要拦截的请求 -->
+        <mvc:exclude-mapping path="/test"/>
         <!--bean配置的就是拦截器-->
         <bean class="com.kuang.interceptor.MyInterceptor"/>
     </mvc:interceptor>
@@ -1045,7 +1127,7 @@ FilterChain chain){
 }
 ```　
 
-### 自定义SpringMVC异常处理类
+### 基于配置的异常处理
 只需要写一个类实现HandlerExceptionResolver接口，就可以捕获controller中的异常：
 ```java
 @Component
@@ -1070,7 +1152,7 @@ public class CustomException implements HandlerExceptionResolver {
 }
 ```
 
-### web.xml配置友好页面
+在web.xml配置友好页面中
 ```xml
 <!--错误页面配置-->
 <error-page>
@@ -1083,6 +1165,22 @@ public class CustomException implements HandlerExceptionResolver {
 </error-page>
 ```
 
+### 基于注解的异常处理
+```java
+//@ControllerAdvice将当前类标识为异常处理的组件
+@ControllerAdvice
+public class ExceptionController {
+
+    //@ExceptionHandler用于设置所标识方法处理的异常
+    @ExceptionHandler(ArithmeticException.class)
+    //ex表示当前请求处理中出现的异常对象
+    public String handleArithmeticException(Exception ex, Model model){
+        model.addAttribute("ex", ex);
+        return "error";
+    }
+
+}
+```
 
 
 ## 参考
