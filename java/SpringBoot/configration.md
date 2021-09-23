@@ -18,6 +18,16 @@ SpringBoot强烈推荐yaml配置，并且基于native YAML提供更强大的特�
 ## 配置注入
 可以使用配置文件中的值注入到实体类
 
+### 配置提示
+```xml
+<!-- 导入配置文件处理器，配置文件进行绑定就会有提示 -->
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring‐boot‐configuration‐processor</artifactId>
+  <optional>true</optional>
+</dependency>
+```
+
 ### yaml-demo
 
 #### yaml配置文件
@@ -86,15 +96,17 @@ class DemoApplicationTests {
 ```
 
 ### 常用注解
-* @PropertySource：加载指定的配置文件
-  * value属性：指定配置文件
+* @PropertySource：加载指定的配置文件（完成加载后，根据配置文件的类型，使用下面2个不同的注解进行值注入）
+  * value属性：指定配置文件(数组类型，可加载多个)
 * yaml - @configurationProperties：默认从全局配置文件中获取值
   * prefix属性：指定配置文件中绑定到被注入实体类的配置内容
-* properties - @Value：给被标注的属性注入值，值可以有多种来源：字面量/Spring表达式/从配置文件中取值
+* 读取properties - @Value：给被标注的属性注入值，值可以有多种来源：字面量/Spring表达式/从配置文件中取值
+* @ImportResource：读取外部配置文件
 
 ### yaml-占位符
 yaml配置文件还可以使用占位符。
-#### 随机数
+
+#### 随机值占位符
 使用占位符生成随机数，示例：
 * ${random.value}
 * ${random.int}
@@ -102,9 +114,9 @@ yaml配置文件还可以使用占位符。
 * ${random.int(10)}
 * ${random.int\[1024,65536]}
 
-#### 取值
-使用占位符获取之前配置的值，如果没有也可以使用指定默认值：
-* ${person.full-name:other}：获取person对象的full-name属性的值，如果获取失败则使用other值。
+#### 属性配置占位符
+使用占位符可以在配置文件中引用前面配置过的属性，如果没有也可以使用指定默认值：
+* ${person.full-name:other}：获取person对象的full-name属性的值，如果找不到属性则使用other值(默认值)。
 
 
 ### yaml-松散绑定
@@ -179,26 +191,27 @@ public class PropController4 {
 
 
 ## 配置位置
-springboot 启动会扫描以下位置的application.properties或者application.yml文件作为Spring boot的默认配置文件：
-1. 项目路径下的config文件夹配置文件
-2. 项目路径下配置文件
-3. 资源路径下的config文件夹配置文件
-4. 资源路径下配置文件
+springboot启动会扫描以下位置的application.properties或者application.yml文件作为Spring boot的默认配置文件：
+1. 项目路径下的config文件夹配置文件（file:./config/）
+2. 项目路径下配置文件（file:./）
+3. 资源路径下的config文件夹配置文件（classpath:/config/）
+4. 资源路径下配置文件（classpath:/）
 
 优先级由高到底，高优先级的配置会覆盖低优先级的配置。
 
 在同一级目录下优先级为：properties > yml > yaml，相同的属性取优先级高的文件中的值，不同的属性取并集（项目中一般只用一种文件）。
 
-## 环境切换
+## profile - 多环境
 profile是Spring对不同环境提供不同配置的功能支持，可以通过激活不同的环境版本，实现快速切换环境。
 
-### 方案1 - 多配置文件
+### 方案1 - 多profile文件形式
 我们在主配置文件编写的时候，文件名可以是 application-{profile}.properties/yml，用来指定多个环境版本，例如：
 * application-test.properties 代表测试环境配置
 * application-dev.properties 代表开发环境配置
 
 但是Springboot并不会直接启动这些配置文件，它默认使用application.properties主配置文件，我们需要通过一个配置（在主配置文件中）来选择需要激活的环境。
 
+#### 配置文件参数激活环境
 properties格式：
 ```properties
 # 比如在配置文件中指定使用dev环境，我们可以通过设置不同的端口号进行测试；
@@ -237,7 +250,8 @@ spring:
 ```
 
 ### 传入参数激活不同的环境
-#### 虚拟机参数
+除了上面提到的[配置文件参数激活环境](#配置文件参数激活环境)外，还可以通过如下方式激活环境。
+#### jvm参数
 ```sh
 java -jar -Dspring.profiles.active=环境key jar包名称  # 切记-D参数一定要写在jar包前面
 # -D<名称>=<值> 用于 设置系统属性（临时系统属性，供运行的java程序读取）
@@ -247,6 +261,21 @@ java -jar -Dspring.profiles.active=环境key jar包名称  # 切记-D参数一�
 java -jar jar包名称 --spring.profiles.active=环境key  # 切记--参数一定要写在jar包后面
 # 这里设置的是传递给java程序的命令行参数
 ```
+
+
+## 外部配置
+Spring Boot 支持多种外部配置方式，这些方式优先级如下:
+1. 命令行参数
+2. 来自java:comp/env的JNDI属性
+3. Java系统属性(System.getProperties())
+4. 操作系统环境变量
+5. RandomValuePropertySource配置的random.*属性值
+6. jar包外部的application-{profile}.properties或application.yml(带spring.profile)配置文件
+7. jar包内部的application-{profile}.properties或application.yml(带spring.profile)配置文件
+8. jar包外部的application.properties或application.yml(不带spring.profile)配置文件
+9. jar包内部的application.properties或application.yml(不带spring.profile)配置文件
+10. @Configuration注解类上的@PropertySource
+11. 通过SpringApplication.setDefaultProperties指定的默认属性
 
 ## 参考
 * https://www.cnblogs.com/lskreno/p/12222762.html

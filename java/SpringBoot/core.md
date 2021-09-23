@@ -12,7 +12,7 @@
 ## 配置的艺术
 
 ### 开箱即用的pom
-当前项目的pom
+当前项目的pom：其父母为spring-boot-starter-parent
 ```xml
 <parent>
     <groupId>org.springframework.boot</groupId>
@@ -22,7 +22,7 @@
 </parent>
 ```
 
-spring-boot-starter-parent项目的pom
+spring-boot-starter-parent项目的pom：其父母为spring-boot-dependencies
 ```xml
 <parent>
     <groupId>org.springframework.boot</groupId>
@@ -33,6 +33,8 @@ spring-boot-starter-parent项目的pom
 ```
 
 **spring-boot-dependencies**才是真正管理SpringBoot应用里面所有依赖版本的地方，它是SpringBoot的版本控制中心。
+
+![core+截屏2021-09-17 16.58.49](https://raw.githubusercontent.com/loli0con/picgo/master/images/core%2B%E6%88%AA%E5%B1%8F2021-09-17%2016.58.49.png%2B2021-09-17-17-02-07)
 
 从这里我们可以知道：  
 SpringBoot为我们提供了一套最优的依赖包版本搭配组合，并且使用了传递依赖功能。我们想使用哪个功能（比如Redis），只需要在pom文件加入一个启动器依赖的坐标（不需要指定版本号），它会自动帮我们把相关的所有依赖包都传递依赖进来，且不会存在版本冲突问题。
@@ -144,7 +146,7 @@ public @interface AutoConfigurationPackage {
 }
 ```
 @import：Spring底层注解@import，给容器中导入一个组件。
-Registrar.class作用：将主启动类的所在包及包下面所有子包里面的所有组件扫描到Spring容器。
+Registrar.class作用：定义默认的包扫描规则——将主启动类的所在包及包下面所有子包里面的所有组件扫描到Spring容器。
 
 ##### AutoConfigurationImportSelector
 AutoConfigurationImportSelector：自动配置导入选择器。该类实现了ImportSelector接口，重写了selectImports方法，用于导入和自动配置相关的类。
