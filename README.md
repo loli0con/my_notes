@@ -1,6 +1,6 @@
 # my_notes
 
-something minds during studying
+KILL OR DIE
 
 ## introduction
 
@@ -46,15 +46,17 @@ xmind 格式无法在线阅读，主要用于备份和发布。
 - 不背单词
 
 ### 一
-1. SpringBoot
-2. redis笔记
-3. MongoDB
-4. RocketMQ
-5. 数据结构
-   1. 树
-6.  综合案例整理
-   2. JavaWeb
-   3. SpringMVC
+1. redis笔记
+2. MongoDB
+3. RocketMQ
+4. spring boot
+5. spring cloud
+6. 数据结构
+   1. 红黑树
+   2. b树/b+树
+7.  综合案例整理
+   3. JavaWeb
+   4. SpringMVC
 
 ### 一点五
 * Java日志
