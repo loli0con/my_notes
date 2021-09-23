@@ -12,6 +12,10 @@
 
 静态资源放在这些目录中任何一个都可以，但习惯会把静态资源放在`classpath:/static/`目录下。
 
+#### 静态资源访问前缀
+![springmvc+20210923160426](https://raw.githubusercontent.com/loli0con/picgo/master/images/springmvc%2B20210923160426.png%2B2021-09-23-16-04-27)
+默认无前缀，即在*当前项目 + static-path-pattern + 静态资源名 = 静态资源文件夹*下找对应的静态资源。
+
 ### 导入Webjars
 Webjars本质就是以jar包的方式引入静态资源。
 
@@ -38,12 +42,31 @@ Webjars本质就是以jar包的方式引入静态资源。
 ![springmvc+20210825181003](https://raw.githubusercontent.com/loli0con/picgo/master/images/springmvc%2B20210825181003.png%2B2021-08-25-18-10-03)
 
 
-### 自定义静态资源路径（不推荐）
+### 自定义
+#### 静态资源路径（不推荐）
 我们也可以自己通过配置文件来指定一下，哪些文件夹是需要我们放静态资源文件的，在application.properties中配置：
 ```properties
 spring.resources.static-locations=classpath:/coding1/,classpath:/coding2/
 ```
 一旦自己定义了静态文件夹的路径，原来的自动配置就都会失效了！
+
+### 核心代码
+![springmvc+20210923172249](https://raw.githubusercontent.com/loli0con/picgo/master/images/springmvc%2B20210923172249.png%2B2021-09-23-17-22-53)
+
+## REST
+浏览器默认不支持PUT和DELETE方法，需要通过其他方式——**隐藏HTTP方法过滤器**来实现。
+```html
+<input name="_method" type="hidden" value="PUT" />
+<input name="_method" type="hidden" value="DALETE" />
+```
+
+![springmvc+20210923191909](https://raw.githubusercontent.com/loli0con/picgo/master/images/springmvc%2B20210923191909.png%2B2021-09-23-19-19-13)
+
+![springmvc+20210923193120](https://raw.githubusercontent.com/loli0con/picgo/master/images/springmvc%2B20210923193120.png%2B2021-09-23-19-31-23)
+
+![springmvc+20210923194346](https://raw.githubusercontent.com/loli0con/picgo/master/images/springmvc%2B20210923194346.png%2B2021-09-23-19-43-50)
+
+也可以自己实现该方法：当HiddenHttpMethodFilter类不存在容器里面时，才会自动配置该方法，所以自己可以编写一个方法，给容器里面放入HiddenHttpMethodFilter类，让自己编写的方法执行而默认的配置方法不执行。
 
 
 
@@ -67,8 +90,8 @@ Inclusion of ContentNegotiatingViewResolver and BeanNameViewResolver beans.
 Support for serving static resources, including support for WebJars 
 
 // 自动注册了Converter、GenericConverter和转换器
-// 转换器，这就是我们网页提交数据到后台自动封装成为对象的东西，比如把"1"字符串自动转换为int类型
-// Formatter：【格式化器，比如页面给我们了一个2019-8-10，它会给我们自动格式化为Date对象】
+// Converter：这就是我们网页提交数据到后台自动封装成为对象的东西，比如把"1"字符串自动转换为int类型
+// Formatter：格式化器，比如页面给我们了一个2019-8-10，它会给我们自动格式化为Date对象
 Automatic registration of Converter, GenericConverter, and Formatter beans.
 
 // 支持HttpMessageConverters：
