@@ -364,13 +364,15 @@ public class Test {
 ### 用法示例
 ```Java
 public interface GenderDesc {
-    void info();
+    void info();  // 每个枚举值提供不同的实现
+    String nationality();  // 由枚举类提供相同的实现
 }
 ```
 
 ```Java
 public enum Gender implements GenderDesc{
-    MALE("大雄"){
+    // 相当于创建Gender的匿名内部子类的实例，括号部分是类体
+    MALE("大雄"){  // 调用构造器创建枚举类对象
         @Override
         public void info() {
             System.out.println("我是男生");
@@ -380,7 +382,7 @@ public enum Gender implements GenderDesc{
         public String bornIn(int year) {
             return "俺出生在"+year+"年！";
         }
-    },FEMALE("静香"){
+    },FEMALE("静香"){  // 调用构造器创建枚举类对象
         @Override
         public void info() {
             System.out.println("我是女生");
@@ -391,13 +393,22 @@ public enum Gender implements GenderDesc{
             return "我出生在"+year+"年～";
         }
     };
-    private final String name;
-    private Gender(String name){
+    // 定义枚举类时，需要显式列出所有的枚举值，如上面的MALE、FEMALE所示。所有的枚举值之间以英文逗号（,）隔开，枚举值列举结束后以英文分号作为结束。这些枚举值代表了该枚举类的所有可能的实例。
+    
+    private final String name;  // 定义成员变量
+    private Gender(String name){  //  显式定义带参数的构造器，为成员变量指定初始值
         this.name = name;
     }
     public String getName(){
         return this.name;
     }
+
+    @Override
+    public String nationality(){
+        return "Japanese";
+    }
+
+    // 包含了抽象方法，是抽象枚举类，系统自动会为该类添加abstract关键字修饰。
     public abstract String bornIn (int year);
 }
 ```
