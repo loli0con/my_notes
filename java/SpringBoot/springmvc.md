@@ -69,6 +69,15 @@ spring.resources.static-locations=classpath:/coding1/,classpath:/coding2/
 也可以自己实现该方法：当HiddenHttpMethodFilter类不存在容器里面时，才会自动配置该方法，所以自己可以编写一个方法，给容器里面放入HiddenHttpMethodFilter类，让自己编写的方法执行而默认的配置方法不执行。
 
 
+## 异常处理 
+默认情况下，Spring Boot提供`/error`处理所有错误的映射。对于机器客户端，它将生成JSON响应，其中包含错误，HTTP状态和异常消息的详细信息。对于浏览器客户端，响应一个“ whitelabel”错误视图，以HTML格式呈现相同的数据。
+
+要对其进行自定义，添加View解析为`/error`；要完全替换默认行为，可以实现ErrorController并注册该类型的Bean定义，或添加ErrorAttributes类型的组件以使用现有机制但替换其内容。
+
+### 自定义错误页面
+在静态资源文件夹下的error/下的4xx，5xx页面会被自动解，以替换默认的错误页面。
+
+有精确的错误状态码页面就匹配精确，没有就找4xx.html / 5xx.html；如果都没有就触发白页。
 
 ## 拓展MVC
 
@@ -156,7 +165,9 @@ public class MvcConfiguration implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // 添加拦截器，通过addPathPatterns来添加拦截路径
         // **代表拦截多层，*代表只拦截一层
-        registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(new LoginInterceptor())
+                .addPathPatterns("/**")  // 拦截所有请求，包括静态资源
+                .excludePathPatterns("/", "/login", "/css/**");
     }
 }
 

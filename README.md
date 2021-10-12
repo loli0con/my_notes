@@ -1,7 +1,5 @@
 # my_notes
 
-KILL OR DIE
-
 ## introduction
 
 一些学习笔记仓库，以 markdown 格式和 xmind 格式为主。
@@ -54,9 +52,9 @@ xmind 格式无法在线阅读，主要用于备份和发布。
 6. 数据结构
    1. 红黑树
    2. b树/b+树
-7.  综合案例整理
-   3. JavaWeb
-   4. SpringMVC
+7. 综合案例整理
+   1. JavaWeb
+   2. SpringMVC
 
 ### 一点五
 * Java日志
