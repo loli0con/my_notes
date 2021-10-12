@@ -60,6 +60,35 @@ mybatis-plus:
 ## CRUD接口
 [CRUD接口](https://baomidou.com/guide/crud-interface.html#crud-%E6%8E%A5%E5%8F%A3)
 
+![mybatisplus+20211012173314](https://raw.githubusercontent.com/loli0con/picgo/master/images/mybatisplus%2B20211012173314.png%2B2021-10-12-17-33-15)
+
+### service封装
+Mybatis-Plus为了开发更加快捷，对业务层也进行了封装，直接提供了相关的接口和实现类。我们在进行业务层开发时，可以继承它提供的接口和实现类，使得编码更加高效。
+
+#### 步骤
+1. 定义接口继承IService
+2. 定义实现类继承ServiceImpl\<Mapper，Entity>实现定义的接口
+
+##### 定义Service接口
+```java
+public interface UserService extends IService<User> {}
+```
+
+##### 定义Service实现类
+```java
+@Service
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+    /**
+     * test
+     */
+    public void test(){
+        // this.baseMapper可以获取到userMapper对象，相当于已经注入进来了并且放到了this.baseMapper中;
+        // 说明：Iservice中也包含了一些封装的CRUD方法
+        UserMapper baseMapper = this.baseMapper;
+    }
+}
+```
+
 ## 条件构造器
 [条件构造器](https://baomidou.com/guide/wrapper.html#%E6%9D%A1%E4%BB%B6%E6%9E%84%E9%80%A0%E5%99%A8)
 
@@ -76,33 +105,6 @@ mybatis-plus:
 
 ## 通用枚举
 [通用枚举](https://baomidou.com/guide/enum.html#%E9%80%9A%E7%94%A8%E6%9E%9A%E4%B8%BE)
-
-## service封装
-Mybatis-Plus 为了开发更加快捷，对业务层也进行了封装，直接提供了相关的接口和实现类。我们在进行业务层开发时，可以继承它提供的接口和实现类，使得编码更加高效。
-
-### 步骤
-1. 定义接口继承IService
-2. 定义实现类继承ServiceImpl\<Mapper，Entity>实现定义的接口
-
-#### 定义Service接口
-```java
-public interface UserService extends IService<User> {}
-```
-
-#### 定义Service实现类
-```java
-@Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
-    /**
-     * test
-     */
-    public void test(){
-        // this.baseMapper可以获取到userMapper对象，相当于已经注入进来了并且放到了this.baseMapper中;
-        // 说明：Iservice中也包含了一些封装的CRUD方法
-        UserMapper baseMapper = this.baseMapper;
-    }
-}
-```
 
 ## 自动填充
 我们在进行数据库表的更新/插入操作时，如果有创建时间、更新时间，每次插入都需要手动设置字段值，这就很麻烦。而Mybatis Plus提供了自动填充字段的设置。即给某些指定字段设置默认值。
