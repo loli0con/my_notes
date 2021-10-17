@@ -44,11 +44,11 @@ sudo pmset -b sleep 20
 # 向硬盘写入镜像，同时内存供电
 sudo pmset -b hibernatemode 3
 
-# 显示器休眠时间：15 分钟
-# sudo pmset -b displaysleep 15
+# 显示器休眠时间：10 分钟
+# sudo pmset -b displaysleep 10
 # 显示器关闭的时间在系统配置界面中进行设置
 
-# 硬盘休眠时间：10 分钟
+# 硬盘休眠时间：15 分钟
 sudo pmset -b disksleep 15
 
 # 高电量下 standby: 1.5小时
