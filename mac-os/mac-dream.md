@@ -58,8 +58,6 @@ sudo pmset -b standbydelaylow 3600
 # standby 电量阈值：90%
 sudo pmset -b highstandbythreshold 90
 
-# 休眠时断网
-sudo pmset -b tcpkeepalive 0
 # 开盖唤醒
 sudo pmset -b lidwake 1
 # 关闭被同一 iCloud 下的设备唤醒
