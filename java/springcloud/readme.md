@@ -8,9 +8,9 @@
 ## 生态
 Cloud：
 * 注册中心
-  * Eureka ❌
-  * Zookeeper ✅
-  * Consul ✅
+  * [Eureka](eureka.md) ❌
+  * [Zookeeper](zookeeper.md) ✅
+  * [Consul](consul.md) ✅
   * Nacos ✅
 * 服务调用-rest风格
   * Ribbo ✅
@@ -39,3 +39,9 @@ Cloud：
 3. 编写配置（YML）
 4. 编写主启动类
 5. 编写业务类
+
+## 实用工具
+RestTemplate
+
+## 名词解释
+* 服务治理：在传统的rpc远程调用框架中，管理每个服务与服务之间依赖关系比较复杂，管理比较复杂，所以需要使用服务治理，管理服务于服务之间依赖关系，可以实现服务调用、负载均衡、容错等，实现服务发现与注册。

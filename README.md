@@ -44,11 +44,13 @@ xmind 格式无法在线阅读，主要用于备份和发布。
 - 不背单词
 
 ### 一
-1. redis笔记
-2. MongoDB
+1. spring cloud
+   1. https://www.bilibili.com/video/BV18E411x7eT
+   2. 分布式事务、spring事务
+2. spring boot
 3. RocketMQ
-4. spring boot
-5. spring cloud
+4. MongoDB
+5. redis笔记
 6. 数据结构
    1. 红黑树
    2. b树/b+树
