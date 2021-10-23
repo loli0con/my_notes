@@ -74,8 +74,8 @@ server和client都要修改yml配置中的`defaultZone`为其他的eureka实例�
 修改RestTemplate访问的URL地址，修改为“CLOUD-SERVICE-NAME”（服务提供者在eureka上注册的名字）。
 #### 配置类
 ```java
-@Configurationpublic
-class ApplicationContextBean{
+@Configuration
+public class ApplicationContextBean{
     @Bean
     @LoadBalanced //使用@LoadBalanced注解赋予RestTemplate负载均衡的能力
     public RestTemplate getRestTemplate(){
