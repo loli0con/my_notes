@@ -255,3 +255,89 @@ threadPoolProperties={
     @HystrixProperty(name="queueSizeRejectionThreshold",value="5"),
 }
 ```
+
+
+## 工作流程
+![hystrix+20211029204456](https://raw.githubusercontent.com/loli0con/picgo/master/images/hystrix%2B20211029204456.png%2B2021-10-29-20-44-57)
+
+
+1. 创建 HystrixCommand（用在依赖的服务返回单个操作结果的时候）或 HystrixObserableCommand（用在依赖的服务返回多个操作结果的时候）对象。
+2. 命令执行。其中 HystrixComand 实现了下面前两种执行方式；而 HystrixObservableCommand 实现了后两种执行方式：
+   * execute()：同步执行，从依赖的服务返回一个单一的结果对象，或是在发生错误的时候抛出异常。
+   * queue()：异步执行，直接返回一个Future对象，其中包含了服务执行结束时要返回的单一结果对象。
+   * observe()：返回 Observable 对象，它代表了操作的多个结果，它是一个 Hot Obserable（不论"事件源"是否有"订阅者"，都会在创建后对事件进行发布，所以对于 Hot Observable 的每一个"订阅者"都有可能是从"事件源"的中途开始的，并可能只是看到了整个操作的局部过程）。
+   * toObservable()：同样会返回 Observable 对象，也代表了操作的多个结果，但它返回的是一个Cold Observable（没有"订阅者"的时候并不会发布事件，而是进行等待，直到有"订阅者"之后才发布事件，所以对于 Cold Observable 的订阅者，它可以保证从一开始看到整个操作的全部过程）。
+3. 若当前命令的请求缓存功能是被启用的，并且该命令缓存命中，那么缓存的结果会立即以 Observable 对象的形式返回。
+4. 检查断路器是否为打开状态。如果断路器是打开的，那么Hystrix不会执行命令，而是转接到 fallback 处理逻辑（第8步）；如果断路器是关闭的，检查是否有可用资源来执行命令（第5步）。
+5. 线程池/请求队列/信号量是否占满。如果命令依赖服务的专有线程池和请求队列，或者信号量（不使用线程池的时候）已经被占满，那么 Hystrix 也不会执行命令，而是转接到 fallback 处理逻辑（第8步）。
+6. Hystrix 会根据我们编写的方法来决定采取什么样的方式去请求依赖服务。
+   * HystrixCommand.run()：返回一个单一的结果，或者抛出异常。
+   * HystrixObservableCommand.construct()：返回一个Observable 对象来发射多个结果，或通过 onError 发送错误通知。
+7. Hystrix会将 "成功"、"失败"、"拒绝"、"超时" 等信息报告给断路器，而断路器会维护一组计数器来统计这些数据。断路器会使用这些统计数据来决定是否要将断路器打开，来对某个依赖服务的请求进行"熔断/短路"。
+8. 当命令执行失败的时候，Hystrix 会进入 fallback 尝试回退处理，我们通常也称该操作为"服务降级"。而能够引起服务降级处理的情况有下面几种：
+   * 第4步：当前命令处于"熔断/短路"状态，断路器是打开的时候。
+   * 第5步：当前命令的线程池、请求队列或者信号量被占满的时候。
+   * 第6步：HystrixObservableCommand.construct() 或 HystrixCommand.run() 抛出异常的时候。
+9. 当Hystrix命令执行成功之后，它会将处理结果直接返回或是以 Observable 的形式返回。
+
+
+tips：如果我们没有为命令实现降级逻辑或者在降级处理逻辑中抛出了异常，Hystrix 依然会返回一个 Observable 对象，但是它不会发射任何结果数据，而是通过 onError 方法通知命令立即中断请求，并通过onError()方法将引起命令失败的异常发送给调用者。
+
+
+## Dashboard
+除了隔离依赖服务的调用以外，Hystrix还提供了准实时的调用监控（Hystrix Dashboard），Hystrix会持续地记录所有通过Hystrix发起的请求的执行信息，并以统计报表和图形的形式展示给用户，包括每秒执行多少请求多少成功，多少失败等。
+
+### pom
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-hystrix-dashboard</artifactId>
+</dependency>
+
+<!-- dashboard服务和被监控的服务需要加入这一项依赖 -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-actuator</artifactId>         
+</dependency>
+```
+
+### yml
+```yml
+server:
+    port: 9001  # 监控页面的端口，呆会访问  localhost:9001  这个url能看到dashboard。
+```
+
+### 主启动
+```java
+@EnableHystrixDashboard
+```
+
+### 监控端点
+这里本不用配置，如果会遇到错误：“Unable to connect to Command Metric Stream.”，则需要进行如下配置。
+
+新版本Hystrix需要在主启动类（被监控的服务）中指定监控路径：
+```java
+/** 
+    此配置是为了服务监控而配置，与服务容错本身无关，springcloud 升级后的坑。
+
+    ServletRegistrationBean 因为 springboot 的默认路径不是 "/hystrix.stream"，只要在自己的项目里配置上下面的 servlet 就可以了
+*/
+
+@Bean
+public ServletRegistrationBean getServlet(){
+    HystrixMetricsStreamServlet streamServlet = new  HystrixMetricsStreamServlet();
+    ServletRegistrationBean registrationBean =  new ServletRegistrationBean(streamServlet);
+    registrationBean.setLoadOnStartup(1);
+    registrationBean.addUrlMappings("/hystrix.stream");
+    registrationBean.setName("HystrixMetricsStreamServlet");
+    return registrationBean;
+} 
+```
+
+### 监控页面
+![hystrix+20211029211220](https://raw.githubusercontent.com/loli0con/picgo/master/images/hystrix%2B20211029211220.png%2B2021-10-29-21-12-22)
+
+#### 内容解析
+![hystrix+20211029211531](https://raw.githubusercontent.com/loli0con/picgo/master/images/hystrix%2B20211029211531.png%2B2021-10-29-21-15-32)
+
+![hystrix+20211029211701](https://raw.githubusercontent.com/loli0con/picgo/master/images/hystrix%2B20211029211701.png%2B2021-10-29-21-17-03)

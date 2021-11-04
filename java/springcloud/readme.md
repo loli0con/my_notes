@@ -43,5 +43,15 @@ Cloud：
 ## 实用工具
 RestTemplate
 
-## 名词解释
-* 服务治理：在传统的rpc远程调用框架中，管理每个服务与服务之间依赖关系比较复杂，管理比较复杂，所以需要使用服务治理，管理服务于服务之间依赖关系，可以实现服务调用、负载均衡、容错等，实现服务发现与注册。
+## alibaba
+如果使用nacos、sentinel、seata等alibaba的套件，需要在项目的根pom引入依赖。
+
+```xml
+<dependency>
+    <groupId>com.alibaba.cloud</groupId>
+    <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+    <version>2.1.0.RELEASE</version>
+    <type>pom</type>
+    <scope>import</scope>
+</dependency> 
+```
