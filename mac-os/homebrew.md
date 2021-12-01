@@ -14,15 +14,15 @@ HomeBrew中文翻译为**家酿酒**，是macOS上包管理的事实标准。
 
 ### 名词解释
 在开始使用HomeBrew之前，我们有必要了解一下怎么酿酒。
-|英文|翻译|实际含义|
-|-----|-----|-----|
-|formula(e)|配方|安装包的描述文件，formulae为复数。**酿酒配方**|
-|cellar|酒窖|包安装好后所在的目录。**存放酒的地方**|
-|keg|小桶|具体某个包所在的目录，keg 是 cellar 的子目录。**小酒桶**|
-|bottle|瓶子;一瓶的量|预先编译好的包，不需要现场下载编译源码，速度会快很多;官方库中的包大多都是通过 bottle 方式安装。**酒瓶**|
-|tap|水龙头|包的来源。**酿酒时所用到的水的来源**|
-|cask|木桶|安装 macOS native 应用的扩展，可以理解为有图形化界面的应用。**木酒桶**|
-|bundle|捆|描述 Homebrew 依赖的扩展，解决软件依赖问题|
+| 英文       | 翻译          | 实际含义                                                                                                |
+| ---------- | ------------- | ------------------------------------------------------------------------------------------------------- |
+| formula(e) | 配方          | 安装包的描述文件，formulae为复数。**酿酒配方**                                                          |
+| cellar     | 酒窖          | 包安装好后所在的目录。**存放酒的地方**                                                                  |
+| keg        | 小桶          | 具体某个包所在的目录，keg 是 cellar 的子目录。**小酒桶**                                                |
+| bottle     | 瓶子;一瓶的量 | 预先编译好的包，不需要现场下载编译源码，速度会快很多;官方库中的包大多都是通过 bottle 方式安装。**酒瓶** |
+| tap        | 水龙头        | 包的来源。**酿酒时所用到的水的来源**                                                                    |
+| cask       | 木桶          | 安装 macOS native 应用的扩展，可以理解为有图形化界面的应用。**木酒桶**                                  |
+| bundle     | 捆            | 描述 Homebrew 依赖的扩展，解决软件依赖问题                                                              |
 
 [小桶和木桶的区别](https://cn.weblogographic.com/difference-between-keg-and-cask-ale-2652)：
 cask啤酒被称为桶装啤酒，它是未经高温消毒的，未经过滤的啤酒，由其调理的同一桶提供，包括二次发酵；key小桶啤酒是经过过滤、巴氏灭菌并人工碳酸化，同时在冷却桶的压力下制成并冷藏好。
@@ -254,42 +254,12 @@ git remote -v  # 查看仓库地址
 还是用酒的例子来解释：德国黑啤，诞生于德国，但在全球各地都有它的工厂，全球各地都有销售。你想要想用它，并非要跑到德国去，在当地就可以买到。  
 这里的换源，就相当于你从本地采购德国黑啤，当然你也可以原装进口。
 
-示例代码为替换为[中科大源](http://mirrors.ustc.edu.cn/help/brew.git)
-
-#### 替换默认源
-```shell
-cd "$(brew --repo)" 
-git remote set-url origin https://mirrors.ustc.edu.cn/brew.git  
-
-cd "$(brew --repo)/Library/Taps/homebrew/homebrew-core"
-git remote set-url origin https://mirrors.ustc.edu.cn/homebrew-core.git
-
-cd "$(brew --repo)"/Library/Taps/homebrew/homebrew-cask
-git remote set-url origin https://mirrors.ustc.edu.cn/homebrew-cask.git
-
-brew update  # brew 更新
-
-brew doctor  # 检查是否有误
-```
-
-后悔药秘方：
-重复上面的操作，只要把`mirrors.ustc.edu.cn`改为`github.com/Homebrew`就行了。
-
-#### 替换Bottles源
-##### bash
-```
-echo 'export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles/bottles' >> ~/.bash_profile
-source ~/.bash_profile
-```
-##### zsh
-```
-echo 'export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles/bottles' >> ~/.zshrc
-source ~/.zshrc
-```
-
-后悔药秘方：
-用文本编辑器代开~/.bash_profile或~/.zshrc，然后删除被添加上的`export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles`这行即可。
-
+替换为[中科大源](http://mirrors.ustc.edu.cn/):
+* [Homebrew 源代码仓库](https://mirrors.ustc.edu.cn/help/brew.git.html)
+* [Homebrew 核心软件仓库](https://mirrors.ustc.edu.cn/help/homebrew-core.git.html)
+* [Homebrew 预编译二进制软件包](https://mirrors.ustc.edu.cn/help/homebrew-bottles.html)
+* [Homebrew cask 软件仓库](https://mirrors.ustc.edu.cn/help/homebrew-cask.git.html)，提供 macOS 应用和大型二进制文件
+* [Homebrew cask 其他版本软件仓库](https://mirrors.ustc.edu.cn/help/homebrew-cask-versions.git.html)，提供使用人数多的、需要的版本不在 cask 仓库中的应用。
 
 ### 常用命令
 1. brew tap 列出本地资源仓库，其中 homebrew 是默认仓库，其它都是第三方仓库
@@ -298,7 +268,7 @@ source ~/.zshrc
 
 这里的添加/删除仓库，和上述的换源不太一样。
 
-还是德国黑啤的例子：你想要来点伏特加了！
+还是德国黑啤的例子：你想要来点伏特加了！（同一种产品的不同采购方式-对比-不同产品的采购方式）
 
 
 ## 辅助软件
