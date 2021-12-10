@@ -44,17 +44,19 @@ xmind 格式无法在线阅读，主要用于备份和发布。
 - 不背单词
 
 ### 一
-1. spring cloud
+1. Spring Data Jpa
+2. StreamAPI、方法引用
+3. RocketMQ&Kafka
+4. spring cloud
    1. https://www.bilibili.com/video/BV18E411x7eT
    2. 分布式事务、spring事务
-2. spring boot
-3. RocketMQ
-4. MongoDB
-5. redis笔记
-6. 数据结构
+5. spring boot
+6. MongoDB
+7. redis笔记
+8. 数据结构
    1. 红黑树
    2. b树/b+树
-7. 综合案例整理
+9. 综合案例整理
    1. JavaWeb
    2. SpringMVC
 
