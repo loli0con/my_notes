@@ -559,6 +559,7 @@ public class LinkMan implements Serializable {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="lkm_id")
+    private Long lkmId;
 
     //多对一关系映射：多个联系人对应客户
     @ManyToOne(targetEntity=Customer.class)
