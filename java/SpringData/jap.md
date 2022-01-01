@@ -515,7 +515,7 @@ public void testSpecifications() {
 * @JoinColumn
   * 作用：用于定义主键字段和外键字段的对应关系。
   * 属性：
-    * name：指定外键字段的名称
+    * name：指定本表中的外键字段的名称
     * referencedColumnName：指定引用主表的主键字段名称
     * unique：是否唯一。默认值不唯一nullable：是否允许为空。默认值允许。
     * insertable：是否允许插入。默认值允许。
@@ -602,6 +602,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="user_id")
+    private Long userId;
 
     /**
      * 配置用户到角色的多对多关系
