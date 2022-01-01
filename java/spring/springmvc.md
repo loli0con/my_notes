@@ -46,7 +46,7 @@ View Resolver负责将处理结果生成View视图，View Resolver首先根据�
 
 
 
-## FirstDemo
+## FirstDemo（通过xml配置文件把自定义的Handler/Controller注册到IOC容器中）
 这个Demo很标准地展示了SpringMVC的原理，但实际开发中不会这么写，有更简单的写法（注解版）。
 ### web.xml
 在web.xml中配置DispatcherServlet前端控制器，接管所有的请求。
@@ -148,7 +148,7 @@ ${msg}
 
 
 
-## SecondDemo
+## SecondDemo（以扫描+注解的形式把自定义的Handler/Controller注册到IOC容器中）
 对FirstDemo进行简化，描述了实际开发中代码：需要手动配置视图解析器，而处理器映射器和处理器适配器只需要开启注解驱动即可，而省去了大段的xml配置。
 
 ### springMVC.xml
@@ -211,8 +211,8 @@ public class HelloController {
 ## Controller
 * 控制器提供访问应用程序的行为，通常通过接口定义或注解定义两种方法实现。
 * 控制器负责解析用户的请求并将其转换为一个模型。
-* 在Spring MVC中一个控制器类可以包含多个方法
-* 在Spring MVC中，对于Controller的配置方式有很多种.
+* 在Spring MVC中一个控制器类可以包含多个方法。
+* 在Spring MVC中，对于Controller的配置方式有很多种。
 
 ### 实现Control
 #### 实现Controller接口 - 不推荐
@@ -265,7 +265,7 @@ public class IndexController{
 在路径中(即value属性)可以使用如下占位符：
 * ？：表示任意的单个字符
 * *：表示任意的0个或多个字符
-* \\**：表示任意的一层或 多层目录（只能使用/\*\*/xxx的方式）
+* \\**：表示任意的一层或多层目录（只能使用/\*\*/xxx的方式）
 
 ##### 属性详解
 @RequestMapping的属性：
@@ -500,7 +500,7 @@ class Address {
     private String city;
 }
 ```
-2. 提交数据（注意需要*url编码*） : http://localhost:8080/user?name=奇魔猪&age=18&address.province=广东&address.city=广州&hobby=唱歌&hobby=跳舞&addressList\[0].province=浙江&addressList\[0].city=杭州&addressList\[1].province=湖北&addressList\[1].city=武汉&map\["pig"].province=广东&map\["pig"].city=佛山&map\["dog"].province=广东&map\["dog"].city=深圳
+2. 提交数据（注意需要*url编码*） : `http://localhost:8080/user?name=奇魔猪&age=18&address.province=广东&address.city=广州&hobby=唱歌&hobby=跳舞&addressList[0].province=浙江&addressList[0].city=杭州&addressList[1].province=湖北&addressList[1].city=武汉&map["pig"].province=广东&map["pig"].city=佛山&map["dog"].province=广东&map["dog"].city=深圳`
 3. 处理方法
 ```java
 @RequestMapping("/user")
