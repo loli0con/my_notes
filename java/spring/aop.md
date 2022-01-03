@@ -44,19 +44,20 @@ AOP的本质是在一系列纵向的控制流程中，把那些相同的子流�
 ## Spring AOP 操作方式一 ➡️ xml配置文件
 ### 相关标签
 ![aop+20210731113325](https://i.loli.net/2021/07/31/K7ZuXa4xYqG2fkW.png)
-* 配置AOP - <aop:config>
-  * 配置切入点 - <aop:pointcut id="当前切入点的标识符" expression="切入点表达式">
-  * (方式一)配置通知器 <aop:advisor advice-ref="引用通知类的id" pointcut-ref="引用切入点的id"/>
-  * (方式二)配置切面 - <aop:aspect ref="引用切面类的id">
-    * 配置通知 <aop:bofore method="切面类中的方法名" pointcut-ref="引用切入点的id">
-    * 配置通知 <aop:after-returning method="切面类中的方法名" pointcut-ref="引用切入点的id">
-    * 配置通知 <aop:after-throwing method="切面类中的方法名" pointcut-ref="引用切入点的id">
-    * 配置通知 <aop:after method="切面类中的方法名" pointcut-ref="引用切入点的id">
-    * 配置通知 <aop:around method="切面类中的方法名" pointcut-ref="引用切入点的id">
+* 配置AOP，即配置\<aop:config>标签，需要以下步骤：
+  1. 配置切入点 ➡️ <aop:pointcut id="当前切入点的标识符" expression="切入点表达式"
+    1. (方式一)配置通知器 ➡️ <aop:advisor advice-ref="引用通知类的id" pointcut-ref="引用切入点的id"/>
+    2. (方式二)配置切面类 ➡️ <aop:aspect ref="引用切面类的id">
+      * 配置通知 <aop:bofore method="切面类中的方法名" pointcut-ref="引用切入点的id">
+      * 配置通知 <aop:after-returning method="切面类中的方法名" pointcut-ref="引用切入点的id">
+      * 配置通知 <aop:after-throwing method="切面类中的方法名" pointcut-ref="引用切入点的id">
+      * 配置通知 <aop:after method="切面类中的方法名" pointcut-ref="引用切入点的id">
+      * 配置通知 <aop:around method="切面类中的方法名" pointcut-ref="引用切入点的id">
 
 ### Demo
+#### 配置 通知器/切面类
 ```java
-//方式一：通过 Spring API 实现AOP
+//方式一：通过Spring API实现AOP - 通知器
 /**
 前置通知：org.springframework.aop.MethodBeforeAdvice
 后置通知：
@@ -74,7 +75,7 @@ class BeforeLog1 implements MethodBeforeAdvice {
   }
 }
 
-//方式二：自定义类来实现AOP
+//方式二：通过自定义类来实现AOP - 切面类
 class BeforeLog2 {
    public void printLog(){
        System.out.println("---------方法执行前---------");
@@ -82,6 +83,7 @@ class BeforeLog2 {
 }
 ```
 
+#### 配置xml标签
 ```xml
 <!--注册bean-->
 <bean id="userService" class="com.demo.service.UserServiceImpl"/>
@@ -105,9 +107,9 @@ class BeforeLog2 {
 
 ### 切入点表达式
 #### 拓展
-* https://blog.csdn.net/qq_38619183/article/details/112359456
-* https://blog.csdn.net/zhengchao1991/article/details/53391244
-* https://blog.csdn.net/buzhimingyue/article/details/106071059
+1. https://blog.csdn.net/buzhimingyue/article/details/106071059
+2. https://blog.csdn.net/qq_38619183/article/details/112359456
+3. https://blog.csdn.net/zhengchao1991/article/details/53391244
 #### 切入点
 | 指示符    | 作用                           |
 | --------- | ------------------------------ |
@@ -125,7 +127,7 @@ class BeforeLog2 {
 
 #### 表达式
 ![aop+`访问修饰符? 返回类型 包名.类名.?方法名(参数类型) 抛出异常类型?`](https://i.loli.net/2021/07/31/PKowuZSsNymdQf3.png)
-其中：
+可以在其中可以使用以下符号：
 * ？表示出现0次或1次
 * \* 表示通配符，可以匹配一个到多个参数
 * .. 表示通配符，可以匹配零到多个参数
@@ -193,7 +195,7 @@ Spring框架提供了ProceedingJoinPoint接口，作为环绕通知的参数。�
 | getSignature()                | 获取目标方法其它的信息，如：类名，方法名等         |
 
 ```java
-//方式二：自定义类来实现AOP
+//方式二：自定义类来实现AOP - 切面类
 class LogAspect {
     /**
      * 环绕通知方法
