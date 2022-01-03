@@ -2,7 +2,6 @@
 
 ## 文档
 * [官方文档](https://docs.spring.io/spring-framework/docs/5.2.16.RELEASE/spring-framework-reference/core.html)
-* [中文文档(非官方)](https://www.docs4dev.com/docs/zh/spring-framework/5.1.3.RELEASE/reference)
 
 ## 下载地址
 https://repo.spring.io/release/org/springframework/spring/
@@ -42,12 +41,13 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
 ![readme+20210728120928](https://i.loli.net/2021/07/28/eporQKfDtzMI8Gy.png)
 
 ### Core Container核心容器
+[IOC](ioc.md)容器：
 * Beans模块：提供了BeanFactory，工厂模式的实现，Spring将所有管理的对象称为Bean。
 * Core模块：提供了Spring框架的基本组成部分，包括IoC和DI依赖注入的功能。
 * Context模块：访问和配置Bean对象的上下文对象，核心容器。如：ApplicationContext
 
 ### Data Access/Integration数据访问与集成
-* JDBC模块：提供了JDBC的支持，如：JdbcTemplate
+* [JDBC](jdbc.md)模块：提供了JDBC的支持，如：JdbcTemplate
 * ORM模块：对主流的ORM框架提供了支持，如：JPA，JDO，Hibernate等
 * Transaction模块：支持声明式事务的管理
 
@@ -56,7 +56,7 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
 * Web模块：提供了基本的Web开发集成特性，如：文件上传，收发邮件等。
 
 ### 其他模块
-* AOP模块：提供了面向切面编程的功能
+* [AOP](aop.md)模块：提供了面向切面编程的功能
 * Aspects模块：提供了与AspectJ框架集成功能
 * Test模块：提供了对单元测试和集成测试的支持
 
