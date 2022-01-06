@@ -434,10 +434,10 @@ public String hello(@RequestParam("username") String name){
 2. 处理方法 :
 ```java
 @RequestMapping("/hello")
-public String hello(@RequestParam ArrayList<String> list,Integer[] nums) { //需要指定@RequestParam注解在集合形参前
+public String hello(@RequestParam ArrayList<String> list,Integer[] arr) { //需要指定@RequestParam注解在集合形参前
     //输出集合中元素
     System.out.print(list);
-    System.out.print(Arrays.toString(nums));
+    System.out.print(Arrays.toString(arr));
     return "hello";
 }
 ```
