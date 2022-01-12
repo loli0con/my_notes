@@ -36,14 +36,35 @@ HandlerMapping负责根据用户请求找到Handler即处理器，springmvc提�
 通过HandlerAdapter对处理器进行执行，这是适配器模式的应用，通过扩展适配器可以对更多类型的处理器进行执行。（因为不同的处理器有不同的实现方式，有注解的方式实现的，有配置文件的实现的。）
 
 #### Handler 处理器
-Handler 是继DispatcherServlet前端控制器的后端控制器，在DispatcherServlet的控制下Handler对具体的用户请求进行处理。
-由于Handler涉及到具体的用户业务请求，所以一般情况需要工程师根据业务需求开发Handler。
+Handler是继DispatcherServlet前端控制器的后端控制器，在DispatcherServlet的控制下Handler对具体的用户请求进行处理。
+由于Handler涉及到具体的用户业务请求，所以一般情况**需要工程师根据业务需求开发**Handler。
 
 #### ViewResolver 视图解析器
 作用：进行视图解析，根据逻辑视图名解析成真正的视图（view）
 View Resolver负责将处理结果生成View视图，View Resolver首先根据逻辑视图名解析成物理视图名即具体的页面地址，再生成View视图对象，最后返回视图对象。
 
 
+### 流程
+1. 用户向服务器发送请求，请求被SpringMVC 前端控制器 DispatcherServlet捕获。
+2. DispatcherServlet对请求URL进行解析，得到请求资源标识符(URI)，判断请求URI对应的映射:
+   1. 不存在:
+      1. 判断是否配置了mvc:default-servlet-handler
+      2. 如果没配置，则控制台报映射查找不到，客户端展示404错误
+      3. 如果有配置，则访问目标资源(一般为静态资源，如:JS,CSS,HTML)，找不到客户端也会展示404错误
+   2. 存在则执行下面的流程:
+3. 根据该URI，调用HandlerMapping获得该Handler配置的所有相关的对象(包括Handler对象以及Handler对象对应的拦截器)，最后以HandlerExecutionChain执行链对象的形式返回。
+4. DispatcherServlet根据获得的Handler，选择一个合适的HandlerAdapter。
+5. 如果成功获得HandlerAdapter，此时将开始执行拦截器的preHandler(...)方法【正向】
+6. 提取Request中的模型数据，填充Handler入参，开始执行Handler(Controller)方法，处理请求。在填充Handler的入参过程中，根据你的配置，Spring将帮你做一些额外的工作:
+   1. HttpMessageConveter: 将请求消息(如Json、xml等数据)转换成一个对象，将对象转换为指定的响应信息
+   2. 数据转换: 对请求消息进行数据转换。如String转换成Integer、Double等
+   3. 数据格式化: 对请求消息进行数据格式化。如将字符串转换成格式化数字或格式化日期等
+   4. 数据验证: 验证数据的有效性(长度、格式等)，验证结果存储到BindingResult或Error中
+7. Handler执行完成后，向DispatcherServlet返回一个ModelAndView对象。
+8. 此时将开始执行拦截器的postHandle(...)方法【逆向】。
+9. 根据返回的ModelAndView(此时会判断是否存在异常:如果存在异常，则执行HandlerExceptionResolver进行异常处理)选择一个适合的ViewResolver进行视图解析，根据Model和View，来渲染视图。
+10. 渲染视图完毕执行拦截器的afterCompletion(...)方法【逆向】。
+11. 将渲染结果返回给客户端。
 
 
 ## FirstDemo（通过xml配置文件把自定义的Handler/Controller注册到IOC容器中）
