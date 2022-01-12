@@ -275,11 +275,12 @@ public class IndexController{
   * 格式3：@RequestMapping("save")  省略 / 写法，依然可以映射save.do的请求路径
   * 格式4：@RequestMapping("save.do")
 * method：限制请求的方法（method属性是一个RequestMethod类型的数组），满足value不满足method->405
-* param：限制提交的参数（params属性是一个字符串类型的数组），满足value&method不满足param->400
+* params：限制提交的参数（params属性是一个字符串类型的数组），满足value&method不满足params->400
   * {"id","name"} **必须有**这两个参数的名字，否则会出现400错误
   * {"!id","!name"} **必须没有**这两个参数的名字，否则会出现400错误
   * {"id=1","name=newboy"} 不但要有这些参数，而且**值还有限制**
   * {"id!=1"} id**不等于**1的值都可以
+* headers：限制请求头的参数（headers属性是一个字符串类型的数组），满足value&method不满足headers->404。用法同params。
 
 
 ##### 派生注解
@@ -340,28 +341,48 @@ public String test(HttpServletRequest request, HttpServletResponse response, Htt
 #### 控制器方法的形参获取请求参数
 在控制器方法的形参位置，设置和请求参数同名的形参，当浏览器发送请求，匹配到请求映射时，在DispatcherServlet中就会将请求参数赋值给/绑定到相应的形参。
 
+若请求所传输的请求参数中有多个同名的请求参数，此时可以在控制器方法的形参中设置字符串数组或者字符串类型的形参接收此请求参数。若使用字符串数组类型的形参，此形参的数组中包含了每一个数据；若使用字符串类型的形参，此参数的值为每个数据中间使用逗号拼接的结果。
+
 ##### 用到的注解
 它们共有的三个属性：value、required、defaultValue
 ###### @RequestParam
 作用：@RequestParam是将请求参数（包括QueryString和请求体中的 x-www-form-urlencoded类型的数据）和控制器方法的形参创建映射关系
 
-| @RequestParam属性 | 应用场景：用于提交的参数名与方法的形参不同的情况 |
-| ----------------- | ------------------------------------------------ |
-| name/value        | 指定提交的参数名                                 |
-| required          | 是否是必须的                                     |
-| defaultValue      | 如果没有值，使用这个默认值                       |
+| @RequestParam属性 | 应用场景：用于提交的参数名与方法的形参不同的情况                                                        |
+| ----------------- | ------------------------------------------------------------------------------------------------------- |
+| name/value        | 指定为形参赋值的请求参数的参数名                                                                        |
+| required          | 设置是否必须传输此请求参数，默认值为true。为true时，若不传参，且没有设置defaultValue属性，则页面报错400 |
+| defaultValue      | 当value所指定的请求参数没有传输或者传输的值为""时，则使用默认值为形参赋值                               |
 
 
 ###### @RequestHeader
-* 作用：用于获取请求头的值（String类型）
+* 作用：@RequestHeader是将请求头信息和控制器方法的形参创建映射关系
 * 位置：放在方法的参数前面
-* 属性：
-  * value：指定请求头的名字
+* 属性（用法同@RequestParam）：
+  * value：指定请求头参数的名字
+  * required
+  * defaultValue
 
 ```java
 @RequestMapping("/header")
 public String header(@RequestHeader("user-agent") String header) {
     System.out.println("请求头：" + header );
+    return "success";
+}
+```
+
+###### @CookieValue
+* 作用：@CookieValue是将cookie数据和控制器方法的形参创建映射关系
+* 位置：放在方法的参数前面
+* 属性（用法同@RequestParam）：
+  * value：指定Cookie的名字
+  * required
+  * defaultValue
+
+```java
+@RequestMapping("/cookie")
+public String cookie(@CookieValue("JSESSIONID") String cookieValue) {
+    System.out.println("获取Cookie的值：" + cookieValue);
     return "success";
 }
 ```
@@ -372,20 +393,6 @@ public String header(@RequestHeader("user-agent") String header) {
 * 注意：只能出现1次，因为每次请求只有一个请求体，只能用于POST请求，因为GET请求没有请求体
 * 属性：
   * required：请求体中的数据是否必须
-
-###### @CookieValue
-* 作用：用于获取Cookie的值（String类型）
-* 位置：放在方法的参数前面
-* 属性：
-  * value：指定Cookie的名字
-
-```java
-@RequestMapping("/cookie")
-public String cookie(@CookieValue("JSESSIONID") String cookieValue) {
-    System.out.println("获取Cookie的值：" + cookieValue);
-    return "success";
-}
-```
 
 ##### 赋值/绑定的规则
 SpringMVC参数绑定的规则：
@@ -578,7 +585,6 @@ session域：
 
 application域：
 1. 通过ServletContext
-·
 
 #### demo
 ```java
@@ -638,20 +644,34 @@ public class DemoController {
 }
 ```
 
+## HttpMessageConverter
+HttpMessageConverter，报文信息转换器，将请求报文转换为Java对象，或将Java对象转换为响应报文。它提供了两个注解和两个类型：@RequestBody、@ResponseBody、RequestEntity、ResponseEntity。
 
-### Json交互
-下面的注解需要jackson包支持，同时在SpringMVC的核心配置文件中开启mvc的注解驱动。
-#### @RequestBody
-在处理器方法形参上使用，把请求体的json格式数据，转换成java对象。
+### @RequestBody
+@RequestBody可以获取请求体。在控制器方法设置一个形参，使用@RequestBody进行标识，当前请求的请求体就会为当前注解所标识的形参赋值。
 
-注解@RequestBody接收的参数是来自requestBody中，即请求体。一般用于处理非 Content-Type: application/x-www-form-urlencoded编码格式的数据，比如：application/json、application/xml等类型的数据。
+#### 接收JSON
+在处理器方法形参上使用@RequestBody，把请求体的JSON格式的字符串数据转换成java对象。
+
+一般用于处理非 Content-Type: application/x-www-form-urlencoded编码格式的数据，比如：application/json、application/xml等类型的数据。
 
 [和RequestParam的区别](https://blog.csdn.net/weixin_38004638/article/details/99655322)
 
-#### @ResponseBody
-在处理器方法上使用@ResponseBody注解进行标识，将Java对象直接作为控制器方法的返回值返回，就会自动转换为Json格式的字符串。
+### RequestEntity
+RequestEntity是用来封装请求报文的一种类型。在控制器方法的形参中设置该类型的形参，当前请求的请求报文就会赋值给该形参，可以通过getHeaders()获取请求头信息，可以通过getBody获取请求体信息。
 
-#### Demo
+### @ResponseBody
+@ResponseBody用于标识一个控制器方法，可以将该方法的返回值直接作为响应报文的响应体响应到浏览器。
+
+#### 响应JSON
+@ResponseBody处理JSON的步骤：
+1. 导入jackson依赖
+2. 在SpringMVC的核心配置文件中开启mvc的注解驱动`<mvc:annotation-driven />`，此时在HandlerAdaptor中会自动装配一个消息转换器：MappingJackson2HttpMessageConverter，它将响应到浏览器的Java对象转换为JSON格式的字符串
+3. 在处理器方法上使用@ResponseBody注解进行标识
+4. 将Java对象直接作为控制器方法的返回值返回，就会自动转换为JSON格式的字符串
+下面的注解需要jackson包支持，同时在SpringMVC的核心配置文件中开启mvc的注解驱动。
+
+##### Demo
 ```java
 @Controller
 public class UserController {
@@ -697,10 +717,8 @@ public class UserController {
     }
 }
 ```
-#### @RestController
-在类上直接使用 @RestController，那么类中所有的方法都只会返回 json 字符串。
 
-#### JSON乱码统一解决
+##### JSON乱码统一解决
 在springmvc的配置文件上添加一段消息StringHttpMessageConverter转换配置
 ```xml
 <mvc:annotation-driven>
@@ -719,9 +737,16 @@ public class UserController {
 </mvc:annotation-driven>
 ```
 
+### @RestController
+@RestController注解是springMVC提供的一个复合注解，标识在控制器的类上，就相当于为类添加了@Controller注解，并且为其中的每个方法添加了@ResponseBody注解
+
+### ResponseEntity
+ResponseEntity是控制器方法的返回类型，该控制器方法的返回值就是响应到浏览器的响应报文。
+
 
 ### 文件
 #### 上传
+文件上传要求form表单的请求方式必须为post，并且添加属性enctype="multipart/form-data"。
 ##### 配置bean
 ```xml
 <!--文件上传配置-->
@@ -870,120 +895,11 @@ Spring提供的过滤器，在web.xml中配置
 </filter-mapping>
 ```
 
-### 自定义过滤器
-网上大神写的
-```java
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Map;
-
-/**
-* 解决get和post请求 全部乱码的过滤器
-*/
-public class GenericEncodingFilter implements Filter {
-
-   @Override
-   public void destroy() {
-  }
-
-   @Override
-   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-       //处理response的字符编码
-       HttpServletResponse myResponse=(HttpServletResponse) response;
-       myResponse.setContentType("text/html;charset=UTF-8");
-
-       // 转型为与协议相关对象
-       HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-       // 对request包装增强
-       HttpServletRequest myrequest = new MyRequest(httpServletRequest);
-       chain.doFilter(myrequest, response);
-  }
-
-   @Override
-   public void init(FilterConfig filterConfig) throws ServletException {
-  }
-
-}
-
-//自定义request对象，HttpServletRequest的包装类
-class MyRequest extends HttpServletRequestWrapper {
-
-    private HttpServletRequest request;
-    //是否编码的标记
-    private boolean hasEncode;
-    //定义一个可以传入HttpServletRequest对象的构造函数，以便对其进行装饰
-    public MyRequest(HttpServletRequest request) {
-        super(request);// super必须写
-        this.request = request;
-    }
-
-    // 对需要增强方法 进行覆盖
-    @Override
-    public Map getParameterMap() {
-        // 先获得请求方式
-        String method = request.getMethod();
-        if (method.equalsIgnoreCase("post")) {
-            // post请求
-            try {
-                // 处理post乱码
-                request.setCharacterEncoding("utf-8");
-                return request.getParameterMap();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        } else if (method.equalsIgnoreCase("get")) {
-            // get请求
-            Map<String, String[]> parameterMap = request.getParameterMap();
-            if (!hasEncode) { // 确保get手动编码逻辑只运行一次
-                for (String parameterName : parameterMap.keySet()) {
-                    String[] values = parameterMap.get(parameterName);
-                    if (values != null) {
-                        for (int i = 0; i < values.length; i++) {
-                            try {
-                                // 处理get乱码
-                                values[i] = new String(values[i]
-                                        .getBytes("ISO-8859-1"), "utf-8");
-                            } catch (UnsupportedEncodingException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-                hasEncode = true;
-            }
-            return parameterMap;
-        }
-        return super.getParameterMap();
-    }
-
-    //取一个值
-    @Override
-    public String getParameter(String name) {
-        Map<String, String[]> parameterMap = getParameterMap();
-        String[] values = parameterMap.get(name);
-        if (values == null) {
-            return null;
-        }
-        return values[0]; // 取回参数的第一个值
-    }
-
-    //取所有值
-    @Override
-    public String[] getParameterValues(String name) {
-        Map<String, String[]> parameterMap = getParameterMap();
-        String[] values = parameterMap.get(name);
-        return values;
-    }
-}
-```
-
 
 ## 拦截器
-SpringMVC的处理器拦截器类似于Servlet开发中的过滤器Filter，用于对处理器进行预处理和后处理。拦截器是AOP思想的具体应用。
+SpringMVC的处理器拦截器类似于Servlet开发中的过滤器Filter，用于对处理器/控制器方法进行预处理和后处理。拦截器是AOP思想的具体应用。
+
+拦截器需要实现HandlerInterceptor接口，必须在配置文件中进行配置。
 
 ### 和过滤器的区别
 * 过滤器
@@ -992,6 +908,80 @@ SpringMVC的处理器拦截器类似于Servlet开发中的过滤器Filter，用�
 * 拦截器 
   * 拦截器是SpringMVC框架自己的，只有使用了SpringMVC框架的工程才能使用
   * 拦截器只会拦截访问的控制器方法，如果访问的是jsp/html/css/image/js是不会进行拦截的
+
+#### 实现方式
+过滤器和拦截器底层实现方式大不相同，过滤器是基于函数回调的，拦截器则是基于Java的反射机制（动态代理）实现的。
+
+在我们自定义的过滤器中都会实现一个doFilter()方法，这个方法有一个FilterChain参数，而实际上它是一个回调接口。ApplicationFilterChain是它的实现类，这个实现类内部也有一个doFilter()方法就是回调方法。
+
+Filter接口
+```java
+// 自定义过滤器要实现的接口
+public interface Filter {
+    default void init(FilterConfig filterConfig) throws ServletException {
+    }
+
+    void doFilter(ServletRequest var1, ServletResponse var2, FilterChain var3) throws IOException, ServletException;
+
+    default void destroy() {
+    }
+}
+```
+
+FilterChain接口
+```java
+public interface FilterChain {
+    void doFilter(ServletRequest var1, ServletResponse var2) throws IOException, ServletException;
+}
+```
+
+ApplicationFilterChain里面能拿到我们自定义的xxxFilter类，在其内部回调方法doFilter()里调用各个自定义xxxFilter过滤器，并执行doFilter()方法。
+
+ApplicationFilterChain实现类
+```java
+public final class ApplicationFilterChain implements FilterChain {
+    private ApplicationFilterConfig[] filters = new ApplicationFilterConfig[0];
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response) {
+            ...//调用内部
+            internalDoFilter(request,response);
+    }
+ 
+    private void internalDoFilter(ServletRequest request, ServletResponse response){
+    if (pos < n) {
+            //获取第pos个filter    
+            ApplicationFilterConfig filterConfig = filters[pos++];        
+            Filter filter = filterConfig.getFilter();
+            ...
+            filter.doFilter(request, response, this);
+        }
+    }
+ 
+}
+```
+
+而每个xxxFilter会先执行自身的doFilter()过滤逻辑，最后在执行结束前会执行filterChain.doFilter(servletRequest,servletResponse)，也就是回调ApplicationFilterChain的doFilter()方法，以此循环执行实现函数回调。
+
+#### 使用范围
+我们看到过滤器实现的是javax.servlet.Filter接口，而这个接口是在Servlet规范中定义的，也就是说过滤器Filter的使用要依赖于Tomcat等容器，导致它只能在web程序中使用。
+
+
+而拦截器(Interceptor) 它是一个Spring组件，并由Spring容器管理，并不依赖Tomcat等容器，是可以单独使用的。不仅能应用在web程序中，也可以用于Application、Swing等程序中。
+
+#### 触发时机
+![springmvc+20220111160303](https://raw.githubusercontent.com/loli0con/picgo/master/images/springmvc%2B20220111160303.png%2B2022-01-11-16-03-04)
+
+过滤器Filter是在请求进入容器后，但在进入servlet之前进行预处理，请求结束是在servlet处理完以后。
+
+拦截器 Interceptor 是在请求进入servlet后，在进入Controller之前进行预处理的，Controller 中渲染了对应的视图之后请求结束。
+
+![springmvc+20220111160122](https://raw.githubusercontent.com/loli0con/picgo/master/images/springmvc%2B20220111160122.png%2B2022-01-11-16-01-23)
+
+![springmvc+20220111160920](https://raw.githubusercontent.com/loli0con/picgo/master/images/springmvc%2B20220111160920.png%2B2022-01-11-16-09-21)
+
+#### 使用资源
+拦截器可以使用Spring里的任何资源、对象，例如Service对象、数据源、事务管理等，通过IOC注入到拦截器即可；而Filter则不能。
 
 ### 自定义拦截器
 #### 拦截器代码
@@ -1011,6 +1001,7 @@ public class MyInterceptor implements HandlerInterceptor {
     }
 
     //在dispatcherServlet处理后执行，做清理工作（无论是否发生异常都会执行）
+    // 处理完视图和模型数据，渲染视图完毕之后执行
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
         System.out.println("------------清理------------");
     }
@@ -1040,7 +1031,8 @@ public class MyInterceptor implements HandlerInterceptor {
         <!-- 通过mvc:exclude-mapping设置需要排除的请求，即不需要拦截的请求 -->
         <mvc:exclude-mapping path="/test"/>
         <!--bean配置的就是拦截器-->
-        <bean class="com.kuang.interceptor.MyInterceptor"/>
+        <bean class="com.pigyun.interceptor.MyInterceptor"/>
+        <!-- <ref bean="myInterceptor"></ref> -->
     </mvc:interceptor>
 </mvc:interceptors>
 ```
@@ -1125,9 +1117,32 @@ FilterChain chain){
        }
    }
 }
-```　
+```
+
 
 ### 基于配置的异常处理
+SpringMVC提供了*一个处理控制器方法执行过程中所出现的异常的*接口：HandlerExceptionResolver。它有两个实现类，DefaultHandlerExceptionResolver和SimpleMappingExceptionResolver。
+
+#### 配置方式
+配置异常处理器SimpleMappingExceptionResolver：
+```xml
+<bean
+class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+    <property name="exceptionMappings">
+        <props>
+<!--
+properties的键表示处理器方法执行过程中出现的异常 properties的值表示若出现指定异常时，设置一个新的视图名称，跳转到指定页面
+-->
+            <prop key="java.lang.ArithmeticException">error</prop>
+        </props>
+</property>
+<!-- exceptionAttribute属性设置一个属性名，将出现的异常信息在请求域中进行共享
+-->
+    <property name="exceptionAttribute" value="ex"></property>
+</bean>
+```
+
+#### 代码方式
 只需要写一个类实现HandlerExceptionResolver接口，就可以捕获controller中的异常：
 ```java
 @Component
