@@ -1218,6 +1218,9 @@ public class ExceptionController {
 }
 ```
 
+### 更多的异常处理方式
+1. https://juejin.cn/post/6844903865674891278
+2. https://www.cnblogs.com/lvbinbin2yujie/p/10574812.html#type4
 
 ## 参考
 * https://mp.weixin.qq.com/s?__biz=Mzg2NTAzMTExNg==&mid=2247483970&idx=1&sn=352e571ee88957ce391e972344e2a3d7&scene=19

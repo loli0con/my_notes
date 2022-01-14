@@ -6,7 +6,7 @@ Spring JavaConfig 是 Spring 社区的一个产品，它提供了纯Java的方�
 ## 简介
 JavaConfig 原来是 Spring 的一个子项目，它通过 Java 类的方式提供 Bean 的定义信息，在 Spring4 的版本，JavaConfig 已正式成为 Spring4 的核心功能。
 
-## 核心注解
+## 注解
 
 ### @Configuration
 @Configuration放在类上，表示这是一个配置类，等价于XML配置文件中的\<beans>元素，即XML配置文件的根元素。一个应用可以包含一到多个被@Configuration注解的类。
@@ -38,6 +38,11 @@ JavaConfig 原来是 Spring 的一个子项目，它通过 Java 类的方式提�
   * 直接指定其他的类的：在已有的Bean上，使用@Import注解，导入一个普通类。
   * 指定实现ImportSelector的类：在已有的Bean上，使用@Import注解，导入一个ImportSelector的实现类。该实现类在重写的selectImports方法中，返回的类全路径（以String[]的形式），返回值中的所有的类都会变成Bean。
   * 指定实现ImportBeanDefinitionRegistrar的类：已有的Bean上，使用@Import注解，导入一个ImportBeanDefinitionRegistrar的实现类，在重写的方法中注册BeanDefinition到Spring容器。
+
+### @ConfigurationProperties
+
+### @EnableConfigurationProperties
+
 
 
 
