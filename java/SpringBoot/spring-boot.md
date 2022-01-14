@@ -76,5 +76,3 @@ public class Example1Application {
    }
 }
 ```
-
-

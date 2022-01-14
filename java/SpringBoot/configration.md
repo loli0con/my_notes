@@ -20,12 +20,30 @@ SpringBoot强烈推荐yaml配置，并且基于native YAML提供更强大的特�
 
 ### 配置提示
 ```xml
-<!-- 导入配置文件处理器，配置文件进行绑定就会有提示 -->
+<!-- 自定义的类和配置文件绑定一般没有提示。 -->
+<!-- 导入配置文件处理器，配置文件进行绑定就会有提示. -->
 <dependency>
   <groupId>org.springframework.boot</groupId>
   <artifactId>spring‐boot‐configuration‐processor</artifactId>
   <optional>true</optional>
 </dependency>
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-maven-plugin</artifactId>
+      <configuration>
+        <excludes>
+          <exclude>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+          </exclude>
+        </excludes>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
 ```
 
 ### yaml-demo
