@@ -30,7 +30,7 @@ xmind 格式无法在线阅读，主要用于备份和发布。
 
 ## benifit
 
-1. 输出倒逼输出
+1. 输出倒逼输入
    1. 作为计划事项的本身
    2. 要求对知识有足够理解
 2. 整理思路，知识结构化
@@ -38,42 +38,45 @@ xmind 格式无法在线阅读，主要用于备份和发布。
 4. 供给别人阅读
 
 ## todo
+防止迷茫
 
-### 零点五
+### 零点五 ➡️ 固定事项
+* 不背单词
 
-- 不背单词
+### 一 ➡️ 可推事项
+1. 前端
+2. spring注解驱动开发 - 笔记编写
+3. ooad - 笔记编写
+4. spring security - 基本使用
+5. BeanUtils
+   1. https://dbwos.com/blog/note/useful-beanutils/
+   2. https://www.cnblogs.com/kancy/p/12089126.html
 
-### 一
-1. Spring Data Jpa
-2. StreamAPI、方法引用
-3. RocketMQ&Kafka
-4. spring cloud
-   1. https://www.bilibili.com/video/BV18E411x7eT
-   2. 分布式事务、spring事务
-5. spring boot
-6. MongoDB
-7. redis笔记
-8. 数据结构
-   1. 红黑树
-   2. b树/b+树
-9. 综合案例整理
-   1. JavaWeb
-   2. SpringMVC
-
-### 一点五
-* Java日志
-* Java网络编程
-* 前端
-* linux就该这么学
-* OOAD
-* 分布式系统
-* bash脚本
-
-### 二
-* 计算机网络
-* 操作系统
-* 算法
-  * 递归分治
-  * 动归
-  * 贪心
-  * 回溯
+### 二 ➡️ 可选事项
+* 考研四杰
+  * 数据结构
+    * 红黑树
+    * b树/b+树
+  * 计算机组成原理
+  * 操作系统
+  * 计算机网络
+* 扎实基础
+  * 算法
+    * 递归分治
+    * 动归
+    * 贪心
+    * 回溯
+  * [分布式系统](https://www.bilibili.com/video/BV1qk4y197bB)
+* 实战
+  * Java
+    * 网络编程
+    * spring
+    * sring boot
+    * [spring cloud](https://www.bilibili.com/video/BV18E411x7eT)
+  * Linux
+    * linux就该这么学
+    * bash脚本
+  * 分布式中间件
+    * redis
+    * mongo
+    * RocketMQ&Kafka
