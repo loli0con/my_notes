@@ -98,9 +98,13 @@ AutoConfigurationImportSelector：自动配置导入选择器。该类实现了I
 ### 举例
 ![core+20210823181014](https://raw.githubusercontent.com/loli0con/picgo/master/images/core%2B20210823181014.png%2B2021-08-23-18-10-18)
 
+@EnableConfigurationProperties：以一种“便利的方式”把带有@ConfigurationProperties注解的类注册到IOC容器当中。可以看到图中的HttpProperties类上有@ConfigurationProperties注解，这个HttpProperties类可以通过其他方式注册到容器中去，也可以通过这种“便利的方式”进行注册。
+
+@ConfigurationProperties注解用于把properties等配置文件中的配置项-配置值绑定到类上。
+
 ![core+20210823183346](https://raw.githubusercontent.com/loli0con/picgo/master/images/core%2B20210823183346.png%2B2021-08-23-18-33-49)
 
-xxxxAutoConfigurartion是JavaConfig类（它有@Configuration注解），是SpringBoot提供的默认配置。xxxxProperties里则封装配置文件中相关属性。
+xxxxAutoConfigurartion是JavaConfig类（它有@Configuration注解），是SpringBoot提供的默认配置。
 
 
 ## 结论
@@ -112,17 +116,19 @@ xxxxAutoConfigurartion是JavaConfig类（它有@Configuration注解），是Spri
 
 
 ## 生效条件
-自动配置类必须在一定的条件下才能生效
+自动配置类必须在一定的条件下才能生效。
+
 ### @Conditional派生注解
 @Conditional派生注解 基于 Spring原生注解@Conditional 实现。
 
-使用@Conditional派生注解来指定条件，只有当条件成立，才给容器中添加组件，配置配里面的所有内容才生效
+使用@Conditional派生注解来指定条件：只有当条件成立，才给容器中添加组件，配置配里面的所有内容才生效。
 
+常见的@Conditional派生注解，如下：
 ![core+20210823204720](https://raw.githubusercontent.com/loli0con/picgo/master/images/core%2B20210823204720.png%2B2021-08-23-20-47-21)
 
 
 ### 查看生效的配置
-我们可以通过启用 debug=true属性（在配置文件中），来让控制台打印自动配置报告，这样我们就可以很方便的知道哪些自动配置类生效。
+我们可以通过启用 debug=true 属性（在配置文件中），来让控制台打印自动配置报告，这样我们就可以很方便的知道哪些自动配置类生效。
 
 在输出的日志中，会有如下结果：
 * Positive matches:（自动配置类启用的：正匹配）
