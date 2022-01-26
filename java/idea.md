@@ -7,7 +7,7 @@
 * [idea破解](https://gitee.com/pengzhile/ide-eval-resetter)
 * [代码审查](https://mp.weixin.qq.com/s/tD0_q3xdU0pISVmN-bcZPg)
 
-## vmoptions
+## vmoptions（旧版）
 ```
 -server
 # 促使内存
@@ -47,4 +47,58 @@
 
 -XX:ErrorFile=$USER_HOME/java_error_in_idea_%p.log
 -XX:HeapDumpPath=$USER_HOME/java_error_in_idea.hprof
+```
+
+
+
+## vmoptions（新版）
+参考：
+1. https://juejin.cn/post/6963835326821302303#heading-10
+2. https://juejin.cn/post/6883641230664663047
+
+```
+-ea
+-server
+-Xms2048m
+-Xmx3072m
+-Xss16m
+-XX:MaxMetaspaceSize=2G
+-XX:MetaspaceSize=1G
+-XX:ConcGCThreads=8
+-XX:ParallelGCThreads=8
+-XX:NewRatio=2
+-XX:ReservedCodeCacheSize=240m
+-XX:+AlwaysPreTouch
+-XX:+UseG1GC
+-XX:+DoEscapeAnalysis
+-XX:+TieredCompilationUseG1GC
+-XX:SoftRefLRUPolicyMSPerMB=50
+-XX:+UnlockExperimentalVMOptions
+-Dsun.io.useCanonPrefixCache=false
+-Djava.net.preferIPv4Stack=true
+-Dsun.io.useCanonCaches=false
+-XX:LargePageSizeInBytes=256m
+-XX:+UseCodeCacheFlushing
+-XX:+DisableExplicitGC
+-XX:+ExplicitGCInvokesConcurrent
+-XX:+AggressiveOpts
+-XX:+CMSClassUnloadingEnabled
+-XX:CMSInitiatingOccupancyFraction=60
+-XX:+CMSParallelRemarkEnabled
+-XX:+UseAdaptiveGCBoundary
+-XX:+UseSplitVerifier
+-XX:CompileThreshold=10000
+-XX:+OptimizeStringConcat
+-XX:+UseStringCache
+-XX:+UseFastAccessorMethods
+-XX:+UnlockDiagnosticVMOptions
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:-OmitStackTraceInFastThrow
+-Djdk.attach.allowAttachSelf=true
+-Dkotlinx.coroutines.debug=off
+-Djdk.module.illegalAccess.silent=true
+-XX:+UseCompressedOops
+-Dfile.encoding=UTF-8
+-XX:CICompilerCount=2
+-Xverify:none
 ```
