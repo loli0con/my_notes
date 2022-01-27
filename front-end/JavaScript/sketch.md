@@ -1,26 +1,9 @@
-# Javascript
+# 草稿
+
 [参考手册-菜鸟版](https://www.runoob.com/jsref/jsref-tutorial.html)
-## 结合方式
-在html页面中使用script标签来书写JavaScript代码（简单）
-```html
-<script type="text/javascript">
-/* JavaScript代码 */
-</script>
-```
 
-使用script标签引入单独的JavaScript代码文件（正规）
-```html
-<script type="text/javascript" src="code.js"></script>
-```
-
-## Hello World
-```js
-window.alert('hello world!'); // 弹框提示
-console.log('hello world'); // 浏览器的控制台输出
-```
-
-## 变量
 ### 数据类型
+
 JavaScript的数据类型：
 * *数值*类型：number
 * *布尔*类型：boolean
@@ -36,59 +19,12 @@ JavaScript的数据类型：
   * RegExp
   * JSON
 
-### 特殊值
-JavaScript里的特殊值：
-* undefined：未定义，所有js变量未赋值的时候的默认值
-* null：空值
-* NaN：Not a Number，非数值
-
-```js
-> typeof undefined;
-'undefined'
-> typeof null;
-'object'
-> typeof NaN;
-'number'
-```
-
-#### undefined 与 null 的区别
-表面上 undefined 与 null 都是什么都没有的意思，但是实际上 undefined 是未定义（就是变量没有初始化），null 是一个变量初始化了，但是什么值都没给，只给了一个空对象；进一步说，undefined 与 null是值相等，类型不相等。
-
-### 定义变量
-```JavaScript
-let var; // 声明
-var = 1; // 赋值
-
-// 推荐使用let
-let a = 1; // 声明并赋值
-var b = '2'; 
-const c = true; // 常量
-```
-
-### 作用域
-作用域是可访问变量的集合。
-
-#### 全局变量
-在函数外声明的变量是全局变量，网页上的所有脚本和函数都能访问它。
-
-#### 生命周期
-局部变量会在函数运行以后被删除，全局变量会在页面关闭后被删除。
-
-#### 全局属性
-如果直接给一个未声明的变量赋值，该变量将被自动作为 window 的一个属性。
-
 
 ### 原则
 闲的蛋疼也不要使用包装对象！！！
 
 不要问为什么，这就是JavaScript代码的乐趣！
 
-#### 类型转换
-* 用parseInt()或parseFloat()来转换任意类型到number。
-* 全局方法 Number() 可以将字符串、布尔值、日期转换为number。
-* 用String()来转换任意类型到string。
-* 通常不必把任意类型转换为boolean再判断，因为可以直接写if (myVar) {...}；  
-所有的变量都可以做为一个 boolean 类型的变量去使用：0 、null、 undefined、""(空串) 都认为是 false。
 #### 类型判断
 * typeof操作符可以判断出number、boolean、string、function、undefined和object。
 * 可通过 instanceof 操作符来判断对象的具体类型。
@@ -119,86 +55,6 @@ function isDate(myDate) {
     return myDate.constructor.toString().indexOf("Date") > -1;
 }
 ```
-
-
-
-## 运算符
-### 关系运算
-* 等于： ==，自动转换数据类型再比较字面值
-* 全等于： ===，比较数据类型和字面值
-
-### 逻辑运算
-* 与：&&（短路）
-* 或：||（短路）
-* 非：!
-
-
-
-## 流程控制
-### 条件判断
-```js
-// if
-var age = 3;
-if (age >= 18) {
-  alert('adult');
-} else if (age >= 6) {
-    alert('teenager');
-} else {
-    alert('kid');
-}
-
-// switch
-// switch 中 case 的判断是 “===” 
-switch(n)
-{
-  case 1:
-    // 执行代码块 1
-    break;
-  case 2:
-    // 执行代码块 2
-    break;
-  default:
-    // 与 case 1 和 case 2 不同时执行的代码
-}
-/* 
-如果 case 后面有多行语句，也不需要 { }，带不带都行，
-因为 case 是一直执行到下面第一个 break
-*/
-```
-
-### 循环
-* while
-* do … while
-* for
-  * for(… ; … ; …)
-  * for(… of …)：以任意顺序迭代对象的可枚举属性，遍历（object）键名
-  * for(… in …)：遍历可迭代对象定义要迭代的数据，遍历（iterable）键值
-
-可以使用在循环中使用break和continue。
-
-## 字符串
-### 定义
-```js
-let str1 = 'Hello'; // 推荐使用单引号
-let str2 = "world";
-
-// ASCII字符可以以\x##形式的十六进制表示
-let str3 = '\x74'; // 完全等同于 'J'
-
-// \u####表示一个Unicode字符
-let str4 = '\u6211\u662F'; // 完全等同于 '我是'
-let str5 = '\u4e2d\u6587'; // 完全等同于 '中文'
-
-// 多行字符串/模版字符串
-let str6 = `${str1} ${str2},
-${str4} ${str3}avaScript!`
-// str6 === 'Hello world,\n我是 tavaScript!'
-```
-
-### 特性
-字符串是不可变的，如果对字符串的某个索引赋值，不会有任何错误，但也没有任何效果。
-
-
 
 ## 函数
 在JavaScript里，函数是一等公民，和对象平等。
