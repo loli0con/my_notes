@@ -12,7 +12,7 @@
       3. [link3](https://www.cnblogs.com/doit8791/p/7613567.html)
 2. [html](html.md)
 3. [css](css.md)
-4. [JavaScript](javascript.md)
+4. [JavaScript]
    1. [bom](js-bom.md)
    2. [dom](js-dom.md)
    3. [ajax技术](ajax.md)
