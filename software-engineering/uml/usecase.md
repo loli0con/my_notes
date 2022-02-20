@@ -1,8 +1,8 @@
-# 用例图
+# 用例模型
 
-## 用例模型
+用例(Use Case)是一种描述系统需求的方法，使用用例的方法来描述系统需求的过程就是用例建模。
 
-### 定义
+## 定义
 * 是软件开发人员分析客户业务流程的结果
 * 是面向对象分析的结果
   * 不一定完全是面向对象分析的结果
@@ -11,14 +11,13 @@
 * 是软件设计部门与软件工程师之间的合同
 * 是开发部门领导、非直接开发人员，了解系统的主要信息来源
 
-### 包含
+## 包含
 * 用例图
   * 系统边界
   * 参与者
   * 用例
   * 关系
 * 用例描述
-
 
 
 ## 参与者
@@ -79,3 +78,12 @@
 * 异常事件或者可选事件流：主事件流的每一步都有可能出现异常，此处描述异常情况的处理
 
 ![usecase+20220113104450](https://raw.githubusercontent.com/loli0con/picgo/master/images/usecase%2B20220113104450.png%2B2022-01-13-10-44-51)
+
+
+
+## 用例建模指南
+https://modelbaba.com/mbse/1678.html
+
+![usecase+用例建模指南1](https://raw.githubusercontent.com/loli0con/picgo/master/images/usecase%2B%E7%94%A8%E4%BE%8B%E5%BB%BA%E6%A8%A1%E6%8C%87%E5%8D%971.png%2B2022-02-20-14-47-46)
+
+![usecase+用例建模指南2](https://raw.githubusercontent.com/loli0con/picgo/master/images/usecase%2B%E7%94%A8%E4%BE%8B%E5%BB%BA%E6%A8%A1%E6%8C%87%E5%8D%972.png%2B2022-02-20-14-48-02)
