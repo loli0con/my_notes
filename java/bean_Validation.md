@@ -31,7 +31,7 @@ https://yuyang.run/translate/hibernate-validator/7.0.1/index.html#validator-defi
   * 检查带注解的元素是否为true
   * 支持的数据类型：Boolean，boolean
 * @DecimalMax(value=，inclusive=)
-  * 当 inclusive = false 时，检查带注解的值是否小于指定的最大值。否则，该值是否小于或等于指定的最大值。参数值是根据 BigDecimal 字符串表示形式的值。
+  * 当 inclusive = false 时，检查带注解的值$$是否小于指定的最大值。否则，该值是否小于或等于指定的最大值。参数值是根据 BigDecimal 字符串表示形式的值。
   * 支持的数据类型：BigDecimal， BigInteger， CharSequence， byte， short， int， long 以及各自的基本类型包装器; Hibernate Validator还支持 JSR 354 API 中的 Number 和 javax.money.MonetaryAmount 的实现。
 * @DecimalMin(value=，inclusive=)
   * 当 inclusive = false 时，检查带注解的值是否大于指定的最小值。否则，该值是否大于或等于指定的最小值。参数值是根据 BigDecimal 字符串表示形式的值。

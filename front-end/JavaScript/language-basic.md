@@ -288,7 +288,10 @@ Symbol.for()对每个字符串**键**都执行幂等操作。第一次使用某�
 还可以使用 Symbol.keyFor()来查询全局注册表，这个方法接收符号，返回该全局符号对应的字符串**键**。如果查询的不是全局符号，则返回 undefined。如果传给 Symbol.keyFor()的不是符号，则该方法抛出 TypeError。
 
 #### 使用符号作为属性
-是可以使用字符串或数值作为属性的地方，都可以使用符号。这就包括了对象字面量属性和 Object.defineProperty()/Object.defineProperties()定义的属性。
+是可以使用字符串或数值作为属性的地方，都可以使用符号。这就包括了对象字面量属性和 Object.defineProperty()/Object.defineProperties()定义的属性。对象字面量只能在计算属性语法中使用符号作为属性。
+
+Object.getOwnPropertyNames()返回对象实例的常规属性数组，Object.getOwnProperty- Symbols()返回对象实例的符号属性数组。这两个方法的返回值彼此互斥。Object.getOwnProperty- Descriptors()会返回同时包含常规和符号属性描述符的对象。Reflect.ownKeys()会返回两种类型的键
+
 
 todo
 todo
