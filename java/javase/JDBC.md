@@ -12,7 +12,7 @@ JDBC为数据库开发提供了标准的API，使用JDBC开发的数据库应用
 程序可通过JDBC API连接到关系数据库，并使用结构化查询语言（SQL，数据库标准的查询语言）来完成对数据库的查询、更新。
 
 JDBC接口(API)包括两个层次:
-* 面向应用的API：Java API，抽象接口，供应用程序开发人员使用(连接数据库，执行SQL语句，获得结 果)。
+* 面向应用的API：Java API，抽象接口，供应用程序开发人员使用(连接数据库，执行SQL语句，获得结果)。
 * 面向数据库的API：Java Driver API，供开发商开发数据库驱动程序用。
 
 ### 驱动程序
@@ -24,6 +24,37 @@ JDBC接口(API)包括两个层次:
 
 ### Java与SQL对应数据类型转换表
 ![JDBC+20210701020953](https://raw.githubusercontent.com/loli0con/picgo/master/images/JDBC%2B20210701020953.png%2B2021-07-01-02-09-54)
+
+## 类型转换
+JDBC 在 java.sql.Types 类中定义了一系列的常规 SQL 类型标识符，这些类型可用于表示那些最为常用的 SQL 类型。在用 JDBC API 编程时，程序员通常可以使用这些 JDBC 类型来引用一般的 SQL 类型，而无须关心目标数据库所用的确切 SQL 类型的名称。
+
+如果想要编写一种可在各种数据库上创建表的可移植 JDBC 程序，用户主要有两个选择。第一个选择是：限制自己只使用那些被广为接受的 SQL 类型名称（例如 INTEGER、NUMERIC 或VARCHAR）。这些类型有可能能适应所有的数据库。第二个选择是：用 java.sql.DatabaseMetaData.getTypeInfo 方法来找出给定的数据库实际上支持哪些 SQL 类型，然后选择与给定 JDBC 类型相匹配的特定于数据库的 SQL 类型名。
+
+JDBC 定义了一个从 JDBC 数据库类型到 Java 类型的标准映射。Java 类型不必与 JDBC 类型完全形同；它们只须能够用足够的类型信息来代表 JDBC 类型，从而能正确地存储和取出参数和从 SQL 语句恢复结果就可以了。
+
+|FROM Object Java类型|FROM Java类型|JDBC类型|TO JAVA类型|TO Java Object 类型|
+|---|---|---|---|---|
+|xxx||CHAR|String|String|
+|String|String|VARCHAR|String|String|
+|xxx||LONGVARCHAR|String|String|
+|xxx|java.math.BigDecimal|NUMERIC|java.math.BigDecimal|java.math.BigDecimal|
+|java.math.BigDecimal||DECIMAL|java.math.BigDecimal|java.math.BigDecimal|
+|Boolean|boolean|BIT|boolean|Boolean|
+|xxx|byte|TINYINT|byte|Integer|
+|xxx|short|SMALLINT|short|Integer|
+|Integer|int|INTEGER|int|Integer|
+|Long|long|BIGINT|long|Long|
+|Float|float|REAL|float|Float|
+|xxx||FLOAT|double|Double|
+|Double|double|DOUBLE|double|Double|
+|xxx||BINARY|byte\[]|byte[]|
+|byte\[]|byte\[]|VARBINARY|byte\[]|byte[]|
+|xxx||LONGVARBINARY|byte\[]|byte[]|
+|java.sql.Date|java.sql.Date|DATE|java.sql.Date|java.sql.Date|
+|java.sql.Time|java.sql.Time|TIME|java.sql.Time|java.sql.Time|
+|java.sql.Timestamp|java.sql.Timestamp|TIMESTAMP|java.sql.Timestamp|java.sql.Timestamp|
+
+
 
 ## 常用接口和类
 ### DriverManager
@@ -114,11 +145,11 @@ PreparedStatement也提供了execute()、executeUpdate()、executeQuery()三个�
 * PreparedStatement可以防止SQL注入，**安全**性更好。
 
 ### CallableStatement
-调用存储过程使用CallableStatement，可以通过Connection的prepareCall()方法来创建CallableStatement对象，创建该对象时需要传入调用存储过程的SQL语句。调用存储过程的SQL语句总是这种格式：{call过程名(?, ?, ?...)}，其中的问号`?`作为存储过程参数的占位符。
+调用存储过程使用CallableStatement，可以通过Connection的prepareCall()方法来创建CallableStatement对象，创建该对象时需要传入调用存储过程的SQL语句。调用存储过程的SQL语句总是这种格式：`{call 过程名(?, ?, ?...)}`，其中的问号`?`作为存储过程参数的占位符。
 
 存储过程的参数既有传入参数，也有传出参数。所谓传入参数就是Java程序必须为这些参数传入值，可以通过CallableStatement的setXxx()方法为传入参数设置值；所谓传出参数就是Java程序可以通过该参数获取存储过程里的值，CallableStatement需要调用registerOutParameter()方法来注册该参数。
 
-调用CallableStatement的execute()方法来执行存储过程，执行结束后通过CallableStatement对象的getXxx（int index）方法来获取指定传出参数的值。
+调用CallableStatement的execute()方法来执行存储过程，执行结束后通过CallableStatement对象的getXxx(int index)方法来获取指定传出参数的值。
 
 #### 示例代码
 ```Java
@@ -224,10 +255,9 @@ CachedRowSet提供了如下方法来控制分页：
 ## 事务
 JDBC连接也提供了事务支持，JDBC连接的事务支持由Connection提供，Connection默认打开自动提交。可以调用Connection的setAutoCommit()方法来关闭自动提交，开启事务。
 
-一旦事务开始之后，程序可以像平常一样创建Statement对象，创建了Statement对象之后，可以执行任意多条DML语句。这些语句所做的修改不会生效，因为事务还没有结束。如果所有的语句都执行成功，程序可以调用Connection的commit()方法来提交事务。
+一旦事务开始之后，程序可以像平常一样创建Statement对象，创建了Statement对象之后，可以执行任意多条DML语句。这些语句所做的修改不会生效，因为事务还没有结束。如果所有的语句都执行成功，程序可以调用Connection的commit()方法来提交事务。如果任意一条SQL语句执行失败，则应该用Connection的rollback()方法来回滚事务。  
 
-如果任意一条SQL语句执行失败，则应该用Connection的rollback()方法来回滚事务。  
-实际上，当Connection遇到一个未处理的SQLException异常时，系统将会非正常退出，事务也会自动回滚。但如果程序捕获了该异常，则需要在异常处理块中显式地回滚事务。
+实际上，当Connection遇到一个未处理的SQLException异常时，系统将会非正常退出，事务也会自动回滚。但如果程序捕获了该异常，则需要在异常处理块中显式地回滚事务（禁止捕获了异常然后不做任何处理的行为）。
 
 Connection提供了setSavepoint()方法设置中间点，提供了rollback(Savepoint savepoint)方法回滚到指定中间点。
 
@@ -243,7 +273,8 @@ JDBC还提供了一个批量更新的功能，使用批量更新时，多条SQL�
 ## DatabaseMetaData
 JDBC提供了DatabaseMetaData来封装数据库连接对应数据库的信息，通过Connection提供的getMetaData()方法就可以获取数据库对应的DatabaseMetaData对象。
 
-许多DatabaseMetaData方法以ResultSet对象的形式返回查询信息，然后使用ResultSet的常规方法（如getString()和getInt()）即可从这些ResultSet对象中获取数据。如果查询的信息不可用，则将返回一个空ResultSet对象。  
+许多DatabaseMetaData方法以ResultSet对象的形式返回查询信息，然后使用ResultSet的常规方法（如getString()和getInt()）即可从这些ResultSet对象中获取数据。如果查询的信息不可用，则将返回一个空ResultSet对象。
+
 DatabaseMetaData的很多方法都需要传入一个xxxPattern模式字符串，这里的xxxPattern不是正则表达式，而是SQL里的模式字符串，即用百分号（%）代表任意多个字符，使用下画线（_）代表一个字符。在通常情况下，如果把该模式字符串的参数值设置为null，即表明该参数不作为过滤条件。
 
 ## 连接池
@@ -289,7 +320,9 @@ conn.close();
 ```
 
 ## jdbc.properties
-一个适用于mysql的🌰
+在开发中使用数据库时获得连接的4个参数（驱动、URL、用户名、密码）通常都存在配置文件中，方便后期维护，程序如果需要更换数据库，只需要修改配置文件即可。在JAVA代码中加载配置文件时，需要注意配置文件的存放路径。
+
+### 一个适用于mysql的🌰
 ```properties
 driver=com.mysql.jdbc.Driver
 url=jdbc:mysql://localhost:3306/day11?useSSL=false&useUnicode=true&characterEncoding=utf8
@@ -297,3 +330,9 @@ username=root
 password=root
 poolMaximumActiveConnections=10
 ```
+
+
+## 参考文章
+1. [java.sql.Types，数据库字段类型，java数据类型的对应关系](https://www.cnblogs.com/shishm/archive/2012/01/30/2332142.html)
+2. [深入理解JDBC设计模式: DriverManager 解析](https://cloud.tencent.com/developer/article/1817106)
+3. [JDBC中使用Properties类及配置文件的操作](https://blog.csdn.net/Activity_Time/article/details/81149710)
