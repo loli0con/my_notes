@@ -9,7 +9,7 @@ SpringBoot使用一个全局的配置文件，**配置文件名称是固定的**
 ### yaml
 YAML 是专门用来写配置文件的语言，非常简洁和强大。
 
-SpringBoot强烈推荐yaml配置，并且基于native YAML提供更强大的特性支持。
+SpringBoot强烈推荐yaml配置，并且基于native YAML提供更强大的特性支持（功能增强）。
 
 请按需阅读：
 1. [YAML 入门教程](https://www.runoob.com/w3cnote/yaml-intro.html)
