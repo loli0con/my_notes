@@ -128,3 +128,45 @@ public class FlowBean implements WritableComparable<FlowBean> {
     }
 }
 ```
+
+
+
+
+
+## 应用
+
+### Join应用
+
+#### Reduce Join
+1. Map 端的主要工作: 为来自不同表或文件的 key/value 对，打标签以区别不同来源的记录。然后用连接字段作为 key，其余部分和新加的标志作为 value，最后进行输出。
+2. Reduce 端的主要工作: 在 Reduce 端以连接字段作为 key 的分组已经完成，我们只需要在每一个分组当中将那些来源于不同文件的记录(在 Map 阶段已经打标志)分开，最后进行合并就 ok 了。
+
+这种方式中，合并的操作是在 Reduce 阶段完成，Reduce 端的处理压力太大，Map
+节点的运算负载则很低，资源利用率不高，且在 Reduce 阶段极易产生数据倾斜。
+
+#### Map Join
+
+##### 使用场景
+Map Join 适用于一张表十分小、一张表很大的场景。
+
+##### 优点
+在 Map 端缓存多张表，提前处理业务逻辑，这样增加 Map 端业务，减少 Reduce 端数
+据的压力，尽可能的减少数据倾斜。
+
+##### 具体实现
+采用 DistributedCache:
+1. 在 Mapper 的 setup 阶段，将文件读取到缓存集合中。
+2. 在 Driver 驱动类中加载缓存。
+
+```Java
+//缓存普通文件到 Task 运行节点。
+job.addCacheFile(new URI("file:///e:/cache/pd.txt"));
+//如果是集群运行,需要设置 HDFS 路径
+job.addCacheFile(new URI("hdfs://hadoop102:8020/cache/pd.txt"));
+```
+
+
+### 数据清洗(ETL)
+ETL，是英文 Extract-Transform-Load 的缩写，用来描述将数据从来源端经过抽取 (Extract)、转换(Transform)、加载(Load)至目的端的过程。
+
+在运行核心业务 MapReduce 程序之前，往往要先对数据进行清洗，清理掉不符合用户要求的数据。清理的过程往往只需要运行 Mapper 程序，不需要运行 Reduce 程序。
