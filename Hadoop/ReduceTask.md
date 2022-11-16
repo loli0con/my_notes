@@ -1,5 +1,6 @@
 # ReduceTask
 
+![MapReduce+20221116150638](https://raw.githubusercontent.com/loli0con/picgo/master/images/MapReduce%2B20221116150638.png%2B2022-11-16-15-06-39)
 
 ## OutputFormat 数据输出
 
