@@ -162,7 +162,22 @@ public class FlowBean implements WritableComparable<FlowBean> {
 2. Sort 阶段:在远程拷贝数据的同时，ReduceTask 启动了两个后台线程对内存和磁盘上的文件进行合并，以防止内存使用过多或磁盘上文件过多。按照 MapReduce 语义，用户编写 reduce()函数输入数据是按 key 进行聚集的一组数据。为了将 key 相同的数据聚在一起，Hadoop 采用了基于排序的策略。由于各个 MapTask 已经实现对自己的处理结果进行了局部排序，因此，ReduceTask 只需对所有数据进行一次归并排序即可。
 3. Reduce 阶段: reduce()函数将计算结果写到 HDFS 上。
 
+### Shuffle
+在 MapTask 和 ReduceTask 之间，Shuffle 过程从第 7(包含) 步开始到第 16(不包含) 步结束：
+1. MapTask 收集 map()方法输出的 kv 对，放到内存缓冲区中
+2. 从内存缓冲区不断溢出本地磁盘文件，可能会溢出多个文件
+3. 多个溢出文件会被合并成大的溢出文件
+4. 在溢出过程及合并的过程中，都要调用 Partitioner 进行分区和针对 key 进行排序
+5. ReduceTask 根据自己的分区号，去各个 MapTask 机器上取相应的结果分区数据
+6. ReduceTask 会抓取到同一个分区的来自不同 MapTask 的结果文件，ReduceTask 会将这些文件再进行合并(归并排序)
+7. 合并成大文件后，Shuffle 的过程也就结束了，后面进入 ReduceTask 的逻辑运算过
+程(从文件中取出一个一个的键值对 Group，调用用户自定义的 reduce()方法)
 
+![MapReduce+20221116175359](https://raw.githubusercontent.com/loli0con/picgo/master/images/MapReduce%2B20221116175359.png%2B2022-11-16-17-54-02)
+
+#### 注意
+1. Shuffle 中的缓冲区大小会影响到 MapReduce 程序的执行效率，原则上说，缓冲区越大，磁盘 io 的次数越少，执行速度就越快。
+2. 缓冲区的大小可以通过参数调整，参数: mapreduce.task.io.sort.mb 默认 100M。
 
 
 
