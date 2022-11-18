@@ -180,11 +180,32 @@ public class FlowBean implements WritableComparable<FlowBean> {
 2. 缓冲区的大小可以通过参数调整，参数: mapreduce.task.io.sort.mb 默认 100M。
 
 
+## 开发总结
+1. 输入数据接口: InputFormat
+   1. 默认使用的实现类是: TextInputFormat
+   2. TextInputFormat的功能逻辑是: 一次读一行文本，然后将该行的起始偏移量作为key，行内容作为 value 返回。
+   3. CombineTextInputFormat 可以把多个小文件合并成一个切片处理，提高处理效率。
+2. 逻辑处理接口: Mapper
+   1. 用户根据业务需求实现其中三个方法:map()、setup()、cleanup()
+3. Partitioner 分区
+   1. 有默认实现 HashPartitioner，逻辑是根据 key 的哈希值和 numReduces 来返回一个分区号，`key.hashCode()&Integer.MAXVALUE%numReduces`
+   2. 如果业务上有特别的需求，可以自定义分区。
+4. Comparable 排序
+   1. 当我们用自定义的对象作为 key 来输出时，就必须要实现 WritableComparable 接口，重写其中的 compareTo()方法。
+   2. 部分排序: 对最终输出的每一个文件进行内部排序。
+   3. 全排序: 对所有数据进行排序，通常只有一个 Reduce。
+   4. 二次排序: 排序的条件有两个。
+5. Combiner 合并
+   1. Combiner 合并可以提高程序执行效率，减少 IO 传输。
+   2. 使用时必须不能影响原有的业务处理结果。
+6. 逻辑处理接口: Reducer
+   1. 用户根据业务需求实现其中三个方法:reduce()、setup()、cleanup()
+7. 输出数据接口:OutputFormat
+   1. 默认实现类是 TextOutputFormat，功能逻辑是: 将每一个 KV 对，向目标文本文件输出一行。
+   2. 用户还可以自定义 OutputFormat。
 
 
-
-
-## 应用
+## 应用场景
 
 ### Join应用
 
@@ -221,3 +242,100 @@ job.addCacheFile(new URI("hdfs://hadoop102:8020/cache/pd.txt"));
 ETL，是英文 Extract-Transform-Load 的缩写，用来描述将数据从来源端经过抽取 (Extract)、转换(Transform)、加载(Load)至目的端的过程。
 
 在运行核心业务 MapReduce 程序之前，往往要先对数据进行清洗，清理掉不符合用户要求的数据。清理的过程往往只需要运行 Mapper 程序，不需要运行 Reduce 程序。
+
+```Java
+// map方法
+
+// 1 获取1行数据
+String line = value.toString();
+// 2 解析数据
+boolean result = parse(line,context);
+// 3 不合法退出 
+if (!result) {
+    return;
+}
+// 4 合法就直接写出
+context.write(value, NullWritable.get());
+```
+
+
+## 数据压缩
+
+### 优缺点
+* 压缩的优点: 以减少磁盘 IO、减少磁盘存储空间。
+* 压缩的缺点: 增加 CPU 开销。
+
+### 压缩原则
+1. 运算密集型的 Job，少用压缩
+2. IO 密集型的 Job，多用压缩
+
+### 压缩编码
+|压缩格式|是否自带|算法|文件扩展名|是否可切片|换成压缩格式后，原程序是否需要修改|优点|缺点|
+|---|---|---|---|---|---|---|---|
+|DEFLATE|是|DEFLATE|.deflate|否|不需要修改|||
+|Gzip|是|DEFLATE|.gz|否|不需要修改|压缩率比较高|不支持Split;压缩/解压速度一般|
+|bzip2|是|bzip2|.bz2|是|不需要修改|压缩率高;支持Split|压缩/解压速度慢|
+|LZO|否|LZO|.lzo|是|需要建索引，还需要指定输入格式|压缩/解压速度比较快;支持Split|压缩率一般;支持切片需要额外创建索引|
+|Snappy|是|Snappy|.snappy|否|不需要修改|压缩和解压缩速度快|不支持Split;压缩率一般|
+
+
+### 压缩位置
+![MapReduce+WX20221117-180255@2x](https://raw.githubusercontent.com/loli0con/picgo/master/images/MapReduce%2BWX20221117-180255%402x.png%2B2022-11-18-09-32-25)
+
+### 压缩参数
+
+#### 编码/解码器
+|压缩格式|编码/解码器|
+|---|---|
+|DEFLATE|org.apache.hadoop.io.compress.DefaultCodec|
+|gzip|org.apache.hadoop.io.compress.GzipCodec|
+|bzip2|org.apache.hadoop.io.compress.BZip2Codec|
+|LZO|com.hadoop.compression.lzo.LzopCodec|
+|Snappy|org.apache.hadoop.io.compress.SnappyCodec|
+
+#### 启用压缩
+|参数|配置位置|默认值|阶段|建议|
+|---|---|---|---|---|
+|io.compression.codecs|core-site.xml|无|输入压缩|Hadoop使用文件扩展名判断是否支持某种编解码器|
+|mapreduce.map.output.compress|mapred-site.xml|false|mapper输出|这个参数设为true启用压缩|
+|mapreduce.map.output.compress.codec|mapred-site.xml|org.apache.hadoop.io.compress.DefaultCodec|mapper输出|企业多使用LZO或Snappy编解码器在此阶段压缩数据|
+|mapreduce.output.fileoutputformat.compress|mapred-site.xml|false|reducer输出|这个参数设为true启用压缩|
+|mapreduce.output.fileoutputformat.compress.codec|mapred-site.xml|org.apache.hadoop.io.compress.DefaultCodec|reducer输出|使用标准工具或者编解码器，如gzip和bzip2|
+
+
+   
+### demo
+```Java
+// Driver驱动
+Configuration conf = new Configuration();
+
+
+// 开启 map 端输出压缩
+conf.setBoolean("mapreduce.map.output.compress", true);
+// 设置 map 端输出压缩方式
+conf.setClass("mapreduce.map.output.compress.codec", BZip2Codec.class, CompressionCodec.class);
+
+
+Job job = Job.getInstance(conf);
+job.setJarByClass(WordCountDriver.class);
+job.setMapperClass(WordCountMapper.class);
+job.setReducerClass(WordCountReducer.class);
+job.setMapOutputKeyClass(Text.class);
+job.setMapOutputValueClass(IntWritable.class);
+job.setOutputKeyClass(Text.class);
+job.setOutputValueClass(IntWritable.class);
+FileInputFormat.setInputPaths(job, new Path(args[0]));
+FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+
+// 设置 reduce 端输出压缩开启
+FileOutputFormat.setCompressOutput(job, true);
+// 设置压缩的方式
+FileOutputFormat.setOutputCompressorClass(job, BZip2Codec.class);
+// FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);
+// FileOutputFormat.setOutputCompressorClass(job, DefaultCodec.class);
+
+
+boolean result = job.waitForCompletion(true);
+System.exit(result ? 0 : 1);
+```
