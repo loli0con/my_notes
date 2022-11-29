@@ -2,18 +2,73 @@
 ## 定义
 1. Servlet 是 **JavaEE 规范**之一。规范就是接口。
 2. Servlet 就 JavaWeb 三大组件之一。
-3. Servlet 是运行在服务器上的一个 java 小程序，它可以**接收客户端发送过来的请求，并响应数据给客户端**。
+3. Servlet 是运行在服务器上的一个 Java 小程序，它可以**接收客户端发送过来的请求，并响应数据给客户端**。
+
+### 接口规范
+在JavaEE平台上，处理TCP连接，解析HTTP协议这些底层工作统统扔给现成的Web服务器去做，开发者只需要把自己的应用程序跑在Web服务器上。为了实现这一目的，JavaEE提供了Servlet API，开发者使用Servlet API编写自己的Servlet来处理HTTP请求，Web服务器实现Servlet API接口，实现底层功能：
+```
+                 ┌───────────┐
+                 │My Servlet │
+                 ├───────────┤
+                 │Servlet API│
+┌───────┐  HTTP  ├───────────┤
+│Browser│<──────>│Web Server │
+└───────┘        └───────────┘
+```
+
 
 ## Servlet体系
 ![servlet+20210719092717](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B20210719092717.png%2B2021-07-19-09-27-19)
 
+## Servlet API
+Servlet API是一个jar包，需要通过Maven来引入它，才能正常编译。
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.itranswarp.learnjava</groupId>
+    <artifactId>web-servlet-hello</artifactId>
+    <packaging>war</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>17</java.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>5.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>hello</finalName>
+    </build>
+</project>
+```
+
+注意事项：
+1. 打包类型不是jar，而是war，表示Java Web Application Archive
+2. `<scope>`指定为`provided`，表示编译时使用，但不会打包到.war文件中，因为运行期Web服务器本身已经提供了Servlet API相关的jar包
+3. Servlet版本
+   1. 4.0及之前的servlet-api由Oracle官方维护，引入的依赖项是`javax.servlet:javax.servlet-api`，编写代码时引入的包名为：`import javax.servlet.*;`
+   2. 5.0及以后的servlet-api由Eclipse开源社区维护，引入的依赖项是`jakarta.servlet:jakarta.servlet-api`，编写代码时引入的包名为：`import jakarta.servlet.*;`
+   3. `/WEB-INF/web.xml`配置文件：低版本Servlet必须有，高版本Servlet不需要
 
 ## 开发方式
 我们需要开发自己的Servlet程序，并将Servlet程序注册/告诉到tomcat，让tomcat使用我们开发的Servlet程序处理请求并响应数据。
 
 有两种方式开发方式：
 * 基于配置：在web.xml中配置自己的编写好的Servlet程序，以供tomcat读取
-* 基于注解：在Servlet上用注解修饰，以供tomcat扫描
+* 基于注解(推荐)：在Servlet上用注解修饰，以供tomcat扫描
 ### web.xml
 [官方示例](https://tomcat.apache.org/tomcat-8.5-doc/appdev/web.xml.txt)
 ```xml
@@ -71,11 +126,12 @@
 精确 > 前缀 > 后缀
 
 ### 实现方式
-* 注解：`@WebServlet(urlPatterns={"匹配路径1","匹配路径2",...})`
 * web.xml：`<servlet-mapping><url-pattern>...`
+* 注解：`@WebServlet(urlPatterns={"匹配路径1","匹配路径2",...})`
 
 
 ## 生命周期
+
 ### 相关方法
 0. 构造器方法
 1. init初始化方法，服务器实例Servlet之后调用，调用1次
@@ -83,9 +139,11 @@
 3. destroy销毁方法，服务器关闭前销毁Servlet之前调用，调用1次
 
 ### 创建时机
+
+#### 第一次访问时创建(默认情况)
 浏览器默认第一次访问的时候调用了init，说明这个时候创建了Servlet对象
 
-#### 启动创建
+#### 服务器启动时创建(可选配置)
 Servlet对象可以修改为服务器启动时创建，需要配置：
 * xml方式: \<load-on-startup>1\</load-on-startup>
 * 注解方式: loadOnStartup = 1
