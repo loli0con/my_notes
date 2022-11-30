@@ -931,6 +931,11 @@ rem 搜索完毕
 pause
 ```
 
+## remote.repositories
+每次在更新maven项目的时候，每一个jar包路径下的_remote.repositories文件都会同setting.xml中设置的仓库地址id进行判断，如果没有匹配，会自动更新该jar包的相关文件，如果未联网则会出现jar无法发现的错误，导致即使jar存在，maven项目也无法使用该jar的情况。
+
+当通过手动复制粘贴的方式往maven本地仓库中导入依赖包时，需要将_remote.repositories文件删除，否则maven对该依赖包进行校验(和远程仓库中的对比)时，如果远程仓库中不存在该包依赖高，那么maven将报错中止。删除脚本参考上一章节。
+
 
 
 ## 参考
