@@ -219,9 +219,12 @@ HttpServletRequest request;
 ### 请求数据（行/头/体）
 #### 行
 * request.getMethod()：获取请求方法
-* request.getRequestURI()：获取请求的资源路径
+* request.getRequestURI()：获取请求的资源路径，不包括请求参数
+* request.getQueryString()：返回请求参数
+* request.getParameter(name)：返回请求参数，GET请求从URL读取参数，POST请求从Body中读取参数
 * request.getRequestURL()：获取请求的统一资源定位符(绝对路径)
-* request.getRemoteAddr()：获取客户端ip地址
+* request.getRemoteAddr()：返回客户端的IP地址
+* request.getScheme()：返回协议类型，例如"http"，"https"
 * request.getProtocol()：获取协议和版本
 * request.getServletPath()：获取当前Servlet的访问地址
 * request.getContextPath()：获取当前项目的访问地址
@@ -229,6 +232,7 @@ HttpServletRequest request;
 #### 头
 * request.getHeaderNames()：得到所有的请求头名称
 * request.getHeader(String headName)：获取指定请求头name对应的值value
+* request.getCookies()：返回请求携带的所有Cookie
 ##### 常用请求头
 | 请求头            | 描述                                                   |
 | ----------------- | ------------------------------------------------------ |
@@ -242,6 +246,9 @@ HttpServletRequest request;
 * Map\<String,String\[]> request.getParameterMap()：获取所有参数键和值
 * String request.getParameter(String name)：通过参数名获得参数值（参数值为单值/一个字符串）
 * String[] request.getParameterValues(String name)：通过参数名获得一组同名的值（参数值为一个字符串数组）
+* request.getInputStream()：如果该请求带有HTTP Body，该方法将打开一个输入流用于读取Body
+* request.getReader()：和getInputStream()类似，但打开的是Reader
+* request.getContentType()：获取请求Body的类型，例如"application/x-www-form-urlencoded"
 ##### 封装
 根据Map集合数据自动封装数据到JavaBean中，步骤如下：
 1. 导入beanutils的jar包
@@ -250,10 +257,26 @@ HttpServletRequest request;
 
 ### 转发
 转发：request.getRequestDispatcher("/资源路径").forward(request,response);
-#### 转发与重定向的区别
-重定向：response.sendRedirect("/项目路径/资源路径")
+#### 转发与重定向
+重定向API：response.sendRedirect("/项目路径/资源路径")
 
-区别：
+项目路径：`request.getContextPath()`获取当前Webapp挂载的路径，对于ROOT来说，总是返回空字符串""。
+
+重定向过程：
+```
+┌───────┐   GET /hi     ┌───────────────┐
+│Browser│ ────────────> │RedirectServlet│
+│       │ <──────────── │               │
+└───────┘   302 /hello  └───────────────┘
+
+
+┌───────┐   GET /hello  ┌───────────────┐
+│Browser│ ────────────> │ HelloServlet  │
+│       │ <──────────── │               │
+└───────┘   200 <html>  └───────────────┘
+```
+
+#### 区别
 1. 转发url不变，重定向url会变。
 2. 转发是在服务器内部跳转，重定向是浏览器的跳转，因此转发是1次请求，重定向是2次请求。
 3. 转发跳转前后两个资源是共享request与response，重定向不共享。
@@ -268,14 +291,19 @@ HttpServletResponse response;
 ```
 每次请求进来，Tomcat 服务器都会创建一个 Response 对象传递给 Servlet 程序去使用。我们如果需要设置返回给客户端的信息，都可以通过 HttpServletResponse 对象来进行设置。
 
-### 行
+### 响应数据（行/头/体）
+#### 行
 * response.setStatus(int status)：设置状态码
 * response.sendError(int sc, String msg)：发送一个错误码和错误信息
 
-### 头
+#### 头
 * response.setHeader(String name, String value)：用给定名称和值设置响应头
+* response.addHeader(name, value)：给响应添加一个Header，因为HTTP协议允许有多个相同的Header
+* response.setContentType(String type)：设置Body的类型，例如，"text/html"
+* response.setCharacterEncoding(String charset)：设置字符编码，例如，"UTF-8"
+* response.addCookie(Cookie cookie)：给响应添加一个Cookie
 
-#### 常见响应头
+##### 常见响应头
 | 响应头              | 描述                                                         |
 | ------------------- | ------------------------------------------------------------ |
 | location            | 重定向跳转的地址                                             |
@@ -285,8 +313,8 @@ HttpServletResponse response;
 | content-disposition | 内容的处理方式，可以控制下载。attachment;filename=xxx.xx     |
 | content-encoding    | 压缩方式。gzip                                               |
 
-### 体
-* 获得响应体的输出流，输出数据
+#### 体
+* 获得响应体的输出流，输出数据（二者只能获取其中一个）
   * var writer = response.getWriter()：字符流输出
     * writer.print(任何类型)：本质将任何类型转换为字符串输出，兼容性更好
     * writer.write(字符串类型)
@@ -310,6 +338,9 @@ HttpServletResponse response;
 [Url编码-百分号编码介绍](../front-end/url-encode.md)  
 [base64编码](../front-end/base64.md)
 
+### 注意事项
+1. 写入响应前，无需设置setContentLength()，因为底层服务器会根据写入的字节数自动设置，如果写入的数据量很小，实际上会先写入缓冲区，如果写入的数据量很大，服务器会自动采用Chunked编码让浏览器能识别数据结束符而不需要设置Content-Length头。
+2. 写入完毕后，必须调用flush()，因为大部分Web服务器都基于HTTP/1.1协议，会复用TCP连接。如果没有调用flush()，将导致缓冲区的内容无法及时发送到客户端。此外，写入完毕后千万不要调用close()，原因同样是因为会复用TCP连接，如果关闭写入流，将关闭TCP连接，使得Web服务器无法复用此TCP连接。
 
 
 ## 域对象
