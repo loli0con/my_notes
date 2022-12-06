@@ -329,9 +329,9 @@ HttpServletResponse response;
   * public void write(byte[] b) 将字节数组写入压缩输出流。
   * void finish() 完成将压缩数据写入输出流的操作，无需关闭底层流。
 * 重定向
-  * response.sendRedirect("/项目路径/资源路径")
+  * response.sendRedirect("/项目路径/资源路径") # 返回302表示临时重定向
   * 上面的一句(推荐) 等价于 下面的两句
-  * response.setStatus(302);
+  * response.setStatus(302); # 也可以传入301表示永久重定向
   * response.setHeader("Location", "/项目路径/资源路径");
 
 ![servlet+1565982684673](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B1565982684673.png%2B2021-07-19-15-01-53)
@@ -433,6 +433,8 @@ Session 属于服务器端的会话技术，数据保存服务器内存中，Ses
 * setMaxAge(int expiry)：设置cookie过期时间，单位是秒。正数：设置秒数；负数：浏览器关闭就失效；零：删除cookie。
 * setPath(String uri)：设置cookie的访问路径，只有访问这个路径或者它的子路径，浏览器才会将cookie发送给服务器。
 
+如果是https网页，还需要调用setSecure(true)，否则浏览器不会发送该Cookie，服务端自然就无法获取到该Cookie。
+
 ##### 写/读
 * response.addCookie(Cookie cookie)：将服务器创建的cookie通过响应发送给浏览器
 * Cookie[] request.getCookies()：服务器得到浏览器发送过来的所有的cookie信息，返回的是一个Cookie的对象数组。如果没有读到任何的Cookie，返回null
@@ -494,6 +496,9 @@ response.addCookie(cookie);
 2. 由于进行序列化与反序列操作，需要会话的中的对象数据所属的类实现可序列化接口
 
 #### 禁用Cookie的解决方案
+除了使用Cookie机制可以实现Session外，还可以通过隐藏表单、URL末尾附加ID来追踪Session。
+
+##### URL方式
 重定向的url重写，把会话的ID在地址栏上带给服务器：`response.encodeURL(path)`。
 
 ```java
