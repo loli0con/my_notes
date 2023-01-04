@@ -23,15 +23,15 @@ ZooKeeper数据模型的结构与**Unix文件系统**很类似，整体上可以
 
 节点可以分为四大类：
 * PERSISTENT 持久化节点：客户端与Zookeeper断开连接后，该节点依旧存在。
-* PERSISTENT_SEQUENTIAL 持久化顺序节点：-s，客户端与Zookeeper断开连接后，该节点依旧存在，只是Zookeeper给该节点名称进行顺序编号
-* EPHEMERAL 临时节点：-e，客户端与Zookeeper断开连接后，该节点被删除。
-* EPHEMERAL_SEQUENTIAL 临时顺序节点：-es，客户端与Zookeeper断开连接后，该节点被删除，只是Zookeeper给该节点名称进行顺序编号
+* PERSISTENT_SEQUENTIAL 持久化顺序节点：`-s`，客户端与Zookeeper断开连接后，该节点依旧存在，只是Zookeeper给该节点名称进行顺序编号
+* EPHEMERAL 临时节点：`-e`，客户端与Zookeeper断开连接后，该节点被删除。
+* EPHEMERAL_SEQUENTIAL 临时顺序节点：`-es`，客户端与Zookeeper断开连接后，该节点被删除，只是Zookeeper给该节点名称进行顺序编号
 
 ### 应用场景
 提供的服务包括：
 1. 统一命名服务：在分布式环境下，经常需要对应用或服务进行统一命名，便于识别
 2. 统一配置管理：分布式环境下，配置文件同步非常常见
-   1. 一般要求一个集群中，所有节点的配置信息是一致的，比如 Kafka 集群
+   1. 一般要求一个集群中，所有节点的配置信息是一致的，比如Kafka集群
    2. 对配置文件修改后，希望能够快速同步到各个节点上
    3. 配置管理可交由ZooKeeper实现
       1. 可将配置信息写入ZooKeeper上的一个Znode
@@ -52,27 +52,27 @@ ZooKeeper数据模型的结构与**Unix文件系统**很类似，整体上可以
 
 
 
+## Zookeeper程序
 
-## 运行
-1. 去下载https://zookeeper.apache.org/
+### 运行流程
+1. 下载https://zookeeper.apache.org/
 2. 修改配置（`mv zoo_sample.cfg zoo.cfg`）
-3. 操作Zookeeper
+3. 启动Zookeeper服务器
+4. 启动Zookeeper客户端
 
 ### 配置参数
 Zookeeper中的配置文件zoo.cfg中参数含义解读如下：
 1. tickTime = 2000：通信心跳时间，Zookeeper服务器与客户端心跳时间，单位毫秒
 2. initLimit = 10：LF初始通信时限，Leader和Follower初始连接时能容忍的最多心跳数(tickTime的数量)
 3. syncLimit = 5：LF同步通信时限，Leader和Follower之间通信时间如果超过syncLimit*tickTime，Leader认为Follwer死掉，从服务器列表中删除Follwer。
-4. dataDir：保存Zookeeper中的数据
+4. dataDir：保存Zookeeper中的数据。默认的tmp目录，容易被Linux系统定期删除，所以一般不用默认的tmp目录。
 5. clientPort = 2181：客户端连接端口，通常不做修改
 
-
-
-## 常用命令
+### 常用命令
 我们可以通过zookeeper的客户端工具或者zookeeper的Api连接服务端：
 ![zookeeper+20210902004910](https://raw.githubusercontent.com/loli0con/picgo/master/images/zookeeper%2B20210902004910.png%2B2021-09-02-00-49-10)
 
-### 服务端
+#### 服务端
 ```sh
 # 处于zookeeper的bin目录下
 
@@ -89,45 +89,19 @@ Zookeeper中的配置文件zoo.cfg中参数含义解读如下：
 ./zkServer.sh restart 
 ```
 
-### 客户端
-| 命令基本语法 | 功能描述                                                                                  |
-| ------------ | ----------------------------------------------------------------------------------------- |
-| help         | 显示所有操作命令                                                                          |
-| ls path      | 使用 ls 命令来查看当前 znode 的子节点(可监听)<br />-w监听子节点变化<br />-s 附加次级信息 |
-| create       | 普通创建<br />-s 含有序列<br />-e 临时(重启或者超时消失)                                  |
-| get path     | 获得节点的值(可监听) <br />-w 监听节点内容变化<br />-s 附加次级信息                       |
-| set          | 设置节点的具体值                                                                          |
-| stat         | 查看节点状态                                                                              |
-| delete       | 删除节点                                                                                  |
-| deleteall    | 递归删除节点                                                                              |
+#### 客户端
+|命令基本语法|功能描述|
+|---|---|
+|help|显示所有操作命令|
+|ls *路径*|使用ls命令来查看当前znode的子节点(可监听)<br/>-w 监听子节点变化<br/>-s 附加次级信息|
+|create *路径*|普通创建<br/>-s 含有序列<br />-e 临时(重启或者超时消失)|
+|get *路径*|获得节点的值(可监听)<br/>-w 监听节点内容变化<br />-s 附加次级信息|
+|set *路径* *值*|设置节点的具体值|
+|stat *路径*|查看节点状态|
+|delete *路径*|删除节点|
+|deleteall *路径*|递归删除节点|
 
-
-#### 连接和退出
-```sh
-# 连接zookeeper服务端, 可以不指定服务端地址，默认连接localhost:2181
-./zkCli.sh
-# 连接指定服务端地址
-./zkCli.sh –server localhost:2181   
-# 断开连接
-quit
-```
-
-#### 查看目录/节点的孩子
-```sh
-# 显示指定目录下节点 / 代表根目录
-ls /
-
-# 查看 /zookeeper 节点下的信息
-ls /zookeeper
-```
-
-#### 查看节点详情
-```sh
-# 查看 /zookeeper 节点的详细数据
-ls -s /zookeeper
-```
-
-详情说明：
+附加次级信息的内容：
 - cZxid：节点被创建的事务ID
 - ctime：创建时间(从1970年开始的毫秒数)
 - mZxid：最后一次被更新的事务ID
@@ -140,13 +114,41 @@ ls -s /zookeeper
 - dataLength：节点存储的数据的长度 
 - numChildren：当前节点的子节点个数
 
-事务ID：每次修改ZooKeeper状态都会产生一个ZooKeeper事务ID。事务ID是ZooKeeper中所有修改总的次序。每次修改都有唯一的zxid，如果zxid1小于zxid2，那么zxid1在zxid2之前发生。
 
+事务ID：
+1. 每次修改ZooKeeper状态都会产生一个ZooKeeper事务ID。
+2. 每次修改都有唯一的zxid，如果zxid1小于zxid2，那么zxid1在zxid2之前发生。
+3. 事务ID是ZooKeeper中所有修改总的次序。
 
-#### 创建节点
+##### 连接和退出
 ```sh
-# 在根节点下创建app1节点, 并设置值为itheima
-create /app1 itheima
+# 连接zookeeper服务端, 可以不指定服务端地址，默认连接localhost:2181
+./zkCli.sh
+# 连接指定服务端地址
+./zkCli.sh –server localhost:2181   
+# 断开连接
+quit
+```
+
+##### 查看目录/节点的孩子
+```sh
+# 显示指定目录下节点 / 代表根目录
+ls /
+
+# 查看 /zookeeper 节点下的信息
+ls /zookeeper
+```
+
+##### 查看节点详情
+```sh
+# 查看 /zookeeper 节点的详细数据
+ls -s /zookeeper
+```
+
+##### 创建节点
+```sh
+# 在根节点下创建app1节点, 并设置值为a1
+create /app1 a1
 
 # 在根节点下创建app2节点, 且不设置值
 create /app2 "" # 3.5版本后不需要 ""
@@ -155,34 +157,38 @@ create /app2 "" # 3.5版本后不需要 ""
 create /app2/app2-2 ""
 
 # 创建临时节点 /app1，如果断开连接，该节点就没了
-create -e /app1 111 
+create -e /app1 a1 
 
 # 创建顺序节点, 会在app1后面加一堆的数字，方便进行排序
-create -s /app1 111
-create -s /app1 111
-create -s /app1 111
+create -s /app1 a1
+create -s /app1 a1
+create -s /app1 a1
 ```
+顺序结点：
+1. 创建znode时设置顺序标识，znode名称后会附加一个值，顺序号是一个单调递增的计数器，由父节点维护
+2. 在分布式系统中，顺序号可以被用于为所有的事件进行全局排序，这样客户端可以通过顺序号推断事件的顺序
 
-#### 获取节点值
+##### 获取节点值
 ```sh
 # 获取/app1节点的值
 get /app1
 ```
 
-#### 设置节点值
+##### 设置节点值
 ```sh
 # 相当于是修改/app1节点的值为itheima2
-set /app1 itheima2
+set /app1 p1
 ```
 
-#### 删除节点
+##### 删除节点
 ```sh
 # 删除单个节点，如果下面有子节点就删除不了
 delete /app1
 
-# 删除带有子节点的节点，有些版本是deleteall
-rmr /app2
+# 删除带有子节点的节点，有些版本是rmr
+deleteall /app2
 ```
+
 
 
 ## 监听器
@@ -194,6 +200,9 @@ rmr /app2
   * PathChildrenCache：监控一个ZNode的子节点
   * TreeCache：可以监控整个树上的所有节点，类似于PathChildrenCache和NodeCache的组合
 ![zookeeper+20210902011101](https://raw.githubusercontent.com/loli0con/picgo/master/images/zookeeper%2B20210902011101.png%2B2021-09-02-01-11-02)
+
+
+
 
 ## JavaAPI - Curator
 Curator 是Apache ZooKeeper 的Java客户端库，可以更容易的使用ZooKeeper，包含几个包：
@@ -505,9 +514,9 @@ public class CuratorTest {
 ```
 
 
-## 集群
+## 集群部署
 
-### 安装
+### 部署流程
 1. 集群规划：在 hadoop102、hadoop103 和 hadoop104 三个节点上都部署 Zookeeper。
 2. 解压安装
 3. 配置服务器编号：在数据目录（zoo.cfg指定的dataDir目录）下创建一个myid文件，在文件中添加与 server 对应的编号。hadoop102服务器对应的编号为2，hadoop103对应的编号为3，hadoop104服务器对应的编号为4。
@@ -583,7 +592,7 @@ Leader，而这个端口就是用来执行选举时服务器相互通信的端�
 ![zookeeper+20210902090931](https://raw.githubusercontent.com/loli0con/picgo/master/images/zookeeper%2B20210902090931.png%2B2021-09-02-09-09-33)
 
 
-## Zookeeper分布式锁
+## Zookeeper应用——分布式锁
 分布式锁：一种更加高级的锁机制，能处理种跨机器的进程之间的数据同步问题，保证了分布式系统中多个进程能够有序的访问该临界资源。
 
 ### 原理
