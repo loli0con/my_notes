@@ -6,6 +6,8 @@ Zookeeper 是一个开源的分布式的，为分布式框架提供**协调服�
 ### 机制
 Zookeeper从设计模式角度来理解：是一个基于观察者模式设计的分布式服务管理框架，它**负责存储和管理大家都关心的数据**，然后**接受观察者的注册**，一旦这些数据的状态发生变化，Zookeeper就将**负责通知已经在Zookeeper上注册的那些观察者**做出相应的反应。
 
+Zookeeper = 文件系统(数据结构) + 通知机制(设计模式)
+
 ### 特点
 1. Zookeeper：一个领导者(Leader)，多个跟随者(Follower)组成的集群。
 2. 集群中只要有半数以上节点存活，Zookeeper集群就能正常服务。所以Zookeeper适合安装奇数台服务器。
@@ -26,20 +28,45 @@ ZooKeeper数据模型的结构与**Unix文件系统**很类似，整体上可以
 * EPHEMERAL_SEQUENTIAL 临时顺序节点：-es，客户端与Zookeeper断开连接后，该节点被删除，只是Zookeeper给该节点名称进行顺序编号
 
 ### 应用场景
-提供的服务包括：统一命名服务、统一配置管理、统一集群管理、服务器节点动态上下线、软负载均衡、分布式锁、注册中心等。
+提供的服务包括：
+1. 统一命名服务：在分布式环境下，经常需要对应用或服务进行统一命名，便于识别
+2. 统一配置管理：分布式环境下，配置文件同步非常常见
+   1. 一般要求一个集群中，所有节点的配置信息是一致的，比如 Kafka 集群
+   2. 对配置文件修改后，希望能够快速同步到各个节点上
+   3. 配置管理可交由ZooKeeper实现
+      1. 可将配置信息写入ZooKeeper上的一个Znode
+      2. 各个客户端服务器监听这个Znode
+      3. 一旦Znode中的数据被修改，ZooKeeper将通知各个客户端服务器
+3. 统一集群管理：分布式环境中，实时掌握每个节点的状态是必要的，这样可以根据节点实时状态做出一些调整。ZooKeeper可以实现实时监控节点状态变化。
+   1. 可将节点信息写入ZooKeeper上的一个ZNode
+   2. 监听这个ZNode可获取它的实时状态变化
+4. 服务器节点动态上下线，客户端能实时洞察到服务器上下线的变化
+   1. 服务端启动时去注册信息(创建都是临时节点)
+   2. 客户端通过Zookeeper获取到当前在线服务器列表，并且注册监听
+   3. 服务器节点下线
+   4. Zookeeper触发服务器节点上下线事件通知给客户端
+   5. 客户端重新再去Zookeeper获取服务器列表，并注册监听
+5. 软负载均衡：在Zookeeper中记录每台服务器的访问数，让访问数最少的服务器去处理最新的客户端请求
+6. 分布式锁
+7. 注册中心
+
+
+
 
 ## 运行
 1. 去下载https://zookeeper.apache.org/
-2. 修改配置
+2. 修改配置（`mv zoo_sample.cfg zoo.cfg`）
 3. 操作Zookeeper
 
 ### 配置参数
 Zookeeper中的配置文件zoo.cfg中参数含义解读如下：
-1. tickTime = 2000:通信心跳时间，Zookeeper服务器与客户端心跳时间，单位毫秒
-2. initLimit = 10:LF初始通信时限，Leader和Follower初始连接时能容忍的最多心跳数(tickTime的数量)
-3. syncLimit = 5:LF同步通信时限，Leader和Follower之间通信时间如果超过syncLimit * tickTime，Leader认为Follwer死 掉，从服务器列表中删除Follwer。
-4. dataDir:保存Zookeeper中的数据
-5. clientPort = 2181:客户端连接端口，通常不做修改
+1. tickTime = 2000：通信心跳时间，Zookeeper服务器与客户端心跳时间，单位毫秒
+2. initLimit = 10：LF初始通信时限，Leader和Follower初始连接时能容忍的最多心跳数(tickTime的数量)
+3. syncLimit = 5：LF同步通信时限，Leader和Follower之间通信时间如果超过syncLimit*tickTime，Leader认为Follwer死掉，从服务器列表中删除Follwer。
+4. dataDir：保存Zookeeper中的数据
+5. clientPort = 2181：客户端连接端口，通常不做修改
+
+
 
 ## 常用命令
 我们可以通过zookeeper的客户端工具或者zookeeper的Api连接服务端：
@@ -66,7 +93,7 @@ Zookeeper中的配置文件zoo.cfg中参数含义解读如下：
 | 命令基本语法 | 功能描述                                                                                  |
 | ------------ | ----------------------------------------------------------------------------------------- |
 | help         | 显示所有操作命令                                                                          |
-| ls path      | 使用 ls 命令来查看当前 znode 的子节点(可监听) -w<br />监听子节点变化<br />-s 附加次级信息 |
+| ls path      | 使用 ls 命令来查看当前 znode 的子节点(可监听)<br />-w监听子节点变化<br />-s 附加次级信息 |
 | create       | 普通创建<br />-s 含有序列<br />-e 临时(重启或者超时消失)                                  |
 | get path     | 获得节点的值(可监听) <br />-w 监听节点内容变化<br />-s 附加次级信息                       |
 | set          | 设置节点的具体值                                                                          |
@@ -87,15 +114,34 @@ quit
 
 #### 查看目录/节点的孩子
 ```sh
-# 显示指定目录下节点 /代表根目录
+# 显示指定目录下节点 / 代表根目录
 ls /
 
-# 查看dubbo节点下的信息
+# 查看 /zookeeper 节点下的信息
 ls /zookeeper
+```
 
-# 查看dubbo节点的详细数据
+#### 查看节点详情
+```sh
+# 查看 /zookeeper 节点的详细数据
 ls -s /zookeeper
 ```
+
+详情说明：
+- cZxid：节点被创建的事务ID
+- ctime：创建时间(从1970年开始的毫秒数)
+- mZxid：最后一次被更新的事务ID
+- mtime：修改时间(从1970年开始的毫秒数)
+- pZxid：子节点列表最后一次被更新的事务ID
+- cversion：子节点的版本号，znode子节点修改次数
+- dataVersion：数据版本号
+- aclVrsion：权限版本号
+- ephemeralOwner：代表临时节点拥有者的session id，持久节点则为0
+- dataLength：节点存储的数据的长度 
+- numChildren：当前节点的子节点个数
+
+事务ID：每次修改ZooKeeper状态都会产生一个ZooKeeper事务ID。事务ID是ZooKeeper中所有修改总的次序。每次修改都有唯一的zxid，如果zxid1小于zxid2，那么zxid1在zxid2之前发生。
+
 
 #### 创建节点
 ```sh
@@ -138,27 +184,6 @@ delete /app1
 rmr /app2
 ```
 
-#### 查看节点详情
-```sh
-# 查看节点信息，再后面一些高版本主键废弃，使用ls -s /app2
-ls2 /app2
-```
-
-详情说明：
-- czxid：节点被创建的事务ID
-- ctime：创建时间(从1970年开始的毫秒数)
-- mzxid：最后一次被更新的事务ID 
-- mtime：修改时间(从1970年开始的毫秒数)
-- pzxid：子节点列表最后一次被更新的事务ID
-- cversion：子节点的版本号，znode 子节点修改次数
-- dataversion：数据版本号 
-- aclversion：权限版本号 
-- ephemeralOwner：用于临时节点，代表临时节点的事务ID。如果为持久节点则为0 
-- dataLength：节点存储的数据的长度 
-- numChildren：当前节点的子节点个数
-
-## 事务zxid
-每次修改ZooKeeper状态都会产生一个ZooKeeper事务ID。事务ID是ZooKeeper中所有修改总的次序。每次修改都有唯一的zxid，如果zxid1小于zxid2，那么zxid1在zxid2之前发生。
 
 ## 监听器
 说明：
