@@ -430,7 +430,8 @@ public class CuratorTest {
                 System.out.println(new String(data));
             }
         });
-        // 3. 开启监听，如果参数为true开启监听时，如果设置为true，那么NodeCache在第一次启动的时候就会立刻在Zookeeper上读	// 取对应节点的数据内容，并保存在Cache中。
+        // 3. 开启监听，如果参数为true开启监听时，如果设置为true，那么NodeCache在第一次启动的时候就会立刻在Zookeeper上读
+        // 取对应节点的数据内容，并保存在Cache中。
         nodeCache.start(true);
 
         // 不让线程结束
