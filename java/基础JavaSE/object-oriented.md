@@ -107,6 +107,8 @@ Java包机制需要两个方面的保证
 
 同一个包中的类不必位于相同的目录下，只要让CLASSPATH环境变量里包含这两个路径即可。jvm会自动搜索CLASSPATH下的子路径，把它们当成用一个包下的类来处理。
 
+包没有父子关系。java.util和java.util.zip是不同的包，两者没有任何继承关系。
+
 ### import
 import可以向某个Java文件中导入指定包层次下某个类或者全部类：
 * import package.subpackage...Classname
@@ -117,6 +119,14 @@ import static用于导入指定类的某个静态成员变量、方法或全部�
 * import static package.subpackage...ClassName.fieldName|methodName
 * import static package.subpackage...ClassName.*
 
+### 编译
+Java编译器最终编译出的.class文件只使用完整类名，因此，在代码中，当编译器遇到一个class名称时：
+1. 如果是完整类名，就直接根据完整类名查找这个class
+2. 如果是简单类名，按下面的顺序依次查找：
+   1. (默认自动import当前package的其他class)查找当前package是否存在这个class
+   2. 查找import的包是否包含这个class
+   3. (默认自动import java.lang.*)查找java.lang包是否包含这个class
+3. 如果按照上面的规则还无法确定类名，则编译报错。
 
 
 ***
