@@ -5,6 +5,26 @@
 
 > 🌝拿到所有信息以后，基本就可以为所欲为了。
 
+## Class类
+除了int等基本类型外，Java的其他类型全部都是**class**（包括interface），**class**（包括interface）的本质是**数据类型（Type）**。
+* `String` -> **String.class** -> 是一种数据类型
+* `Object` -> **Object.class** -> 是一种数据类型
+* `Runnable` -> **Runnable.class** -> 是一种数据类型
+* `Exception` -> **Exception.class** -> 是一种数据类型
+* `Class` -> **Class.class** -> 是一种数据类型
+
+**class**是由JVM在执行过程中动态加载的，JVM在第一次读取到一种**class**类型时，将其加载进内存。每加载一种**class**，JVM就为其创建一个`Class`类型的实例，并关联起来。注意：这里的`Class`类型是一个名叫`Class`的**class**。所以，JVM持有的每个`Class`实例都指向一个数据类型（class或interface）。
+
+由于JVM为每个加载的**class**创建了对应的`Class`实例，并在实例中保存了该**class**的所有信息，包括类名、包名、父类、实现的接口、所有方法、字段等，因此，如果获取了某个`Class`实例，我们就可以通过这个`Class`实例获取到该实例对应的**class**的所有信息。
+
+这种通过`Class`实例获取**class**信息的方法称为反射（Reflection）。
+
+### 数组
+数组（例如String[]）也是一种类，而且不同于String.class，它的类名是[Ljava.lang.String。
+
+### 基本类型
+JVM为每一种基本类型如int也创建了Class实例，通过int.class访问。
+
 ## 获取Class对象
 每个类被加载之后，系统就会为该类生成一个对应的Class对象，通过该Class对象就可以访问到JVM中的这个类。有三种方式获取Class对象：
 1. 使用Class类的forName(String clazzName)静态方法，该方法需要传入字符串参数，该字符串参数的数值是某个类的全限定类名
@@ -59,7 +79,6 @@ Object invoke(Object obj, Object... args)，该方法中的obj是执行该方法
 ### 访问成员变量值
 通过Class对象获取指定的Filed对象，再调用Field对象的方法来读取和设置成员变量值。
 
-
 ### 操作数组
 在java.lang.reflect包下还提供了一个Array类，Array对象可以代表所有的数组。程序可以通过使用Array来动态地创建数组，操作数组元素等。
 
@@ -67,14 +86,6 @@ Object invoke(Object obj, Object... args)，该方法中的obj是执行该方法
 `static Object newInstance(Class<?> componentType, int... length)`：创建一个具有指定的元素类型、指定维度的新数组。
 
 
-## JDK动态代理
-在Java的java.lang.reflect包下提供了一个Proxy类和一个InvocationHandler接口，通过使用这个类和接口可以生态JDK动态代理类或动态代理对象。
-
-Proxy提供了用于创建动态代理类和代理对象的静态方法，它也是所有动态代理类的父类。
-
-![reflection+20210606174524](https://raw.githubusercontent.com/loli0con/picgo/master/images/reflection%2B20210606174524.png%2B2021-06-06-17-45-25)
-
-**请阅读[Java动态代理详解](https://juejin.cn/post/6844903744954433544)。**
 
 ## 获取泛型信息
 [ParameterizedType详解](https://blog.csdn.net/LVXIANGAN/article/details/94836504)
