@@ -1,13 +1,16 @@
 # 集合工具类
 
-## 前沿
-本篇笔记直接抄书，主要是我有几个单词不太熟悉，而且背这玩意没意义
+Collections类提供了一组工具方法来方便使用集合类：
+* 创建空集合；
+* 创建单元素集合；
+* 创建不可变集合；
+* 排序／洗牌等操作。
 
-## 抄书
-### 排序操作
+## 常用方法
+### 排序
 ![Collections+20210601230516](https://raw.githubusercontent.com/loli0con/picgo/master/images/Collections%2B20210601230516.png%2B2021-06-01-23-05-18)
 
-### 查找、替换操作
+### 查找/替换
 ![Collections+20210601230603](https://raw.githubusercontent.com/loli0con/picgo/master/images/Collections%2B20210601230603.png%2B2021-06-01-23-06-05)
 
 ### 同步控制
@@ -15,11 +18,3 @@
 
 ### 不可变集合
 ![Collections+20210601231118](https://raw.githubusercontent.com/loli0con/picgo/master/images/Collections%2B20210601231118.png%2B2021-06-01-23-11-19)
-
-## 后记
-就是这些该死的单词
-```
-rotate [rəʊˈteɪt] 旋转
-synchronized ['sɪŋkrənaɪzd] 同步的
-singleton [ˈsɪŋɡltən] 独身
-```

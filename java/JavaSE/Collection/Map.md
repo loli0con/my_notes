@@ -10,6 +10,13 @@ Map是存储**键值（key-value）映射表**的数据结构，能高效通过k
 ## Entry
 Map提供了一个Entry内部类来封装key-value对，计算Entry存储规则时则只考虑Entry封装的key。
 
+```Java
+public interface Map<K,V> {
+    interface Entry<K,V> {}
+}
+```
+
+
 
 ## equals() 和 hashCode()
 在Map的内部，**对key做比较是通过equals()实现的**，正确使用Map必须保证：作为key的对象必须正确覆写equals()方法。**key计算索引的方式是调用key对象的hashCode()方法**，它返回一个int整数。
@@ -40,19 +47,7 @@ Static class Node<K,V> implements Map.Entry<K,V>{
 ## LinkedHashMap
 LinkedHashMap使用双向链表来维护key-value对的次序，该链表负责维护Map的迭代顺序，迭代顺序与key-value对的插入顺序保存一致。因为使用链表来维护内部顺序，所以在迭代访问Map的全部元素时将有较好的性能。
 
-
-
-
-## Properties
-Properties类是Hashtable类的子类，用于处理属性文件。
-
-
 ## SortedMap接口 和 TreeMap实现类
 Map接口派生出了一个SortedMap子接口，SortedMap接口有一个TreeMap实现类。
 
-TreeMap就是一个红黑树数据结构，每个key-value对即作为红黑树的一个节点。  
-TreeMap存储key-value对（节点）时，需要根据key对节点进行排序，保证所有的key-value处于有序状态，有两种排序方式：自然排序 和 定制排序。
-
-TreeMap中判断两个key相等的标准是：两个key通过compareTo()方法返回0，即认为这两个key是相等的。
-
-与TreeSet类似，注意要让两个key通过equals()方法比较返回true时，它们通过compareTo()方法比较也应该返回0。
+TreeMap就是一个红黑树数据结构，每个key-value对即作为红黑树的一个节点。TreeMap存储key-value对（节点）时，需要根据key对节点进行排序，Key必须实现Comparable接口，或者在创建TreeMap时传入Comparator。
