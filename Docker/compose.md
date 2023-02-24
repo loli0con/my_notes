@@ -3,6 +3,8 @@ Compose 是 Docker 公司推出的一个工具软件，可以管理多个 Docker
 
 Compose允许用户通过一个单独的docker-compose.yml模板文件（YAML 格式）来定义一组相关联的应用容器为一个项目（project）。用户可以很容易地用一个配置文件定义一个多容器的应用，然后使用一条指令安装这个应用的所有依赖，完成构建。Docker-Compose解决了容器与容器之间如何管理编排的问题。 
 
+[Compose file version 3 reference](https://docs.docker.com/compose/compose-file/compose-file-v3)
+
 ## 工程
 由一组关联的应用容器组成的一个完整业务单元，在 docker-compose.yml 文件中定义。
 
