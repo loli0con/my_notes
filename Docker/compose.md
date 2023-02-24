@@ -12,7 +12,7 @@ Compose允许用户通过一个单独的docker-compose.yml模板文件（YAML �
 ## 编排
 1. 编写Dockerfile定义各个微服务应用并构建出对应的镜像文件
 2. 使用 docker-compose.yml 定义一个完整业务单元，安排好整体应用中的各个容器服务
-3. 最后，执行docker-compose up命令 来启动并运行整个应用程序，完成一键部署上线
+3. 最后，执行docker-compose up命令来启动并运行整个应用程序，完成一键部署上线
 
 ## 常用命令
 1. `docker-compose -h`: 查看帮助
@@ -28,4 +28,6 @@ Compose允许用户通过一个单独的docker-compose.yml模板文件（YAML �
 11. `docker-compose config -q`: 检查配置，有问题才有输出
 12. `docker-compose restart`: 重启服务
 13. `docker-compose start`: 启动服务
-14. `docker-compose stop`: 停止服务 
+14. `docker-compose stop`: 停止服务
+
+这些命令在执行时都会默认读取`./docker-compose.yml`路径下的文件。
