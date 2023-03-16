@@ -134,6 +134,34 @@ UTF-16中如何对“辅助平面”进行编码呢？Unicode的码位区间为0
 ## Java编码
 Java的char类型使用固定两个字节表示，实现的是UCS-2标准，所以Java中单个char类型描述的字符是有限的，单个char只能描述unicode中的BMP范围的码位，也就意味着BMP范围外的字符char是无法表示的。char脱离了原有字符的语意，理解为码元更加合适。String本意为char类型的序列，如今理解为码元的序列也许更合适。
 
+### Charset
+Java默认使用Unicode字符集，Java使用Charset来处理字节序列和字符序列（字符串）之间的转换关系，该类包含了用于创建解码器和编码器的方法，还提供了获取Charset所支持字符集的方法，Charset类是不可变的。
+
+#### 查看字符集
+Charset类提供了一个availableCharsets()静态方法来获取当前JDK所支持的所有字符集。可以使用System类的getProperties()方法来访问本地系统的文件编码格式，文件编码格式的属性名为file.encoding。
+
+对于中国的程序员而言，下面几个字符串别名是常用的：
+* GBK：简体中文字符集。
+* BIG5：繁体中文字符集。
+* ISO-8859-1：ISO拉丁字母表No.1，也叫做ISO-LATIN-1。
+* UTF-8：8位UCS转换格式。
+* UTF-16BE：16位UCS转换格式，Big-endian（最低地址存放高位字节）字节顺序。
+* UTF-16LE：16位UCS转换格式，Little-endian（最高地址存放低位字节）字节顺序。
+* UTF-16：16位UCS转换格式，字节顺序由可选的字节顺序标记来标识。
+
+#### 实例对象
+一旦知道了字符集的别名之后，程序就可以调用Charset的forName()方法来创建对应的Charset对象，forName()方法的参数就是相应字符集的别名。Java 7新增了一个StandardCharsets类，该类里包含了ISO_8859_1、UTF_8、UTF_16等类变量，这些类变量代表了最常用的字符集对应的Charset对象。
+
+#### 方法
+获得了Charset对象之后，就可以通过该对象的newDecoder()、newEncoder()这两个方法分别返回CharsetDecoder和CharsetEncoder对象，代表该Charset的解码器和编码器。调用CharsetDecoder的decode()方法就可以将ByteBuffer（字节序列）转换成CharBuffer（字符序列），调用CharsetEncoder的encode()方法就可以将CharBuffer或String（字符序列）转换成ByteBuffer（字节序列）。
+
+Charset类也提供了如下三个方法。
+* CharBuffer decode(ByteBuffer bb)：将ByteBuffer中的字节序列转换成字符序列的便捷方法。
+* ByteBuffer encode(CharBuffer cb)：将CharBuffer中的字符序列转换成字节序列的便捷方法。
+* ByteBuffer encode(String str)：将String中的字符序列转换成字节序列的便捷方法。
+
+也就是说，获取了Charset对象后，如果仅仅需要进行简单的编码、解码操作，其实无须创建CharsetEncoder和CharsetDecoder对象，直接调用Charset的encode()和decode()方法进行编码、解码即可。
+
 ## 参考
 * [深入理解“字符编码模型”](https://www.cnblogs.com/zhe-si/p/16631919.html)
 * [字符编码笔记：ASCII，Unicode 和 UTF-8](https://www.ruanyifeng.com/blog/2007/10/ascii_unicode_and_utf-8.html)
