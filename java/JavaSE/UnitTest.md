@@ -27,12 +27,11 @@ JUnit提供了编写测试前准备、测试后清理的固定代码，我们称
 ### 运行顺序
 ```Java
 // XxxTest为测试类
-
 invokeBeforeAll(XxxTest.class); // 调用@BeforeAll方法
 for (Method testMethod : findTestMethods(XxxTest.class)) { // 取得所有测试方法
     var test = new XxxTest(); // 创建XxxTest实例
     invokeBeforeEach(test); // 调用@BeforeEach方法
-        invokeTestMethod(test, testMethod); //调用测试方法
+    invokeTestMethod(test, testMethod); //调用测试方法
     invokeAfterEach(test); // 调用@AfterEach方法
 }
 invokeAfterAll(XxxTest.class); // 调用@AfterAll方法
@@ -40,7 +39,18 @@ invokeAfterAll(XxxTest.class); // 调用@AfterAll方法
 我们可以注意到每次运行一个@Test方法前，JUnit首先创建一个XxxTest实例，因此每个@Test方法内部的成员变量都是独立的，不能也无法把成员变量的状态从一个@Test方法带到另一个@Test方法。
 
 ## 异常测试
-测试异常可以使用assertThrows()，期待捕获到指定类型的异常。
+JUnit提供assertThrows()来期望捕获一个指定的异常。第二个参数Executable封装了我们要执行的会产生异常的代码。
+```Java
+@Test
+void testDivideZero() {
+    assertThrows(java.lang.ArithmeticException, new Executable() {
+        @Override
+        public void execute() throws Throwable {
+            0 / 0;
+        }
+    });
+}
+```
 
 ## 条件测试
 我们可以给测试方法加上一个@Disabled标记（不推荐使用该标记），JUnit就会不运行该方法，并在测试结果中通过“Skipped”表示。
