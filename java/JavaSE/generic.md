@@ -6,10 +6,15 @@ https://blog.csdn.net/qq_27093465/article/details/73229016
 https://www.cnblogs.com/jingmoxukong/p/12049160.html  
 https://juejin.cn/post/6844903650788114439
 
-## 泛型的定义
-泛型，即“**参数化类型**”，就是允许在定义类、接口、方法时使用**类型形参**，这个**类型形参**（或叫泛型）将在声明变量、创建对象、调用方法时动态地指定（即传入实际的类型参数，也可称为**类型实参**）。
+## 背景
+在没有泛型之前，一旦把一个对象“丢进”Java集合中，集合就会忘记对象的类型，把所有的对象当成Object类型处理。当程序从集合中取出对象后，就需要进行强制类型转换，这种强制类型转换不仅使代码臃肿，而且容易引起ClassCastExeception异常。
 
-如果没有为泛型指定实际的类型，此时该泛型被称为raw type（原始类型），默认是声明该泛型形参时指定的第一个上限类型。
+增加了泛型支持后的集合，完全可以记住集合中元素的类型，并可以在编译时检查集合中元素的类型，如果试图向集合中添加不满足类型要求的对象，编译器就会提示错误。增加泛型后的集合，可以让代码更加简洁，程序更加健壮（Java泛型可以保证如果程序在编译时没有发出警告，运行时就不会产生ClassCastException异常）。
+
+## 泛型的定义
+泛型，即“**参数化类型（parameterized type）**”，就是允许在定义类、接口、方法时使用**类型形参**，这个**类型形参**（或叫泛型）将在声明变量、创建对象、调用方法时动态地指定（即传入实际的类型参数，也可称为**类型实参**）。
+
+如果没有为泛型指定实际的类型（实参），此时该泛型被称为raw type（原始类型），默认是声明该泛型形参时（形参）指定的第一个上限类型。
 
 ## 泛型的意义
 
@@ -40,7 +45,7 @@ private static <T extends Number> double add(T a, T b) {
 ```
 
 ### 类型安全
-泛型中的类型在使用时指定，不需要强制类型转换（，编译器会在**编译时**检查类型），可以避免繁琐的**强制转换**以及随之而来的`ClassCastException`
+泛型中的类型在使用时指定，不需要强制类型转换（编译器会在**编译时**检查类型），可以避免繁琐的**强制转换**以及随之而来的`ClassCastException`
 
 ```Java
 // 不安全
@@ -83,21 +88,38 @@ public class GenericsDemo06{
 
 ### 泛型接口
 ```Java
-interface Info<T>{        // 在接口上定义泛型  
-    public T getVar() ; // 定义抽象方法，抽象方法的返回值就是泛型类型  
-}  
-class InfoImpl<T> implements Info<T>{   // 定义泛型接口的子类  
-    private T var ;             // 定义属性  
-    public InfoImpl(T var){     // 通过构造方法设置属性内容  
-        this.setVar(var) ;    
-    }  
-    public void setVar(T var){
-        this.var = var ;  
-    }  
-    public T getVar(){  
-        return this.var ;
-    }  
-} 
+interface Info<T>{        // 在接口上定义泛型
+    public T getValue();  // 定义抽象方法，抽象方法的返回值就是泛型类型
+}
+
+// 如果在继承泛型接口时未传入泛型实参，那么该过程与定义泛型类相似，在声明类的时候，需将泛型的声明也一起加到类中。
+class InfoImpl<T> implements Info<T>{
+    private T value;
+    public InfoImpl(T value){
+        this.setValue(value);
+    }
+    public void setValue(T value){
+        this.value = value;
+    }
+    public T getValue(){
+        return this.value;
+    }
+}
+
+// 如果在继承泛型接口时传入类型参数，那么该实现类在所有使用了泛型的地方都要替换成传入的实参类型。
+class StringInfoImpl implements Info<String>{
+    private String value;
+    public StringInfoImpl(String value){
+        this.setValue(value);
+    }
+    public void setValue(String value){
+        this.value = value;
+    }
+    public String getValue(){
+        return this.value;
+    }
+}
+
 public class GenericsDemo24{  
     public static void main(String arsg[]){  
         Info<String> i = null;        // 声明接口对象  
@@ -129,7 +151,7 @@ class ArrayAlg{
     }
 }
 
-String middle = ArrayAlg.<String>getMiddle("]ohnM, "Q.n, "Public");
+String middle = ArrayAlg.<String>getMiddle("]ohnM", "Q.n", "Public");
 ```
 
 大多数情况下，方法调用中可以省略类型参数，编译器有足够的信息能够推断出所调用的方法。
@@ -148,47 +170,37 @@ String middle = ArrayAlg.<String>getMiddle("]ohnM, "Q.n, "Public");
 
 一个类型变量或通配符可以有多个限定，限定类型用“ & ”分隔，而逗号用来分隔类型变量。在Java的继承中，可以根据需要拥有多个接口超类型，但限定中至多有一个类。如果用一个类作为限定，它必须是限定列表中的第一个。
 
-## 上下届
+## 上下界
 可以使用上/下界通配符来缩小类型参数的类型范围，例如：
 `<? extends Number>` 或 `<T super Integer>`。
 
 注意：
 * 上界通配符和下界通配符不能同时使用。
-* 上届可设置多个，`<T extends B1 & B2 & B3>`，第一个类型参数（B1）可以是类或接口，其他类型参数（B2、B3···）只能是接口。
+* 上界可设置多个，`<T extends B1 & B2 & B3>`，第一个类型参数（B1）可以是类或接口，其他类型参数（B2、B3···）只能是接口。
 
 ### 进&出
-指定通配符的上下界，就是为了支持类型型变。  
-比如Foo是Bar的子类，这样的`A<Bar>`就相当于`A<? extends Foo>`的子类，可以将`A<Bar>`赋值给`A<? extends Foo>`类型的变量，这种型变方式被称为协变。  
-比如Foo是Bar的子类，当程序需要一个`A<? super Bar>`的变量时，程序可以将`A<Foo>`、`A<Object>`赋值给`A<? super Bar>`类型的变量，这种方式称为逆变。
+指定通配符的上下界，就是为了支持类型型变，[协变只出不进，逆变只进不出！](https://juejin.cn/post/6844903650788114439#heading-11)
+* 比如Foo是Bar的子类，这样的`A<Bar>`就相当于`A<? extends Foo>`的子类，可以将`A<Bar>`赋值给`A<? extends Foo>`类型的变量，这种型变方式被称为协变。
+  * **出**：假定A类型是一个容器，此处的问号（?）代表一个未知的类型，但是这个未知类型一定是Foo的子类型，取出来的对象一定可以隐式转换为其基类Foo。
+  * **进**：假定A类型是一个容器，程序无法确定容器能容纳的对象的真实类型，所以程序无法将任何对象“丢进”。唯一的例外是null，它是所有引用类型的实例。
+* 比如Foo是Bar的子类，当程序需要一个`A<? super Bar>`的变量时，程序可以将`A<Foo>`赋值给`A<? super Bar>`类型的变量，这种方式称为逆变。
+  * **进**：假定A类型是一个容器，编译器知道容器的下限的父类型Bar，根据继承链（隐式转换）可知，可以用Bar类及其父类型的变量去引用Foo类型及其子类型的对象。
+  * **出**：假定A类型是一个容器，编译器无法确定从容器中取出的到底是哪个父类的对象，因此取出来的对象只能被当成Object类型处理。
 
-[协变只出不进，逆变只进不出！](https://juejin.cn/post/6844903650788114439#heading-11)
 
 
 ## 编译和运行
 ### 类型擦除
+Java语言泛型在设计的时候为了兼容原来的旧代码，Java的泛型机制使用了“擦除”机制。
+
 无论何时定义一个泛型类型，都自动提供了一个相应的**原始类型**(raw type)。**原始类型**的名字就是删去类型参数后的泛型类型名。擦除(erased)类型变量，并替换为限定类型：用第一个限定类型来替换，如果没有给定限定就用 Object 替换。当有多个限定时，编译器在必要时会执行类型转换（即切换限定），因此为了提高效率，应该将标签接口(即没有方法的接口)放在边界列表的末尾。
 
 Java 泛型是使用类型擦除来实现的，任何具体的类型信息都会被擦除，因此在运行时JVM是不知道泛型信息的，即**JVM里没有泛型**。编译器虽然会在编译过程中移除参数的类型信息，但是会保证类或方法内部参数类型的一致性。当把一个具有泛型信息的对象赋予给另一个没有泛型信息的变量时，所有在尖括号之间的类型信息都将被扔掉。
 
-#### 推论
+### 推论
 不管为泛型形参传入哪一种类型实参，对于Java来说，它们依然被当成同一个类处理，在内存中也只占用一块内存空间，因此在静态方法、静态初始化快或者静态变量的声明和初始化中不允许使用泛型形参。
 
-泛型不能用于显式地引用运行时类型的操作之中，例如：转型、`instanceof`操作和 `new`表达式，因为所有关于参数的类型信息都丢失了。
-
-### 翻译泛型表达式
-当程序调用泛型方法时，如果擦除返回类型，编译器插入强制类型转换。例如，下面这个语句序列：
-```java
-Pair<Employee> buddies = ...;
-Employee buddy = buddies.getFirst();
-```
-擦除 getFirst 的返回类型后将返回 Object 类型。编译器自动插人 Employee 的强制类型转换。
-也就是说 编译器把这个方法调用翻译为两条虚拟机指令:
-•，
-对原始方法 Pair.getFirst 的调用。
-•将返回的 Object 类型强制转换为 Employee 类型。 当存取一个泛型域时也要插人强制类型转换。
-
-
-
+泛型不能用于显式地引用运行时类型的操作之中，例如：转型、`instanceof`操作和`new`表达式，因为所有关于参数的类型信息都丢失了。
 
 
 ## 泛型方法和类型通配符
