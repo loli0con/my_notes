@@ -8,19 +8,18 @@
 操作系统概念中的“作业”，即任务。一般来说，一个任务对应一个进程（当然一个进程也可以执行多个任务，一个任务也可以由多个进程共同完成）。
 
 ### 进程
-我们都知道程序，一个程序是静态的（例如HelloWorld.java文件），通常是存放在外存中的（例如硬盘）。而当程序被调入内存中运行后，就成了进程。  
-顾名思义，**进程就是进行中的程序**，它是个动态的概念。**进程是系统进行资源分配与调度的基本单位**。
+我们都知道程序，一个程序是静态的（例如HelloWorld.java文件），通常是存放在外存中的（例如硬盘）。而当程序被调入内存中运行后，就成了进程。顾名思义，**进程就是进行中的程序**，它是个动态的概念。**进程是系统进行资源分配与调度的基本单位**。
 
 每一个进程都有自己的独立的一块内存空间。例如我们同时运行多个HelloWorld程序，每个进程里面都有一个“Hello world!”字符串，它们处于三个不同的内存区域之中（由操作系统分配），不会互相影响。即使某个进程奔溃了，出错了，其他的也不会受到影响。
 
 ### 线程
-一个任务可以分为多个子任务，这里的“子任务”就是“线程”。  
-一个任务包含一到多个子任务，**一个进程包含一到多个线程**。
+* 一个任务可以分为多个子任务，这里的“子任务”就是“线程”。
+* 一个任务包含一到多个子任务，对应的**一个进程包含一到多个线程**。
 
 **操作系统调度的最小任务单位是线程**。常用的Windows、Linux等操作系统都采用抢占式多任务，如何调度线程完全由操作系统决定，程序自己不能决定什么时候执行，以及执行多长时间。
 
 ### 进程 vs 线程
-现代的操作系统都支持多任务，多任务既可以由多进程实现，也可以由单进程内的多线程实现，还可以混合多进程＋多线程。
+现代的操作系统都支持多任务，多任务既可以由**多进程模式**实现，也可以由单进程内的**多线程模式**实现，还可以由**多进程＋多线程模式**实现。
 
 和多线程相比，多进程的缺点在于：
 * 创建进程比创建线程**开销大**，尤其是在Windows系统上；
@@ -46,7 +45,7 @@ Java语言内置了多线程支持：一个Java程序实际上是一个JVM进程
 3. 使用*J播*播放*赛马.MP4*
    1. *J播*请求JVM，JVM请求操作系统
    2. 操作系统把硬盘里的*赛马.MP4*加载到内存里（正在看的那部分加载即可）
-   3. 操作系统把内存里的这部分数据分配给JVM，同时会一定程度上占有这个资源（讲道理，你播放的时候，这个视频文件不能被删除)
+   3. 操作系统把内存里的这部分数据分配给JVM，同时会一定程度上占有这个资源（讲道理，你播放的时候，这个视频文件不能被删除）
    4. JVM把视频数据给*J播*，*J播*至少会有两个线程，一个线程要处理图像数据并输出到显示器，一个线程处理音频数据并输出到扬声器
 
 在这里例子里面：
@@ -65,14 +64,14 @@ Jvm是运行在操作系统之上的，程序员和Java代码打交道（.java�
 #### Java线程的生命周期
 ![multithreading+java线程状态](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2Bjava%E7%BA%BF%E7%A8%8B%E7%8A%B6%E6%80%81.jpeg%2B2021-06-15-15-27-38)
 
-提问：[java线程运行怎么有第六种状态?](https://www.zhihu.com/question/56494969)    
-简答：Java里（Thread.State）定义的6种状态是虚拟机状态，不反映任何操作系统的线程状态。
+* 提问：[java线程运行怎么有第六种状态?](https://www.zhihu.com/question/56494969) 
+* 简答：Java里（Thread.State）定义的6种状态是虚拟机状态，不反映任何操作系统的线程状态。
 
 ##### 状态详细说明
 1. 初始状态(NEW)
    * 新创建了一个线程对象，但还没有调用start()方法。
 2. 就绪状态(RUNNABLE之READY)
-   1. 就绪状态只是说你资格运行，调度程序(Cpu)没有挑选到你，你就永远是就绪状态。
+   1. 就绪状态只是说你有资格运行，调度程序(Cpu)没有挑选到你，你就永远是就绪状态。
    2. 调用线程的start()方法，此线程进入就绪状态。
    3. 当前线程sleep()方法结束，其他线程join()结束，等待用户输入完毕，某个线程拿到对象锁，这些线程也将进入就绪状态
    4. 当前线程时间片用完了，调用当前线程的yield()方法，当前线程进入就绪状态。
@@ -97,8 +96,11 @@ Jvm是运行在操作系统之上的，程序员和Java代码打交道（.java�
 ### 硬线程 软线程
 CPU中的线程和操作系统（OS）中的线程即不同，两者都叫Thread是因为他们都是调度的基本单位，软件操作系统调度的基本单位是OS的Thread，硬件的调度基本单位是CPU中的Thread。操作系统负责把它产生的软Thread调度到CPU中的硬Thread中去。
 
-除此之外还有[green thread](http://www.voidcn.com/article/p-bxncifft-bge.html)的概念，有兴趣可以了解。  
+除此之外还有[green thread](http://www.voidcn.com/article/p-bxncifft-bge.html)的概念。
+
 Java使用的是native thread，即操作系统中的线程。
+
+
 
 ## 创建并启动
 
@@ -114,17 +116,24 @@ Java使用的是native thread，即操作系统中的线程。
 2. 创建Runnable实现类的实例，并以此实例作为Thread的target来创建Thread对象，该Thread对象才是真正的线程对象。
 3. 调用线程对象的start()方法来启动该线程。
 
-![multithreading+20210609155657](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210609155657.png%2B2021-06-09-15-56-58)
+Runnable对象仅仅作为Thread对象的target，Runnable实现类里包含的run()方法仅作为线程执行体。而实际的线程对象依然是Thread实例，只是该Thread线程负责执行其target的run()方法。
 
 ### 使用Callable和Future
 Java5开始，提供了Callable接口，该接口是Runnable接口的增强版，提供了一个call()方法可以作为线程的执行体。（和run()方法对比）该方法可以**有返回值**，可以**声明抛出异常**。
 
-Java5提供了Future接口来代表Callable接口里call()方法的返回值，并为Future接口提供了一个FutureTask实现类，该实现类实现了Future接口，并实现了Runnable接口——可以作为Thread类的target。  
-注意，Callable接口有泛型限制，Callable接口里的泛型形参类型与call()方法返回值类型相同。
+Java5提供了Future接口来代表Callable接口里call()方法的返回值，并为Future接口提供了一个FutureTask实现类，该实现类实现了Future接口，并实现了Runnable接口——可以作为Thread类的target。
 
-![multithreading+20210609161204](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210609161204.png%2B2021-06-09-16-12-04)
-![multithreading+20210609161217](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210609161217.png%2B2021-06-09-16-12-17)
+Callable接口有泛型限制，Callable接口里的泛型形参类型与call()方法返回值类型相同。而且Callable接口是函数式接口，因此可使用Lambda表达式创建Callable对象。
 
+#### 方法
+在Future接口里定义了如下几个公共方法来控制它关联的Callable任务：
+* boolean cancel(boolean mayInterruptIfRunning)：试图取消该Future里关联的Callable任务。
+* V get()：返回Callable任务里call()方法的返回值。调用该方法将导致程序阻塞，必须等到子线程结束后才会得到返回值。
+* V get(long timeout, TimeUnit unit)：返回Callable任务里call()方法的返回值。该方法让程序最多阻塞timeout和unit指定的时间，如果经过指定时间后Callable任务依然没有返回值，将会抛出TimeoutException异常。
+* boolean isCancelled()：如果在Callable任务正常完成前被取消，则返回true。
+* boolean isDone()：如果Callable任务已完成，则返回true。
+
+#### 步骤
 创建并启动有返回值的线程的步骤如下：
 1. 创建Callable接口的实现类，并实现call()方法，该call方法将作为线程执行体，且该方法有返回值，再创建Callable实现类的实例。
 2. 使用FutureTask类来包装Callable对象，该Future对象封装了该Callable对象的call()方法的返回值。
@@ -143,8 +152,10 @@ Java5提供了Future接口来代表Callable接口里call()方法的返回值，�
 
 ## 控制线程
 ### join线程
-Thread提供了让一个线程等待另一个线程完成的方法——join()方法。当在某个程序执行流中调用其他线程的join()方法时，调用线程将被阻塞，直到被join()方法加入的join线程执行完成为止。
-![multithreading+20210609171013](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210609171013.png%2B2021-06-09-17-10-14)
+Thread提供了让一个线程等待另一个线程完成的方法——join()方法。当在某个程序执行流中调用其他线程的join()方法时，调用线程将被阻塞，直到被join()方法加入的join线程执行完成为止。join()方法有如下三种重载形式：
+* join()：等待被join的线程执行完成。
+* join(long millis)：等待被join的线程的时间最长为millis毫秒。如果在millis毫秒内被join的线程还没有执行结束，则不再等待。
+* join(long millis, int nanos)：等待被join的线程的时间最长为millis毫秒加nanos毫微秒。
 
 ### 线程睡眠
 如果需要让当前正在执行的线程暂停一段时间，并进入阻塞状态，则可以通过调用Thread类的静态sleep()方法来实现。线程在其睡眠时间内，不会获得执行机会，即使系统中没有其他可执行的线程。
@@ -157,7 +168,11 @@ Thread类的yield()静态方法，也可以让当前正在执行的线程暂停�
 该方法可能“没效果”——某线程让步了但又立刻获得执行的机会。
 
 ### 睡眠和让步的区别
-![multithreading+20210609174439](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210609174439.png%2B2021-06-09-17-44-40)
+sleep()方法和yield()方法的区别如下：
+* sleep()方法暂停当前线程后，会给其他线程执行机会，不会理会其他线程的优先级；但yield()方法只会给优先级相同，或优先级更高的线程执行机会。
+* sleep()方法会将线程转入阻塞状态，直到经过阻塞时间才会转入就绪状态；而yield()不会将线程转入阻塞状态，它只是强制当前线程进入就绪状态。因此完全有可能某个线程被yield()方法暂停之后，立即再次获得处理器资源被执行。
+* sleep()方法声明抛出了InterruptedException异常，所以调用sleep()方法时要么捕捉该异常，要么显式声明抛出该异常；而yield()方法则没有声明抛出任何异常。
+* sleep()方法比yield()方法有更好的可移植性，通常不建议使用yield()方法来控制并发线程的执行。
 
 |区别|睡眠|让步|
 |-----|-----|-----|
@@ -178,14 +193,18 @@ Thread类的yield()静态方法，也可以让当前正在执行的线程暂停�
 ### 后台线程
 后台线程，又被称为守护线程，它是在后台运行的，它的任务是为其他的线程提供服务。
 
-如果所有的前台线程都死亡，后台线程会自动死亡。  
-当整个虚拟机中只剩下后台线程时，虚拟机就退出了。
+如果所有的前台线程都死亡，后台线程会自动死亡。当整个虚拟机中只剩下后台线程时，虚拟机就退出了。
 
-调用Thread对象的setDaemon(true)方法可将指定线程设置成后台线程。前台线程创建的子线程默认是前台线程，后台线程创建的子线程默认是后台线程。  
-Thread还提供了一个isDaemon()方法，用于判断指定线程是否为后台线程。
+调用Thread对象的setDaemon(true)方法可将指定线程设置成后台线程。前台线程创建的子线程默认是前台线程，后台线程创建的子线程默认是后台线程。Thread还提供了一个isDaemon()方法，用于判断指定线程是否为后台线程。
 
 ### 优先级
-![multithreading+20210609174621](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210609174621.png%2B2021-06-09-17-46-22)
+每个线程执行时都具有一定的优先级，优先级高的线程获得较多的执行机会，而优先级低的线程则获得较少的执行机会。每个线程默认的优先级都与创建它的父线程的优先级相同，在默认情况下，main线程具有普通优先级，由main线程创建的子线程也具有普通优先级。
+
+Thread类提供了setPriority(int newPriority)、getPriority()方法来设置和返回指定线程的优先级，其中setPriority()方法的参数可以是一个整数，范围是1～10之间，也可以使用Thread类的如下三个静态常量。
+* MAX_PRIORITY：其值是10。
+* MIN_PRIORITY：其值是1。
+* NORM_PRIORITY：其值是5。
+
 考虑到移植性，通常只会使用上述的三个静态常量作为优先级。
 
 ## 线程同步
@@ -316,9 +335,13 @@ Java中的每个对象都有一个监视器，来监测并发代码的重入。�
 
 
 ### 释放同步监视器的锁定
-![multithreading+WechatIMG70677](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2BWechatIMG70677.jpeg%2B2021-06-11-20-23-10)
+程序无法显式释放对同步监视器的锁定，线程会在如下几种情况下释放对同步监视器的锁定：
+* **离开同步块**
+  * 当前线程的同步方法、同步代码块执行结束，当前线程即释放同步监视器。
+  * 当前线程在同步代码块、同步方法中遇到break、return终止了该代码块、该方法的继续执行，当前线程将会释放同步监视器。
+  * 当前线程在同步代码块、同步方法中出现了未处理的Error或Exception，导致了该代码块、该方法异常结束时，当前线程将会释放同步监视器。
+* 当前线程执行同步代码块或同步方法时，程序执行了同步监视器对象的**wait()方法**，则当前线程暂停，并释放同步监视器。
 
-一定要记住，只有**离开同步块**或者**调用wait方法**的情况下，同步监视器才会被释放。
 
 ### 同步锁
 同步锁Lock是控制多个线程对共享资源进行访问的工具，它比同步代码块和同步方法更灵活，每次只能由一个线程对Lock对象加锁，线程开始访问共享资源之前应该先获得Lock对象。访问结束之后，必须释放锁（通过finally）。
@@ -354,16 +377,16 @@ StampedLock提供了乐观读锁，可取代ReadWriteLock以进一步提升并�
 ##### TODO 更多🔒
 
 ### 死锁
-死锁产生的条件是多线程各自持有不同的锁，并互相试图获取对方已持有的锁，导致无限等待；
-
-避免死锁的方法是多线程获取锁的顺序要一致。
+死锁产生的条件是多线程各自持有不同的锁，并互相试图获取对方已持有的锁，导致无限等待；避免死锁的方法是多线程获取锁的顺序要一致。
 
 
 ## 线程通信
 
 ### Object的wait和notify
 Object类提供了wait()、notify()和notifyAll三个方法，可让同步监视器对象来进行调用，以此实现线程通信。
-![multithreading+20210611204234](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210611204234.png%2B2021-06-11-20-42-35)
+* wait()：导致当前线程等待，直到其他线程调用该同步监视器的notify()方法或notifyAll()方法来唤醒该线程。该wait()方法有三种形式——无时间参数的wait（一直等待，直到其他线程通知）、带毫秒参数的wait()和带毫秒、毫微秒参数的wait()（这两种方法都是等待指定时间后自动苏醒）。调用wait()方法的当前线程会释放对该同步监视器的锁定。
+* notify()：唤醒在此同步监视器上等待的单个线程。如果所有线程都在此同步监视器上等待，则会选择唤醒其中一个线程。选择是任意性的。只有当前线程放弃对该同步监视器的锁定后（使用wait()方法），才可以执行被唤醒的线程。
+* notifyAll()：唤醒在此同步监视器上等待的所有线程。只有当前线程放弃对该同步监视器的锁定后，才可以执行被唤醒的线程。
 
 这种通信方式主要用于同步代码块/同步方法。
 
@@ -372,7 +395,27 @@ Object类提供了wait()、notify()和notifyAll三个方法，可让同步监视
 
 Condition实例被绑定在一个Lock对象上，通过调用Lock对象的newCondition()方法即可获得。  
 Condition类提供了如下三个方法：
-![multithreading+20210611204900](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210611204900.png%2B2021-06-11-20-49-01)
+* await()：类似于隐式同步监视器上的wait()方法，导致当前线程等待，直到其他线程调用该Condition的signal()方法或signalAll()方法来唤醒该线程。该await()方法有更多变体，如long awaitNanos（long nanosTimeout）、void awaitUninterruptibly()、awaitUntil（Date deadline）等，可以完成更丰富的等待操作。
+* signal()：唤醒在此Lock对象上等待的单个线程。如果所有线程都在该Lock对象上等待，则会选择唤醒其中一个线程。选择是任意性的。只有当前线程放弃对该Lock对象的锁定后（使用await()方法），才可以执行被唤醒的线程。
+* signalAll()：唤醒在此Lock对象上等待的所有线程。只有当前线程放弃对该Lock对象的锁定后，才可以执行被唤醒的线程。
+  
+### 阻塞队列
+Java 5提供了一个BlockingQueue接口，BlockingQueue具有一个特征：当生产者线程试图向BlockingQueue中放入元素时，如果该队列已满，则该线程被阻塞；当消费者线程试图从BlockingQueue中取出元素时，如果该队列已空，则该线程被阻塞。程序的两个线程通过交替向BlockingQueue中放入元素、取出元素，即可很好地控制线程的通信。
+
+BlockingQueue包含的方法：
+||抛出异常|（根据成败与否）不同返回值|阻塞线程|指定超时时长|
+|---|---|---|---|---|
+|队尾插入元素|add(e)|offer(e)|put(e)|put(e,time,unit)|
+|队头删除元素|remove()|poll()|take()|poll(time,unit)|
+|获取但不删除元素|element()|peek()|无|无|
+
+![multithreading+20230403222131](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20230403222131.png%2B2023-04-03-22-21-34)
+BlockingQueue包含如下5个实现类：
+* ArrayBlockingQueue：基于数组实现的BlockingQueue队列。
+* LinkedBlockingQueue：基于链表实现的BlockingQueue队列。
+* PriorityBlockingQueue：优先队列，该队列调用remove()、poll()、take()等方法取出元素时，取出的是队列中最小的元素。PriorityBlockingQueue判断元素的大小即可根据元素（实现Comparable接口）的本身大小来自然排序，也可使用Comparator进行定制排序。
+* SynchronousQueue：同步队列。对该队列的存、取操作必须交替进行。
+* DelayQueue：它是一个特殊的BlockingQueue，底层基于PriorityBlockingQueue实现。不过，DelayQueue要求集合元素都实现Delay接口（该接口里只有一个long getDelay()方法），DelayQueue根据集合元素的getDalay()方法的返回值进行排序。
 
 ### 共享变量 与 volatile
 线程间共享变量需要使用volatile关键字标记，确保每个线程都能读取到更新后的变量值。
@@ -386,28 +429,28 @@ Condition类提供了如下三个方法：
 volatile关键字解决的是可见性问题：当一个线程修改了某个共享变量的值，其他线程能够立刻看到修改后的值。
 
 
-### Concurrent集合
-Java标准库的java.util.concurrent包提供了很多线程安全的集合：
-|interface|non-thread-safe|thread-safe|
-|-----|-----|-----|
-|List|ArrayList|CopyOnWriteArrayList|
-|Map|HashMap|ConcurrentHashMap|
-|Set|HashSet / TreeSet|CopyOnWriteArraySet|
-|Queue|ArrayDeque / LinkedList|ArrayBlockingQueue / LinkedBlockingQueue|
-|Deque|ArrayDeque / LinkedList|LinkedBlockingDeque|
-
-java.util.Collections工具类还提供了一个旧的线程安全集合转换器，但是它实际上是用一个包装类包装了非线程安全的集合，然后对所有读写方法都用synchronized加锁，这样获得的线程安全集合的性能比java.util.concurrent集合要低很多，所以不推荐使用。
-
 
 
 ## 线程组 和 未处理的异常
 Java使用ThreadGroup来表示线程组，它可以对一批线程进行分类管理。
 
-用户创建的所有线程都属于指定线程组，如果没有显式指定线程属于哪个线程组，则该线程属于默认线程组。在默认情况下，子线程和创建它的父线程初一同一个线程组内。一旦某个线程加入了指定线程组之后，该线程将一直属于该线程组，直到该线程死亡，线程运行中途不能改变它所属的线程组。
+用户创建的所有线程都属于指定线程组，如果没有显式指定线程属于哪个线程组，则该线程属于默认线程组。在默认情况下，子线程和创建它的父线程初一同一个线程组内。一旦某个线程加入了指定线程组之后，该线程将一直属于该线程组，直到该线程死亡，线程运行中途不能改变它所属的线程组。因为中途不可改变线程所属的线程组，所以Thread类没有提供setThreadGroup()方法来改变线程所属的线程组，但提供了一个getThreadGroup()方法来返回该线程所属的线程组，getThreadGroup()方法的返回值是ThreadGroup对象，表示一个线程组。
 
-![multithreading+20210611215920](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210611215920.png%2B2021-06-11-21-59-21)
+Thread类提供了如下几个构造器来设置新创建的线程属于哪个线程组：
+* Thread(ThreadGroup group, Runnable target)：以target的run()方法作为线程执行体创建新线程，属于group线程组。
+* Thread(ThreadGroup group, Runnable target, String name)：以target的run()方法作为线程执行体创建新线程，该线程属于group线程组，且线程名为name。
+* Thread(ThreadGroup group, String name)：创建新线程，新线程名为name，属于group线程组。
 
-![multithreading+20210611220002](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210611220002.png%2B2021-06-11-22-00-03)
+ThreadGroup类提供了如下两个简单的构造器来创建实例：
+* ThreadGroup(String name)：以指定的线程组名字来创建新的线程组。
+* ThreadGroup(ThreadGroup parent, String name)：以指定的名字、指定的父线程组创建一个新线程组。
+
+ThreadGroup类提供了如下几个常用的方法来操作整个线程组里的所有线程：
+* int activeCount()：返回此线程组中活动线程的数目。
+* interrupt()：中断此线程组中的所有线程。
+* isDaemon()：判断该线程组是否是后台线程组。
+* setDaemon(boolean daemon)：把该线程组设置成后台线程组。后台线程组具有一个特征——当后台线程组的最后一个线程执行结束或最后一个线程被销毁后，后台线程组将自动销毁。
+* setMaxPriority(int pri)：设置线程组的最高优先级。
 
 ### 异常处理
 在Java中，线程中的异常是不能抛出到调用该线程的外部方法中捕获的。
@@ -461,46 +504,65 @@ ExecutorService只是接口，Java标准库提供的几个常用实现类有：
 * ScheduledThreadPool：可以定期调度多个任务的线程池。
 ### 创建线程池
 Java使用Executors工厂类来产生线程池，该工程类包含如下几个静态工厂方法来创建线程池：
-![multithreading+20210611221449](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210611221449.png%2B2021-06-11-22-14-50)
+* newCachedThreadPool()：创建一个具有缓存功能的线程池，系统根据需要创建线程，这些线程将会被缓存在线程池中。
+* newFixedThreadPool(int nThreads)：创建一个可重用的、具有固定线程数的线程池。
+* newSingleThreadExecutor()：创建一个只有单线程的线程池，它相当于调用newFixedThread Pool()方法时传入参数为1。
+* newScheduledThreadPool(int corePoolSize)：创建具有指定线程数的线程池，它可以在指定延迟后执行线程任务。corePoolSize指池中所保存的线程数，即使线程是空闲的也被保存在线程池内。
+* newSingleThreadScheduledExecutor()：创建只有一个线程的线程池，它可以在指定延迟后执行线程任务。
+* ExecutorService newWorkStealingPool(int parallelism)：创建持有足够的线程的线程池来支持给定的并行级别，该方法还会使用多个队列来减少竞争。
+* ExecutorService newWorkStealingPool()：该方法是前一个方法的简化版本。如果当前机器有4个CPU，则目标并行级别被设置为4，也就是相当于为前一个方法传入4作为参数。
 
-![multithreading+20210611222258](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210611222258.png%2B2021-06-11-22-22-59)
 
 ### 提交任务
-ExecutorService代表尽快执行线程的线程池，程序只要将一个Runnable对象或Callable对象提交给该线程池，该线程池就会尽快执行该任务。  
-ExecutorService里提供如下三个方法：
-* Future<?> submit(Runnable task)：将一个Runnable对象提交给指定的线程池，线程池将在有空闲线程时执行Runnable对象代表的任务。其中Future对象代表Runnable任务的返回值——但run()方法没有返回值，所以Future对象将在run()方法执行结束后返回null。但可以调用Future的isDone()、isCancelled()方法来获得Runnable对象的执行状态。
-![multithreading+20210611223455](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210611223455.png%2B2021-06-11-22-34-55)
+1. 前三个方法返回一个ExecutorService对象，该对象代表一个代表尽快执行线程的线程池（只要线程池中有空闲线程，就立即执行线程任务），程序只要将一个Runnable对象或Callable对象（代表线程任务）提交给该线程池，该线程池就会尽快执行该任务。ExecutorService里提供了如下三个方法：
+   * Future<?> submit(Runnable task)：将一个Runnable对象提交给指定的线程池，线程池将在有空闲线程时执行Runnable对象代表的任务。其中Future对象代表Runnable任务的返回值——但run()方法没有返回值，所以Future对象将在run()方法执行结束后返回null。但可以调用Future的isDone()、isCancelled()方法来获得Runnable对象的执行状态。
+   * <T> Future<T> submit(Runnable task, T result)：将一个Runnable对象提交给指定的线程池，线程池将在有空闲线程时执行Runnable对象代表的任务。其中result显式指定线程执行结束后的返回值，所以Future对象将在run()方法执行结束后返回result。
+   * <T> Future<T> submit(Callable<T> task)：将一个Callable对象提交给指定的线程池，线程池将在有空闲线程时执行Callable对象代表的任务。其中Future代表Callable对象里call()方法的返回值。
+2. 中间两个方法返回一个ScheduledExecutorService线程池，它是ExecutorService的子类，代表可在指定延迟后或周期性地执行线程任务的线程池，它提供了如下4个方法：
+   * ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit)：指定callable任务将在delay延迟后执行。
+   * ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit)：指定command任务将在delay延迟后执行。
+   * ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit)：指定command任务将在delay延迟后执行，而且以设定频率重复执行。也就是说，在initialDelay后开始执行，依次在initialDelay+period、initialDelay+2*period…处重复执行，依此类推。
+   * ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit)：创建并执行一个在给定初始延迟后首次启用的定期操作，随后在每一次执行终止和下一次执行开始之间都存在给定的延迟。如果任务在任一次执行时遇到异常，就会取消后续执行；否则，只能通过程序来显式取消或终止该任务。
+3. 最后两个方法生成的work stealing池相当于后台线程池，如果所有的前台线程都死亡了，work stealing池中的线程会自动死亡。
 
-![multithreading+20210611223516](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210611223516.png%2B2021-06-11-22-35-17)
 
 ### 关闭线程池
-![multithreading+20210611223549](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210611223549.png%2B2021-06-11-22-35-50)
-线程池的awaitTermination()则会等待指定的时间让线程池关闭
+用完一个线程池后，应该调用该线程池的shutdown()方法，该方法将启动线程池的关闭序列，调用shutdown()方法后的线程池不再接收新任务，但会将以前所有已提交任务执行完成。当线程池中的所有任务都执行完成后，池中的所有线程都会死亡；另外也可以调用线程池的shutdownNow()方法来关闭线程池，该方法试图停止所有正在执行的活动任务，暂停处理正在等待的任务，并返回等待执行的任务列表。
+
+线程池的awaitTermination()则会等待指定的时间让线程池关闭。
 
 ### 完整步骤
-![multithreading+20210611223611](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210611223611.png%2B2021-06-11-22-36-11)
+使用线程池来执行线程任务的步骤如下：
+1. 调用Executors类的静态工厂方法创建一个ExecutorService对象，该对象代表一个线程池。
+2. 创建Runnable实现类或Callable实现类的实例，作为线程执行任务。
+3. 调用ExecutorService对象的submit()方法来提交Runnable实例或Callable实例。
+4. 当不想提交任何任务时，调用ExecutorService对象的shutdown()方法来关闭线程池。
 
 ### ForkJoinPool
-![multithreading+20210611223749](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210611223749.png%2B2021-06-11-22-37-51)
+Java提供了ForkJoinPool来支持将一个任务拆分成多个“小任务”并行计算，再把多个“小任务”的结果合并成总的计算结果。ForkJoinPool是ExecutorService的实现类，因此是一种特殊的线程池。ForkJoinPool提供了如下两个常用的构造器：
+* ForkJoinPool(int parallelism)：创建一个包含parallelism个并行线程的ForkJoinPool。
+* ForkJoinPool()：以Runtime.availableProcessors()方法的返回值作为parallelism参数来创建Fork JoinPool。
 
-Fork/Join是一种基于“分治”的算法：通过分解任务，并行执行，最后合并结果得到最终结果。
+Java为ForkJoinPool增加了通用池功能，ForkJoinPool类通过如下两个静态方法提供通用池功能：
+* ForkJoinPool commonPool()：该方法返回一个通用池，通用池的运行状态不会受shutdown()或shutdownNow()方法的影响。当然，如果程序直接执行System.exit(0)；来终止虚拟机，通用池以及通用池中正在执行的任务都会被自动终止。
+* int getCommonPoolParallelism()：该方法返回通用池的并行级别。
 
-ForkJoinPool线程池可以把一个大任务分拆成小任务并行执行，任务类必须继承自RecursiveTask或RecursiveAction。
 
-使用Fork/Join模式可以进行并行计算以提高效率。
+创建了ForkJoinPool实例之后，就可调用ForkJoinPool的`submit(ForkJoinTask task)`或`invoke(ForkJoinTask task)`方法来执行指定任务了。其中ForkJoinTask代表一个可以并行、合并的任务。ForkJoinTask是一个抽象类，它还有两个抽象子类：RecursiveAction和RecursiveTask。其中RecursiveTask代表有返回值的任务，而RecursiveAction代表没有返回值的任务。
+
+ForkJoinPool、ForkJoinTask等类的类图：
+![multithreading+20230404114012](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20230404114012.png%2B2023-04-04-11-40-14)
+
 
 ## 线程相关类
 
 ### ThreadLocal类
-![multithreading+20210611223905](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20210611223905.png%2B2021-06-11-22-39-06)
+Java为多线程编程提供了一个ThreadLocal类，通过使用ThreadLocal类可以简化多线程编程时的并发访问，使用这个工具类可以很简捷地隔离多线程程序的竞争资源。
 
-ThreadLocal适合在一个线程的处理流程中保持上下文（避免了同一参数在所有方法中传递）；
-
-使用ThreadLocal要用try ... finally结构，并在finally中清除。
-
-#### 浅析ThreadLocal的实现
-让每个线程都持有一个Map类型的变量，该Map被这些线程共同持有；  
-每个线程使用它本身作为key，通过它本身从这个Map里面获取value。
+ThreadLocal，是Thread Local Variable（线程局部变量）的意思。线程局部变量（ThreadLocal）的功用其实非常简单，就是为每一个使用该变量的线程都提供一个变量值的副本，使每一个线程都可以独立地改变自己的副本，而不会和其他线程的副本冲突，从根本上避免多个线程之间对共享资源（变量）的竞争，也就不需要对多个线程进行同步了。ThreadLocal类只提供了如下三个public方法：
+* T get()：返回此线程局部变量中当前线程副本中的值。
+* void remove()：删除此线程局部变量中当前线程的值。
+* void set(T value)：设置此线程局部变量中当前线程副本中的值。
 
 ### 原子类
 Java的java.util.concurrent包提供了一组原子操作的封装类，它们位于java.util.concurrent.atomic包。  
@@ -520,6 +582,45 @@ CompletionStage 的接口一般都返回新的CompletionStage，表示执行完�
 
 [使用ComletableFuture可以将异步计算中处理流程进行串行化或并行化](https://www.liaoxuefeng.com/wiki/1252599548343744/1306581182447650)。
 
+
+### Concurrent集合
+![multithreading+20230404115049](https://raw.githubusercontent.com/loli0con/picgo/master/images/multithreading%2B20230404115049.png%2B2023-04-04-11-50-52)
+
+Java标准库的java.util.concurrent包提供了大量支持高效并发访问的集合接口和实现类：
+|interface|non-thread-safe|thread-safe|
+|-----|-----|-----|
+|List|ArrayList|CopyOnWriteArrayList|
+|Map|HashMap|ConcurrentHashMap|
+|Set|HashSet / TreeSet|CopyOnWriteArraySet|
+|Queue|ArrayDeque / LinkedList|ArrayBlockingQueue / LinkedBlockingQueue / ConcurrentLinkedQueue|
+|Deque|ArrayDeque / LinkedList|LinkedBlockingDeque / ConcurrentLinkedDeque|
+
+java.util.Collections工具类还提供了一个旧的线程安全集合转换器，但是它实际上是用一个包装类包装了非线程安全的集合，然后对所有读写方法都用synchronized加锁，这样获得的线程安全集合的性能比java.util.concurrent集合要低很多，所以不推荐使用。
+
+线程安全的集合类可分为如下两类：
+* 以Concurrent开头的集合类：以Concurrent开头的集合类代表了支持并发访问的集合，它们可以支持多个线程并发写入访问，这些写入线程的所有操作都是线程安全的，但读取操作不必锁定。以Concurrent开头的集合类采用了分段锁的算法来保证永远不会锁住整个集合，因此在并发写入时有较好的性能。
+* 以CopyOnWrite开头的集合类：采用复制底层数组的方式来实现写操作。当线程对CopyOnWriteArrayList集合执行读取操作时，线程将会直接读取集合本身，无须加锁与阻塞。当线程对CopyOnWriteArrayList集合执行写入操作时（包括调用add()、remove()、set()等方法），该集合会在底层复制一份新的数组，接下来对新的数组执行写入操作。由于CopyOnWriteArrayList执行写入操作时需要频繁地复制数组，性能比较差，但由于读操作与写操作不是操作同一个数组，而且读操作也不需要加锁，因此读操作就很快、很安全。
+
+### 发布-订阅框架
+Java 提供了一个发布-订阅框架，该框架是基于异步响应流的。这个发布-订阅框架可以非常方便地处理异步线程之间的流数据交换（比如两个线程之间需要交换数据）。而且这个发布-订阅框架不需要使用数据中心来缓冲数据，同时具有非常高效的性能。这个发布-订阅框架使用Flow类的4个静态内部接口作为核心API：
+* Flow.Publisher：代表数据发布者、生产者。
+* Flow.Subscriber：代表数据订阅者、消费者。
+* Flow.Subscription：代表发布者和订阅者之间的链接纽带。订阅者既可通过调用该对象的request()方法来获取数据项，也可通过调用对象的cancel()方法来取消订阅。
+* Flow.Processor：数据处理器，它可同时作为发布者和订阅者使用。
+
+
+Flow.Publisher发布者作为生产者，负责发布数据项，并注册订阅者。Flow.Publisher接口定义了如下方法来注册订阅者：
+* void subscribe(Flow.Subscriber<?super T>subscriber)：程序调用此方法注册订阅者时，会触发订阅者的onSubscribe()方法，而Flow.Subscription对象作为参数传给该方法；如果注册失败，将会触发订阅者的onError() 方法。
+
+
+Flow.Subscriber接口定义了如下方法：
+* void onSubscribe(Flow.Subscription subscription)：订阅者注册时自动触发该方法。
+* void onComplete()：当订阅结束时触发该方法。
+* void onError(Throwable throwable)：当订阅失败时触发该方法。
+* void onNext(T item)：订阅者从发布者处获取数据项时触发该方法，订阅者可通过该方法获取数据项。
+
+
+为了处理一些通用发布者的场景，Java 为Flow.Publisher提供了一个SubmissionPublisher实现类，它可向当前订阅者异步提交非空的数据项，直到它被关闭。每个订阅者都能以相同的顺序接收到新提交的数据项。程序创建SubmissionPublisher对象时，需要传入一个线程池作为底层支撑；该类也提供了一个无参数的构造器，该构造器使用ForkJoinPool.commonPool()方法来提交发布者，以此实现发布者向订阅者提供数据项的异步特性。
 
 ## 后记
 license的坑还没填，侵删🥺
