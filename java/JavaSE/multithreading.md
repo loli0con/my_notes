@@ -367,12 +367,81 @@ ReentrantLock是Java里最基本的锁。
 * ReadWriteLock允许多个线程在没有写入时同时读取；
 * ReadWriteLock适合读多写少的场景
 
-[ReadWriteLock用法](https://www.liaoxuefeng.com/wiki/1252599548343744/1306581002092578)
+[ReadWriteLock用法](https://www.liaoxuefeng.com/wiki/1252599548343744/1306581002092578)：
+```Java
+public class Counter {
+    private final ReadWriteLock rwlock = new ReentrantReadWriteLock();
+    private final Lock rlock = rwlock.readLock(); // 获取读锁
+    private final Lock wlock = rwlock.writeLock(); // 获取写锁
+    private int[] counts = new int[10];
+
+    public void inc(int index) {
+        wlock.lock(); // 加写锁
+        try {
+            counts[index] += 1;
+        } finally {
+            wlock.unlock(); // 释放写锁
+        }
+    }
+
+    public int[] get() {
+        rlock.lock(); // 加读锁
+        try {
+            return Arrays.copyOf(counts, counts.length);
+        } finally {
+            rlock.unlock(); // 释放读锁
+        }
+    }
+}
+```
 
 ##### StampedLock
 StampedLock提供了乐观读锁，可取代ReadWriteLock以进一步提升并发性能；StampedLock是不可重入锁。
 
-[StampedLock用法](https://www.liaoxuefeng.com/wiki/1252599548343744/1309138673991714)
+[StampedLock用法](https://www.liaoxuefeng.com/wiki/1252599548343744/1309138673991714)：
+```Java
+public class Point {
+    private final StampedLock stampedLock = new StampedLock();
+
+    private double x;
+    private double y;
+
+    public void move(double deltaX, double deltaY) {
+        long stamp = stampedLock.writeLock(); // 获取写锁
+        try {
+            x += deltaX;
+            y += deltaY;
+        } finally {
+            stampedLock.unlockWrite(stamp); // 释放写锁
+        }
+    }
+
+    public double distanceFromOrigin() {
+        long stamp = stampedLock.tryOptimisticRead(); // 获得一个乐观读锁
+        // 注意下面两行代码不是原子操作
+        // 假设x,y = (100,200)
+        double currentX = x;
+        // 此处已读取到x=100，但x,y可能被写线程修改为(300,400)
+        double currentY = y;
+        // 此处已读取到y，如果没有写入，读取是正确的(100,200)
+        // 如果有写入，读取是错误的(100,400)
+        if (!stampedLock.validate(stamp)) { // 检查乐观读锁后是否有其他写锁发生
+            stamp = stampedLock.readLock(); // 获取一个悲观读锁
+            try {
+                currentX = x;
+                currentY = y;
+            } finally {
+                stampedLock.unlockRead(stamp); // 释放悲观读锁
+            }
+        }
+        return Math.sqrt(currentX * currentX + currentY * currentY);
+    }
+}
+```
+
+StampedLock把读锁细分为乐观读和悲观读，能进一步提升并发效率。乐观锁的意思就是乐观地估计读的过程中大概率不会有写入，因此被称为乐观锁。反过来，悲观锁则是读的过程中拒绝有写入，也就是写入必须等待。显然乐观锁的并发效率更高，但一旦有小概率的写入导致读取的数据不一致，需要能检测出来，再读一遍就行。
+
+和ReadWriteLock相比，写入的加锁是完全一样的，不同的是读取。首先通过tryOptimisticRead()获取一个乐观读锁，并返回版本号。接着进行读取，读取完成后，通过validate()去验证版本号，如果在读取过程中没有写入，版本号不变，验证成功。如果在读取过程中有写入，版本号会发生变化，验证将失败。在失败的时候，再通过获取悲观读锁再次读取。由于写入的概率不高，程序在绝大部分情况下可以通过乐观读锁获取数据，极少数情况下使用悲观读锁获取数据。
 
 ##### TODO 更多🔒
 
@@ -555,6 +624,27 @@ ForkJoinPool、ForkJoinTask等类的类图：
 
 
 ## 线程相关类
+
+### Semaphore
+如果要对某一受限资源进行限流访问，可以使用Semaphore，保证同一时间最多N个线程访问受限资源。
+```Java
+public class AccessLimitControl {
+    // 任意时刻仅允许最多3个线程获取许可:
+    final Semaphore semaphore = new Semaphore(3);
+
+    public String access() throws Exception {
+        // 如果超过了许可数量,其他线程将在此等待:
+        semaphore.acquire();
+        try {
+            // TODO:
+            return UUID.randomUUID().toString();
+        } finally {
+            semaphore.release();
+        }
+    }
+}
+```
+使用Semaphore先调用acquire()获取，然后通过try ... finally保证在finally中释放。
 
 ### ThreadLocal类
 Java为多线程编程提供了一个ThreadLocal类，通过使用ThreadLocal类可以简化多线程编程时的并发访问，使用这个工具类可以很简捷地隔离多线程程序的竞争资源。
