@@ -7,6 +7,8 @@ SOLID是以下是原则的缩写：
 * Interface Segregation Principle 接口隔离原则
 * Dependency Inversion Principle 依赖倒置原则
 
+
+
 ## 坏的设计
 
 ### 表现
@@ -27,8 +29,11 @@ SOLID是以下是原则的缩写：
 
 软件系统在其生命周期都在发生变化，无论是好的设计还是坏的设计，都面临着这个问题，但好的设计是稳定的。
 
+
+
 ## 开闭原则 - Open Closed Principle
 ![SOLID原则+20220314144517](https://raw.githubusercontent.com/loli0con/picgo/master/images/SOLID%E5%8E%9F%E5%88%99%2B20220314144517.png%2B2022-03-14-14-45-17)
+
 ### 定义
 软件系统应当允许功能扩展(即开放性)，但是不允许修改原有的代码(即关闭性)。
 
@@ -42,7 +47,6 @@ SOLID是以下是原则的缩写：
 
 ![SOLID原则+20220314134839](https://raw.githubusercontent.com/loli0con/picgo/master/images/SOLID%E5%8E%9F%E5%88%99%2B20220314134839.png%2B2022-03-14-13-48-41)
 
-
 ### 启发
 1. 定义所有的对象 - 数据为私有的
 2. 不要使用全局变量 
@@ -53,6 +57,7 @@ SOLID是以下是原则的缩写：
 
 ## 依赖倒置原则 - Dependency Inversion Principle
 ![SOLID原则+20220314144642](https://raw.githubusercontent.com/loli0con/picgo/master/images/SOLID%E5%8E%9F%E5%88%99%2B20220314144642.png%2B2022-03-14-14-46-43)
+
 ### 定义
 1. 高层模块不应当依赖低层模块，两者都依赖抽象
 2. 抽象不能依赖细节，细节应当依赖抽象
@@ -89,9 +94,9 @@ SOLID是以下是原则的缩写：
 
 
 
-
 ## 单一职责原则 - Single Responsibility Principle
 ![SOLID原则+20220314144501](https://raw.githubusercontent.com/loli0con/picgo/master/images/SOLID%E5%8E%9F%E5%88%99%2B20220314144501.png%2B2022-03-14-14-45-01)
+
 ### 定义
 单一职责原则的描述是一个 class 应该只做一件事，一个 class 应该只有一个变化的原因。
 
@@ -99,8 +104,11 @@ SOLID是以下是原则的缩写：
 
 这意味着如果 class 是一个数据容器，比如 Book class 或者 Student class，考虑到这个实体有一些字段，应该只有我们更改了数据定义时才能够修改这些字段。
 
+
+
 ## 里氏替换原则
 ![SOLID原则+20220314144538](https://raw.githubusercontent.com/loli0con/picgo/master/images/SOLID%E5%8E%9F%E5%88%99%2B20220314144538.png%2B2022-03-14-14-45-39)
+
 ### 定义
 里氏替换原则描述的是子类应该能替换为它的基类。
 
@@ -110,8 +118,11 @@ SOLID是以下是原则的缩写：
 
 因此，当 class 违背这一原则时，会导致一些难于发现的讨厌的 bug。
 
+
+
 ## 接口隔离原则
 ![SOLID原则+20220314144604](https://raw.githubusercontent.com/loli0con/picgo/master/images/SOLID%E5%8E%9F%E5%88%99%2B20220314144604.png%2B2022-03-14-14-46-05)
+
 ### 定义
 隔离意味着保持独立，接口隔离原则是关于接口的独立。
 
