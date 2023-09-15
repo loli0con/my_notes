@@ -205,7 +205,7 @@ deleteall /app2
 
 
 ## JavaAPI - Curator
-Curator 是Apache ZooKeeper 的Java客户端库，可以更容易的使用ZooKeeper，包含几个包：
+Curator是Apache ZooKeeper的Java客户端库，可以更容易的使用ZooKeeper，包含几个包：
 - Curator client：用来替代ZooKeeper提供的类，它封装了底层的管理并提供了一些有用的工具。
 - Curator framework：提供了高级的API来简化ZooKeeper的使用，增加了很多基于ZooKeeper的特性，帮助管理ZooKeeper的连接以及重试操作。
 - Curator Recipes：封装了一些高级特性，如：Cache事件监听、选举、分布式锁、分布式计数器、分布式Barrier等

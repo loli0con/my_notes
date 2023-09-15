@@ -125,13 +125,15 @@ XML配置文件中的标签必须按照上述的顺序。
 <properties resource="org/mybatis/example/config.properties">
   <property name="username" value="dev_user"/>
   <property name="password" value="F2Fa3!33TYyg"/>
-  <property name="org.apache.ibatis.parsing.PropertyParser.enable-default-value" value="true"/> <!-- 启用默认值特性，还可以修改通过value属性修改默认值的分隔符(默认为“:”) -->
+  <property name="org.apache.ibatis.parsing.PropertyParser.enable-default-value" value="true"/> <!-- 启用默认值特性 -->
+  <property name="org.apache.ibatis.parsing.PropertyParser.default-value-separator" value=":"/> <!-- 默认值的分隔符 -->
 </properties>
+
 <!-- 使用属性 -->
 <dataSource type="POOLED">
   <property name="driver" value="${driver}"/>
   <property name="url" value="${url}"/>
-  <property name="username" value="${username:ut_user}"/> <!-- 默认值特性(需要手动开启)：如果属性 'username' 没有被配置，'username' 属性的值将为 'ut_user' -->
+  <property name="username" value="${username:ut_user}"/> <!-- 默认值特性(需要手动开启，见上面的enable-default-value，属性和默认值之间的分隔符由default-value-separator控制)：如果属性 'username' 没有被配置，'username' 属性的值将为 'ut_user' -->
   <property name="password" value="${password}"/>
 </dataSource>
 ```
@@ -141,12 +143,14 @@ XML配置文件中的标签必须按照上述的顺序。
 2. 然后根据 properties 元素中的 resource 属性读取类路径下属性文件，或根据 url 属性指定的路径读取属性文件，并覆盖之前读取过的同名属性。
 3. 最后读取作为方法参数（构建SqlSessionFactory的方法）传递的属性，并覆盖之前读取过的同名属性。
 
+
+
 ## settings（设置）
 |设置名|描述|有效值|默认值|
 |---|---|---|---|
 |cacheEnabled|全局性地开启或关闭所有映射器配置文件中已配置的任何缓存。|true或false|true|
 |lazyLoadingEnabled|延迟加载的全局开关。当开启时，所有关联对象都会延迟加载。 特定关联关系中可通过设置 fetchType 属性来覆盖该项的开关状态。|true或false|false|
-|aggressiveLazyLoading|开启时，任一方法的调用都会加载该对象的所有延迟加载属性。 否则，每个延迟加载属性会按需加载（参考 lazyLoadTriggerMethods)。|true或false|false （在 3.4.1 及之前的版本中默认为 true）|
+|aggressiveLazyLoading|开启时，任一方法的调用都会加载该对象的所有延迟加载属性。 否则，每个延迟加载属性会按需加载（参考 lazyLoadTriggerMethods）。|true或false|false （在 3.4.1 及之前的版本中默认为 true）|
 |multipleResultSetsEnabled|是否允许单个语句返回多结果集（需要数据库驱动支持）。|true或false|true|
 |useColumnLabel|使用列标签代替列名。实际表现依赖于数据库驱动，具体可参考数据库驱动的相关文档，或通过对比测试来观察。|true或false|true|
 |useGeneratedKeys|允许 JDBC 支持自动生成主键，需要数据库驱动支持。如果设置为 true，将强制使用自动生成主键。尽管一些数据库驱动不支持此特性，但仍可正常工作（如 Derby）。|true或false|false|
@@ -167,16 +171,18 @@ XML配置文件中的标签必须按照上述的顺序。
 |callSettersOnNulls|指定当结果集中值为 null 的时候是否调用映射对象的 setter（map 对象时为 put）方法，这在依赖于 Map.keySet() 或 null 值进行初始化时比较有用。注意基本类型（int、boolean 等）是不能设置成 null 的。|true或false|false|
 |returnInstanceForEmptyRow|当返回行的所有列都是空时，MyBatis默认返回 null。 当开启这个设置时，MyBatis会返回一个空实例。 请注意，它也适用于嵌套的结果集（如集合或关联）。（新增于 3.4.2）|true或false|false|
 |logPrefix|指定 MyBatis 增加到日志名称的前缀。|任何字符串|未设置|
-|logImpl|指定 MyBatis 所用日志的具体实现，未指定时将自动查找。|SLF4J或LOG4J或LOG4J2或JDK_LOGGING或COMMONS_LOGGING或STDOUT_LOGGING或NO_LOGGING|未设置|
-|proxyFactory|指定 Mybatis 创建可延迟加载对象所用到的代理工具。|CGLIB或JAVASSIST|JAVASSIST （MyBatis 3.3 以上）|
+|logImpl|指定 MyBatis 所用日志的具体实现，未指定时将自动查找。|SLF4J或LOG4J（3.5.9 起废弃）或LOG4J2或JDK_LOGGING或COMMONS_LOGGING或STDOUT_LOGGING或NO_LOGGING|未设置|
+|proxyFactory|指定 Mybatis 创建可延迟加载对象所用到的代理工具。|CGLIB（3.5.10 起废弃）或JAVASSIST|JAVASSIST （MyBatis 3.3 以上）|
 |vfsImpl|指定 VFS 的实现|自定义 VFS 的实现的类全限定名，以逗号分隔。|未设置|
 |useActualParamName|允许使用方法签名中的名称作为语句参数名称。 为了使用该特性，你的项目必须采用 Java 8 编译，并且加上 -parameters 选项。（新增于 3.4.1）|true或false|true|
 |configurationFactory|指定一个提供 Configuration 实例的类。 这个被返回的 Configuration 实例用来加载被反序列化对象的延迟加载属性值。 这个类必须包含一个签名为static Configuration getConfiguration() 的方法。（新增于 3.2.3）|一个类型别名或完全限定类名。|未设置|
-shrinkWhitespacesInSql|从SQL中删除多余的空格字符。请注意，这也会影响SQL中的文字字符串。 (新增于 3.5.5)|true或false|false|
-|defaultSqlProviderType|Specifies an sql provider class that holds provider method (Since 3.5.6). This class apply to the type(or value) attribute on sql provider annotation(e.g. @SelectProvider), when these attribute was omitted.|A type alias or fully qualified class name|Not set|
+|shrinkWhitespacesInSql|从SQL中删除多余的空格字符。请注意，这也会影响SQL中的文字字符串。 (新增于 3.5.5)|true或false|false|
+|defaultSqlProviderType|指定一个拥有 provider 方法的 sql provider 类（新增于 3.5.6）。这个类适用于指定 sql provider 注解上的type（或 value） 属性（当这些属性在注解中被忽略时）。 (例如@SelectProvider)|类型别名或者全限定名|未设置|
+|nullableOnForEach	为 'foreach' 标签的 'nullable' 属性指定默认值。（新增于 3.5.9）|true或false|false|
+|argNameBasedConstructorAutoMapping|当应用构造器自动映射时，参数名称被用来搜索要映射的列，而不再依赖列的顺序。（新增于 3.5.10）|true或false|false|
 
 ## typeAliases（类型别名）
-类型别名可为 Java 类型设置一个缩写名字。 它仅用于 XML 配置，意在降低冗余的全限定类名书写。
+类型别名可为 Java 类型设置一个缩写名字。 它仅用于 XML 配置（**全局配置mybatis-config.xml**和**SQL映射XML配置**），意在降低冗余的全限定类名书写。
 
 ```xml
 <typeAliases>
@@ -231,7 +237,7 @@ public class Author {
 |date\[]|Date[]|
 |decimal\[]|BigDecimal[]|
 |bigdecimal\[]|BigDecimal[]|
-vbiginteger\[]|BigInteger[]|
+|biginteger\[]|BigInteger[]|
 |object\[]|Object[]|
 |map|Map|
 |hashmap|HashMap|
@@ -329,7 +335,7 @@ public class ExampleTypeHandler extends BaseTypeHandler<String> { // Java类型
 <typeHandlers>
   <typeHandler handler="org.mybatis.example.ExampleTypeHandler"/>
 </typeHandlers>
-```]
+```
 
 MyBatis 不会通过检测数据库元信息来决定使用哪个类型处理器，必须在参数和结果映射中指明字段的类型，以使其能够绑定到正确的类型处理器上，这是因为 MyBatis 直到语句被执行时才清楚数据类型。
 

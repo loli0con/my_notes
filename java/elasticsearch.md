@@ -23,13 +23,15 @@ PUT幂等，POST非幂等。
   * pri.store.size：主分片占空间大小
 * 查看单个索引：**GET**请求 :http://地址:端口/索引名
 * 删除索引：**DELETE**请求 :http://地址:端口/索引名
-* 关闭索引：**POST**请求 http://地址:端口/索引名称/_close
-* 打开索引：**POST**请求 http://地址:端口/索引名称/_open 
+* 关闭索引：**POST**请求 http://地址:端口/索引名/_close
+* 打开索引：**POST**请求 http://地址:端口/索引名/_open 
 
 #### 数据导入
-将索引*index1*的数据导入到索引*index2*中
+将索引*index1*的数据导入到索引*index2*中：
 ```
 POST http://地址:端口/_reindex
+```
+```JSON
 {
     "source": {
         "index": "index1"
@@ -41,38 +43,42 @@ POST http://地址:端口/_reindex
 ```
 
 #### 别名操作
-添加别名
+##### 添加别名
 ```
 POST http://地址:端口/_aliases
+```
+```JSON
 {
-	"actions": [{
-		"add": {
-			"index": "person",
-			"alias": "person_index"
-		}
-	}]
+    "actions": [{
+        "add": {
+            "index": "person",
+            "alias": "person_index"
+        }
+    }]
 }
 ```
 
-删除别名
+##### 删除别名
 ```
 POST http://地址:端口/_aliases
+```
+```JSON
 {
-	"actions": [{
-		"remove": {
-			"index": "person",
-			"alias": "person_index"
-		}
-	}]
+    "actions": [{
+        "remove": {
+            "index": "person",
+            "alias": "person_index"
+        }
+    }]
 }
 ```
 
 ### 文档
-数字*1*为主键ID。
+数字`1`为主键ID。
 
-* 创建文档(不指定id)：**POST**请求 :http://地址:端口/索引名/_doc。请求体的类型为JSON，请求体的内容为要插入的文档。由于没有指定数据唯一性标识(ID)，默认情况下，ES服务器会随机生成一个。
-* 创建文档(指定id)：**POST**请求 :http://地址:端口/索引名/_doc/1。请求体的类型为JSON，请求体的内容为要插入的文档。明确指定数据唯一性标识(ID)，请求方式可以为**PUT**。
-* 根据id查询文档：**GET**请求 :http://地址:端口/索引名/_doc/1
+* 创建文档(不指定id)：**POST**请求 :http://地址:端口/索引名/_doc。 请求体的类型为JSON，请求体的内容为要插入的文档。由于没有指定数据唯一性标识(ID)，默认情况下，ES服务器会随机生成一个。
+* 创建文档(指定id)：**POST**请求 :http://地址:端口/索引名/_doc/1。 请求体的类型为JSON，请求体的内容为要插入的文档。明确指定数据唯一性标识(ID)，请求方式可以为**PUT**。
+* 根据id查询文档：**GET**请求 :http://地址:端口/索引名/_doc/1。
 * 根据id修改文档：**POST**请求 :http://地址:端口/索引名/_doc/1。请求体的类型为JSON，请求体的内容为修改后的文档。
 * 修改字段：**POST**请求 :http://地址:端口/索引名/_update/1。请求体的类型为JSON，请求体的内容为要修改字段的键值对。
 * 根据id删除文档：**DELETE**请求 :http://地址:端口/索引名/_doc/1。删除一个文档不会立即从磁盘上移除，它只是被标记成已删除(逻辑删除)。
@@ -85,6 +91,8 @@ POST http://地址:端口/_aliases
 已有索引并添加映射，也可使用该种方式给索引添加新字段
 ```
 PUT http://地址:端口/索引名/_mapping
+```
+```JSON
 {
     "properties": {
         "name":{
@@ -126,6 +134,8 @@ PUT http://地址:端口/索引名/_mapping
 #### 索引映射关联
 ```
 PUT http://地址:端口/索引名
+```
+```JSON
 {
     "settings": {},
     "mappings": {
@@ -148,10 +158,54 @@ PUT http://地址:端口/索引名
 ```
 
 ### 查询
-student为索引名
+`student`为索引名，定义数据格式如下：
+```JSON
+{
+    "name":"zhangsan",
+    "nickname":"zhangsan",
+    "sex":"男",
+    "age":30
+}
+```
+
+查询结果通常格式如下：
+```JSON
+{
+    "took":2,
+    "timed_out":false,
+    "_shards":{"total":5,"successful":5,"failed":0},
+    "hits":{
+        "total":1,
+        "max_score":1.0,
+        "hits":[
+            {
+                "_index":"student",
+                "_type":"_doc",
+                "_id":"AV3qGfrC6jMbsbXb6k1p",
+                "_score":1.0,
+                "_source": {
+                    "name":"zhangsan",
+                    "nickname":"zhangsan",
+                    "sex":"男",
+                    "age":30
+                }
+            }
+        ]
+    }
+}
+```
+返回结果的took字段表示该操作的耗时（单位为毫秒），timed_out字段表示是否超时，hits字段表示命中的记录，里面子字段的含义如下:
+* total：返回记录数，本例是1条。
+* max_score：最高的匹配程度，本例是1.0。
+* hits：返回的记录组成的数组。
+
+在返回的记录中，每条记录都有一个_score字段，表示匹配的程序，默认是按照这个字段降序排列。
+
 #### 查询所有
 ```
 GET http://地址:端口/student/_search
+```
+```JSON
 {
     "query": {
         "match_all": {}
@@ -165,6 +219,9 @@ GET http://地址:端口/student/_search
 #### 匹配查询
 ```
 GET http://地址:端口/student/_search
+```
+
+```JSON
 {
     "query": {
         "match": {
@@ -189,6 +246,8 @@ match匹配类型查询，会把查询条件进行分词，然后进行查询，
 #### 字段匹配查询
 ```
 GET http://地址:端口/student/_search
+```
+```JSON
 {
     "query": {
         "multi_match": {
@@ -211,6 +270,8 @@ multi_match(同query_string) 与 match 类似，不同的是它可以在多个�
 #### 关键字精确查询
 ```
 GET http://地址:端口/student/_search
+```
+```JSON
 {
     "query": {
         "term": {
@@ -226,6 +287,8 @@ term 查询，精确的关键词匹配查询，不对查询条件进行分词。
 #### 多关键字精确查询
 ```
 GET http://地址:端口/student/_search
+```
+```JSON
 {
     "query": {
         "terms": {
@@ -240,6 +303,8 @@ terms 查询和 term 查询一样，但它允许你指定多值进行匹配。�
 #### 指定查询字段
 ```
 GET http://地址:端口/student/_search
+```
+```JSON
 {
     "_source": ["name","nickname"],
     "query": {
@@ -249,12 +314,14 @@ GET http://地址:端口/student/_search
     }
 }
 ```
-默认情况下，Elasticsearch在搜索的结果中，会把文档中保存在_source的所有字段都返回。如果我们只想获取其中的部分字段，我们可以添加_source的过滤。
+默认情况下，Elasticsearch在搜索的结果中，会把文档中保存在_source的所有字段都返回。如果我们只想获取其中的部分字段，我们可以添加_source的过滤。类似于mysql中通过select关键字指定要查询的字段。
 
 
 #### 过滤字段
 ```
 GET http://地址:端口/student/_search
+```
+```JSON
 {
     "_source": {
         "includes": ["name","nickname"],
@@ -274,6 +341,8 @@ GET http://地址:端口/student/_search
 #### 组合/布尔查询
 ```
 GET http://地址:端口/student/_search
+```
+```JSON
 {
     "query": {
         "bool": {
@@ -303,15 +372,17 @@ GET http://地址:端口/student/_search
 #### 范围查询
 ```
 GET http://地址:端口/student/_search
+```
+```JSON
 {
-	"query": {
-		"range": {
-			"age": {
-				"gte": 30,
-				"lte": 35
-			}
-		}
-	}
+    "query": {
+        "range": {
+            "age": {
+                "gte": 30,
+                "lte": 35
+            }
+        }
+    }
 }
 ```
 range查询找出那些落在指定区间内的数字或者时间。range查询允许以下字符：
@@ -324,15 +395,17 @@ range查询找出那些落在指定区间内的数字或者时间。range查询�
 #### 模糊查询
 ```
 GET http://地址:端口/student/_search
+```
+```JSON
 {
-	"query": {
-		"fuzzy": {
-			"title": {
-				"value": "zhangsan",
-				"fuzziness": 2
-			}
-		}
-	}
+    "query": {
+        "fuzzy": {
+            "title": {
+                "value": "zhangsan",
+                "fuzziness": 2
+            }
+        }
+    }
 }
 ```
 返回包含与搜索字词相似的字词的文档。
@@ -351,17 +424,19 @@ GET http://地址:端口/student/_search
 #### 单字段排序
 ```
 GET http://地址:端口/student/_search
+```
+```JSON
 {
-	"query": {
-		"match": {
-			"name": "zhangsan"
-		}
-	},
-	"sort": [{
-		"age": {
-			"order": "desc"
-		}
-	}]
+    "query": {
+        "match": {
+            "name": "zhangsan"
+        }
+    },
+    "sort": [{
+        "age": {
+            "order": "desc"
+        }
+    }]
 }
 ```
 sort 可以让我们按照不同的字段进行排序，并且通过 order 指定排序的方式。desc 降序，asc 升序。
@@ -369,40 +444,45 @@ sort 可以让我们按照不同的字段进行排序，并且通过 order 指�
 #### 多字段排序
 ```
 GET http://地址:端口/student/_search
+```
+```JSON
 {
-	"query": {
-		"match_all": {}
-	},
-	"sort": [{
-			"age": {
-				"order": "desc"
-			}
-		},
-		{
-			"_score": {
-				"order": "desc"
-			}
-		}
-	]
+    "query": {
+        "match_all": {}
+    },
+    "sort": [{
+            "age": {
+                "order": "desc"
+            }
+        },
+        {
+            "_score": {
+                "order": "desc"
+            }
+        }
+    ]
 }
 ```
 
 #### 高亮查询
 ```
 GET http://地址:端口/student/_search
+```
+
+```JSON
 {
-	"query": {
-		"match": {
-			"name": "zhangsan"
-		}
-	},
-	"highlight": {
-		"pre_tags": "<font color='red'>",
-		"post_tags": "</font>",
-		"fields": {
-			"name": {}
-		}
-	}
+    "query": {
+        "match": {
+            "name": "zhangsan"
+        }
+    },
+    "highlight": {
+        "pre_tags": "<font color='red'>",
+        "post_tags": "</font>",
+        "fields": {
+            "name": {}
+        }
+    }
 }
 ```
 在进行关键字搜索时，搜索出的内容中的关键字会显示不同的颜色，称之为高亮。
@@ -417,17 +497,19 @@ Elasticsearch 可以对查询内容中的关键字部分，进行标签和样式
 #### 分页查询
 ```
 GET http://地址:端口/student/_search
+```
+```JSON
 {
-	"query": {
-		"match_all": {}
-	},
-	"sort": [{
-		"age": {
-			"order": "desc"
-		}
-	}],
-	"from": 0,
-	"size": 2
+    "query": {
+        "match_all": {}
+    },
+    "sort": [{
+        "age": {
+            "order": "desc"
+        }
+    }],
+    "from": 0,
+    "size": 2
 }
 ```
 * from:当前页的起始索引，默认从 0 开始。
@@ -436,70 +518,72 @@ GET http://地址:端口/student/_search
 #### 指标聚合查询
 ```
 GET http://地址:端口/student/_search
+```
+```JSON
 {
-	"aggs": {
-		"max_age": {
-			"max": {
-				"field": "age"
-			}
-		}
-	},
-	"size": 0
+    "aggs": {
+        "max_age": {
+            "max": {
+                "field": "age"
+            }
+        }
+    },
+    "size": 0
 }
 
 {
-	"aggs": {
-		"min_age": {
-			"min": {
-				"field": "age"
-			}
-		}
-	},
-	"size": 0
+    "aggs": {
+        "min_age": {
+            "min": {
+                "field": "age"
+            }
+        }
+    },
+    "size": 0
 }
 
 {
-	"aggs": {
-		"sum_age": {
-			"sum": {
-				"field": "age"
-			}
-		}
-	},
-	"size": 0
+    "aggs": {
+        "sum_age": {
+            "sum": {
+                "field": "age"
+            }
+        }
+    },
+    "size": 0
 }
 
 {
-	"aggs": {
-		"avg_age": {
-			"avg": {
-				"field": "age"
-			}
-		}
-	},
-	"size": 0
+    "aggs": {
+        "avg_age": {
+            "avg": {
+                "field": "age"
+            }
+        }
+    },
+    "size": 0
 }
 
 {
-	"aggs": {
-		"distinct_age": {
-			"cardinality": {
-				"field": "age"
-			}
-		}
-	},
-	"size": 0
+    "aggs": {
+        "distinct_age": {
+            "cardinality": {
+                "field": "age"
+            }
+        }
+    },
+    "size": 0
 }
 
 {
-	"aggs": {
-		"stats_age": {
-			"stats": {
-				"field": "age"
-			}
-		}
-	},
-	"size": 0
+    "aggs": {
+        "stats_age": {
+            "stats": {
+                "field": "age"
+            }
+        }
+    },
+    "size": 0
 }
 ```
 
@@ -515,21 +599,39 @@ GET http://地址:端口/student/_search
 #### 桶聚合查询
 ```
 GET http://地址:端口/student/_search
+```
+```JSON
 {
-	"aggs": {
-		"age_groupby": {
-			"terms": {
-				"field": "age"
-			}
-		}
-	},
-	"size": 0
+    "aggs": {
+        "age_groupby": {
+            "terms": {
+                "field": "age"
+            }
+        }
+    },
+    "size": 0
 }
 ```
 桶聚和相当于 sql 中的 group by 语句，terms 聚合，分组统计。
 
+还可以在terms分组下再进行聚合:
+```JSON
+{
+    "aggs": {
+        "age_groupby": {
+            "terms": {"field": "age"},
 
+            "aggs": {
+                "sum_age":{
+                    "sum":{"field":"age"}
+                }
+            }
 
+        }
+    },
+    "size": 0
+}
+```
 
 
 
@@ -617,32 +719,32 @@ routing 是一个可变值，默认是文档的 _id ，也可以设置成一个�
 ```
 GET http://localhost:9200/_analyze
 {
-	"analyzer": "standard",
-	"text": "Text to analyze"
+    "analyzer": "standard",
+    "text": "Text to analyze"
 }
 ```
 结果中每个元素代表一个单独的词条:
 ```
 {
-	"tokens": [{
-		"token": "text",
-		"start_offset": 0,
-		"end_offset": 4,
-		"type": "<ALPHANUM>",
-		"position": 1
-	}, {
-		"token": "to",
-		"start_offset": 5,
-		"end_offset": 7,
-		"type": "<ALPHANUM>",
-		"position": 2
-	}, {
-		"token": "analyse",
-		"start_offset": 8,
-		"end_offset": 15,
-		"type": "<ALPHANUM>",
-		"position": 3
-	}]
+    "tokens": [{
+        "token": "text",
+        "start_offset": 0,
+        "end_offset": 4,
+        "type": "<ALPHANUM>",
+        "position": 1
+    }, {
+        "token": "to",
+        "start_offset": 5,
+        "end_offset": 7,
+        "type": "<ALPHANUM>",
+        "position": 2
+    }, {
+        "token": "analyse",
+        "start_offset": 8,
+        "end_offset": 15,
+        "type": "<ALPHANUM>",
+        "position": 3
+    }]
 }
 ```
 token 是实际存储到索引中的词条。position 指明词条在原始文本中出现的位置。start_offset 和 end_offset 指明字符在原始字符串中的位置。
@@ -668,19 +770,19 @@ analyzer可以设为：
 
 ```
 {
-	"tokens": [{
-		"token": "测试",
-		"start_offset": 0,
-		"end_offset": 2,
-		"type": "CN_WORD",
-		"position": 0
-	}, {
-		"token": "单词",
-		"start_offset": 2,
-		"end_offset": 4,
-		"type": "CN_WORD",
-		"position": 1
-	}]
+    "tokens": [{
+        "token": "测试",
+        "start_offset": 0,
+        "end_offset": 2,
+        "type": "CN_WORD",
+        "position": 0
+    }, {
+        "token": "单词",
+        "start_offset": 2,
+        "end_offset": 4,
+        "type": "CN_WORD",
+        "position": 1
+    }]
 }
 ```
 

@@ -44,13 +44,11 @@ xmind 格式无法在线阅读，主要用于备份和发布。
 * 不背单词
 
 ### 一 ➡️ 可推事项
-1. 前端
+1. [前端](https://gitee.com/jishupang/web_atlas)
 2. spring注解驱动开发 - 笔记编写
-3. ooad - 笔记编写
-4. spring security - 基本使用
-5. BeanUtils
-   1. https://dbwos.com/blog/note/useful-beanutils/
-   2. https://www.cnblogs.com/kancy/p/12089126.html
+3. spring el表达式
+4. ooad - 笔记编写
+5. spring security - 基本使用
 
 ### 二 ➡️ 可选事项
 * 考研四杰
