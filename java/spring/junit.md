@@ -12,12 +12,34 @@ Spring提供了SpringExtension运行器。
 使用Spring提供的注解@ContextConfiguration，可以读取配置文件（或注解）来创建Spring容器。
 
 ## 示例
-```java
+
+### @RunWith
+```Java
 @RunWith(SpringJUnit4ClassRunner.class) // JUnit4
-@ExtendWith(SpringExtension.class) // JUnit5
 @ContextConfiguration(locations="classpath:applicationContext.xml")  // 指定配置文件（和⬇️一行代码二选一）
 @ContextConfiguration(classes = SpringConfig.class)// 指定配置类（和⬆️一行代码二选一）
-public class TestSomethong {
+public class T1 {
     /* 测试类 */
 }
 ```
+
+### @ExtendWith
+```Java
+@ExtendWith(SpringExtension.class) // JUnit5
+@ContextConfiguration(locations="classpath:applicationContext.xml")  // 指定配置文件（和⬇️一行代码二选一）
+@ContextConfiguration(classes = SpringConfig.class)// 指定配置类（和⬆️一行代码二选一）
+public class T2 {
+    /* 测试类 */
+}
+```
+
+### @SpringJUnitConfig
+```Java
+@SpringJUnitConfig(locations = "classpath:applicationContext.xml") // JUnit5
+// @SpringJUnitConfig(classes = SpringConfig.class)
+public class T3 {
+    /* 测试类 */
+}
+```
+
+
