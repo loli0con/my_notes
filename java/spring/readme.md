@@ -9,7 +9,7 @@ Spring 是一款主流的 Java EE 轻量级开源框架，其目的是用于简�
 * 将开源世界中众多优秀的第三方框架和类库**整合**
 
 ## 核心
-Spring 有两个核心部分:IOC 和 Aop
+Spring 有两个核心部分:IOC 和 AOP
 * **IoC**：Inverse of Control 的简写，译为“控制反转”，指把创建对象过程交给 Spring 进行管理。
 * **AOP**：Aspect Oriented Programming 的简写，译为“面向切面编程”。AOP 用来封装多个类的公共行为，将那些与业务无关，却为业务模块所共同调用的逻辑封装起来，减少系统的重复代码，降低模块间的耦合度。另外，AOP 还解决一些系统层面上的问题，比如日志、事务、权限等。
 
@@ -42,10 +42,10 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
 * Beans模块：提供了BeanFactory，工厂模式的实现，Spring将所有管理的对象称为Bean。
 * Core模块：提供了Spring框架的基本组成部分，包括IoC和DI依赖注入的功能。
 * Context模块：访问和配置Bean对象的上下文对象，核心容器。如：ApplicationContext
-* Expression模块：spring表达式语言
+* Expression模块：Spring表达式语言
 
 ### AOP
-* [AOP](aop.md)模块：提供了面向切面编程的功能，整合ASM，CGLib，JDK Proxy
+* [AOP](aop.md)模块：提供了面向切面编程的功能，整合ASM、CGLib、JDK Proxy
 * Aspects模块：提供了与AspectJ框架集成功能
 * Instrument模块：动态Class Loading模块
 
@@ -57,10 +57,10 @@ Spring框架采用的是分层架构，它一系列功能要素被分成20个模
 * JMS模块：Spring对Java Message Service(java消息服务)的封装，用于服务之间相互通信
 
 ### Web
-* spring-web：最基础的web支持，建立于spring-context之上，通过servlet或listener来初始化IOC容器
-* spring-webmvc：实现web mvc
-* spring-websocket：与前端的全双工通信协议
-* spring-webflux：Spring 5.0提供的，用于取代传统java servlet，非阻塞式Reactive Web框架，异步，非阻塞，事件驱动的服务
+* Spring-web：最基础的web支持，建立于Spring-context之上，通过servlet或listener来初始化IOC容器
+* Spring-webmvc：实现web mvc
+* Spring-websocket：与前端的全双工通信协议
+* Spring-webflux：Spring 5.0提供的，用于取代传统Java servlet，非阻塞式Reactive Web框架，异步，非阻塞，事件驱动的服务
 
 ### 其他模块
 * Test模块：提供了对单元测试和集成测试的支持，主要是对junit的封装
