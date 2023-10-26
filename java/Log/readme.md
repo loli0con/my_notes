@@ -56,6 +56,7 @@ Slf4j在编译期间，静态绑定本地的LOG库，因此可以在OSGi中正�
 应用中不可直接使用日志系统（log4j、logback）中的 API ，而应依赖使用日志框架 SLF4J 中的 API 。使用门面模式的日志框架，有利于维护和各个类的日志处理方式的统一。
 
 推荐使用SLF4J。
+![log+20231019115530](https://raw.githubusercontent.com/loli0con/picgo/master/images/log%2B20231019115530.png%2B2023-10-19-11-55-30)
 
 
 
@@ -143,15 +144,15 @@ public class App {
 ### 修改默认配置
 修改SpringBoot的配置文件（application.yml等）：
 ```yml
-#修改日志的级别，默认root是info
-#logging.level.root=trace
+# 修改日志的级别，默认root是info
+# logging.level.root=trace
 
-# 不指定路径在当前项目下生成springboot.log日志
-#logging.file=springboot.log
+# 不指定路径则在当前项目下生成springboot.log日志
+# logging.file=springboot.log
 # 可以指定完整的路径；
 logging.file=d://springboot.log
 
-# 在当前磁盘的根路径下创建spring文件夹和里面的log文件夹；使用spring.log 作为默认文件
+# 在当前磁盘的根路径下创建spring文件夹和里面的log文件夹；使用spring.log作为默认文件
 logging.path=/spring/log
 
 # 在控制台输出的日志的格式
@@ -161,7 +162,7 @@ logging.pattern.file=%d{yyyy-MM-dd} === [%thread] === %-5level === %logger{50} =
 ```
 
 ### 指定日志文件
-给类路径下放上每个日志框架自己的配置文件，SpringBoot就不使用他默认配置了。
+给类路径下放上每个日志框架自己的配置文件，SpringBoot就不使用默认配置了。
 
 |Logging System|Customization|
 |---|---|
