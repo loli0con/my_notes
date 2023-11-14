@@ -1,10 +1,10 @@
 # XML方式整合第三方框架
 
 xml整合第三方框架有两种整合方案：
-1. **不需要自定义名空间，不需要使用Spring的配置文件配置第三方框架本身内容**，例如：MyBatis;
-2. **需要引入第三方框架命名空间，需要使用Spring的配置文件配置第三方框架本身内容**，例如：Dubbo。
+1. **不需要自定义名空间，不需要使用Spring的配置文件配置第三方框架本身内容**，例如：[MyBatis](#mybatis不需要自定义名空间);
+2. **需要引入第三方框架命名空间，需要使用Spring的配置文件配置第三方框架本身内容**，例如：[Dubbo](#dubbo需要引入第三方框架命名空间)。
 
-## MyBatis
+## MyBatis（不需要自定义名空间）
 MyBatis提供了mybatis-spring.jar专门用于两大框架的整合。
 
 ## 步骤
@@ -147,3 +147,54 @@ public class MapperFactoryBean<T> extends SqlSessionDaoSupport implements Factor
     }
 }
 ```
+
+## Dubbo（需要引入第三方框架命名空间）
+此处以Spring的**context**命名空间去进行讲解，该方式也是命名空间扩展方式。
+
+### 用法
+加载外部properties文件，将键值对存储在Spring容器中：
+```properties
+jdbc.url=jdbc:mysql://localhost:3306/mybatis
+jdbc.username=root
+jdbc.password=root
+```
+
+```XML
+引入context命名空间，再使用context命名空间的标签：
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+       <!-- 上面最后两行：引入context命名空间 + 对应的XSD文件 -->
+    
+    <!-- 下面使用context命名空间的标签 -->
+    <context:property-placeholder location="classpath:jdbc.properties" />
+
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="url" value="${jdbc.url}"></property>
+        <property name="username" value="${jdbc.username}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+    </bean>
+<beans>
+```
+
+### 原理
+从源头ClassPathXmlApplicationContext入手，经历复杂的源码追踪：
+![XML方式整合第三方框架+20231114072743](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114072743.png%2B2023-11-14-07-27-45)
+
+![XML方式整合第三方框架+20231114073037](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114073037.png%2B2023-11-14-07-30-39)
+
+![XML方式整合第三方框架+20231114073423](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114073423.png%2B2023-11-14-07-34-25)
+
+![XML方式整合第三方框架+20231114073748](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114073748.png%2B2023-11-14-07-37-51)
+
+![XML方式整合第三方框架+20231114074256](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114074256.png%2B2023-11-14-07-42-58)
+
+![XML方式整合第三方框架+20231114074624](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114074624.png%2B2023-11-14-07-46-27)
+
+![XML方式整合第三方框架+20231114075055](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114075055.png%2B2023-11-14-07-50-57)
+
+![XML方式整合第三方框架+20231114084814](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114084814.png%2B2023-11-14-08-48-18)
+
+![XML方式整合第三方框架+20231114085554](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114085554.png%2B2023-11-14-08-55-57)
