@@ -179,22 +179,39 @@ jdbc.password=root
 <beans>
 ```
 
-### 原理
-从源头ClassPathXmlApplicationContext入手，经历复杂的源码追踪：
+### 原理分析
+从源头ClassPathXmlApplicationContext入手，找到处理每一个XML元素结点的代码处：
 ![XML方式整合第三方框架+20231114072743](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114072743.png%2B2023-11-14-07-27-45)
 
+如果是默认的命名空间的XML元素，则调用`this.parseDefaultElement`方法：
 ![XML方式整合第三方框架+20231114073037](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114073037.png%2B2023-11-14-07-30-39)
 
+如果不是默认的命名空间的XML元素，则调用`delegate.parseCustomElement`方法。通过`NamespaceHandlerResolver`的`resolver`方法，传入该命名空间的Uri，获取该命名空间的`NamespaceHandler`：
 ![XML方式整合第三方框架+20231114073423](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114073423.png%2B2023-11-14-07-34-25)
 
+`NamespaceHandlerResolver`的`resolver`方法根据XML元素所处的命名空间Uri，从`handlerMappings`中获取对应的命名空间处理器`NamespaceHandler`，该对象后续将调用`parse`方法解析自定义的XML元素：
 ![XML方式整合第三方框架+20231114073748](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114073748.png%2B2023-11-14-07-37-51)
 
+`handlerMappings`作为`DefualtNamespeceHandlerResolver`的成员变量，在构造方法内根据`handlerMappingsLocation:"META-INF/spring.handlers"`进行初始化：
 ![XML方式整合第三方框架+20231114074256](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114074256.png%2B2023-11-14-07-42-58)
 
+`META-INF/spring.handlers`的内容如下图所示：
 ![XML方式整合第三方框架+20231114074624](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114074624.png%2B2023-11-14-07-46-27)
 
+`NamespaceHandlerResolver`的`resolver`方法获取对应的命名空间处理器`NamespaceHandler`后，会确保调用过该`NamespaceHandler`的`init`方法完成初始化后才返回：
 ![XML方式整合第三方框架+20231114075055](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114075055.png%2B2023-11-14-07-50-57)
 
+`NamespaceHandler`的`init`方法通常用于注册命名空间下的标签的解析器`Parser`到其父类 `NamespaceHandlerSupport`的`Map<String, BeanDefinitionParser> parsers`中，一个标签对应一个`Parser`：
+![XML方式整合第三方框架+20231114085554](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114085554.png%2B2023-11-14-08-55-57)
+
+回到上层的`delegate.parseCustomElement`方法，从`NamespaceHandlerResolver`中获取到对应`handler`后，调用`parser`方法，解析自定义的XML元素：
 ![XML方式整合第三方框架+20231114084814](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114084814.png%2B2023-11-14-08-48-18)
 
-![XML方式整合第三方框架+20231114085554](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114085554.png%2B2023-11-14-08-55-57)
+### 总结原理
+1. **命名空间的名称** 与 **命名空间的处理器映射关系** 会以键值对形式存在到一个叫`spring.handlers`文件里，该文件存储在类加载路径的`META-INF`目录下，Spring会自动加载
+2. `NamespaceHandler`命名空间处理器：如果命名空间只有一个标签，那么直接在`parse`方法中进行解析即可，一般解析结 果就是注册该标签对应的`BeanDefinition`。如果命名空间里有多个标签，那么可以在`init`方法中为每个标签都注册一个`BeanDefinitionParser`，在执行`NamespaceHandler`的`parse`方法时在分流给不同的 `BeanDefinitionParser`进行解析(重写`doParse`方法即可)。
+
+### 虚拟XSD
+![XML方式整合第三方框架+20231114232920](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114232920.png%2B2023-11-14-23-29-23)
+
+![XML方式整合第三方框架+20231114233356](https://raw.githubusercontent.com/loli0con/picgo/master/images/XML%E6%96%B9%E5%BC%8F%E6%95%B4%E5%90%88%E7%AC%AC%E4%B8%89%E6%96%B9%E6%A1%86%E6%9E%B6%2B20231114233356.png%2B2023-11-14-23-33-59)
