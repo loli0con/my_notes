@@ -2,7 +2,7 @@
 
 
 
-## MySQL8安装（red hat系）
+## 安装（red hat）
 |安装方式|特点|
 |---|---|
 |rpm|安装简单，灵活性差，无法灵活选择版本、升级|
@@ -14,7 +14,7 @@
 
 
 
-## mysqld服务配置
+## 服务配置
 
 ### 服务的初始化
 为了保证数据库目录与文件的所有者为 mysql 登录用户，如果你是以 root 身份运行 mysql 服务，需要执
@@ -33,7 +33,7 @@
 
 
 
-## 远程登录
+## 远程访问
 
 ### 调整防火墙
 
@@ -62,9 +62,9 @@ firewall-cmd --add-port=3306/tcp --permanent
 firewall-cmd --reload
 ```
 
-### 修改MySQL配置
+### 调整root账号
 
-#### 查看配置
+#### 查看root账号
 登录MySQL后输入如下命令：
 ```sql
 use mysql;
@@ -119,13 +119,13 @@ mysql> show variables like 'validate_password%';
 关于 **validate_password** 组件对应的系统变量说明:
 |选项|默认值|参数描述|
 |---|---|---|
-|validate_password_check_user_name|ON|设置为ON的时候表示能将密码设置成当前用户名。|
-|validate_password_dictionary_file||用于检查密码的字典文件的路径名，默认为空|
-|validate_password_length|8|密码的最小长度，也就是说密码长度必须大于或等于8|
-|validate_password_mixed_case_count|1|如果密码策略是中等或更强的，validate_password要求密码具有的小写和大写字符的最小数量。对于给定的这个值密码必须有那么多小写字符和那么多大写字符。|
-|validate_password_number_count|1|密码必须包含的数字个数|
-|validate_password_policy|MEDIUM|密码强度检验等级，可以使用数值0、1、2或相应的符号值LOW、MEDIUM、STRONG来指定。</br>**0/LOW**：只检查长度。</br>**1/MEDIUM**：检查长度、数字、大小写、特殊字符。</br>**2/STRONG**：检查长度、数字、大小写、特殊字符、字典文件。|
-|validate_password_special_char_count|1|密码必须包含的特殊字符个数|
+|check_user_name|ON|设置为ON的时候表示能将密码设置成当前用户名。|
+|dictionary_file||用于检查密码的字典文件的路径名，默认为空|
+|length|8|密码的最小长度，也就是说密码长度必须大于或等于8|
+|mixed_case_count|1|如果密码策略是中等或更强的，validate_password要求密码具有的小写和大写字符的最小数量。对于给定的这个值密码必须有那么多小写字符和那么多大写字符。|
+|number_count|1|密码必须包含的数字个数|
+|policy|MEDIUM|密码强度检验等级，可以使用数值0、1、2或相应的符号值LOW、MEDIUM、STRONG来指定。</br>**0/LOW**：只检查长度。</br>**1/MEDIUM**：检查长度、数字、大小写、特殊字符。</br>**2/STRONG**：检查长度、数字、大小写、特殊字符、字典文件。|
+|special_char_count|1|密码必须包含的特殊字符个数|
 
 
 
@@ -180,39 +180,9 @@ MySQL在Windows的环境下全部不区分大小写。
 
 
 
-## 默认数据库
-* **mysql**：MySQL 系统自带的核心数据库，它存储了MySQL的用户账户和权限信息，一些存储过程、事件的定义信息，一些运行过程中产生的日志信息，一些帮助信息以及时区信息等。
-* **information_schema**：MySQL 系统自带的数据库，这个数据库保存着MySQL服务器**维护的所有其他数据库的信息**，比如有哪些表、哪些视图、哪些触发器、哪些列、哪些索引。这些信息并不是真实的用户数据，而是一些描述性信息，有时候也称之为**元数据**。在系统数据库 information_schema 中提供了一些以 innodb_sys 开头的表，用于表示内部系统表。
-* **performance_schema**：MySQL 系统自带的数据库，这个数据库里主要保存MySQL服务器运行过程中的一些状态信息，可以用来**监控 MySQL 服务的各类性能指标**。包括统计最近执行了哪些语句，在执行过程的每个阶段都花费了多长时间，内存的使用情况等信息。
-* **sys**：MySQL 系统自带的数据库，这个数据库主要是通过**视图**的形式把 information_schema 和 performance_schema 结合起来，帮助系统管理员和开发人员监控 MySQL 的技术性能。
+## SQL_MODE
 
-## 主要目录结构
-* 相关命令目录: /usr/bin(mysqladmin、mysqlbinlog、mysqldump等命令)和/usr/sbin
-* 配置文件目录: /usr/share/mysql-8.0(命令及配置文件)和/etc/mysql(如my.cnf)
-* MySQL数据库文件的存放路径: /var/lib/mysql/
+### 介绍
+sql_mode会影响MySQL支持的SQL语法以及它执行的数据验证检查。通过设置sql_mode，可以完成不同严格程度的数据校验，有效地保障数据准确性。
 
-### 数据库文件
-
-#### 数据库在文件系统中的表示
-除了 information_schema 这个系统数据库外，其他的数据库在**数据目录（/var/lib/mysql/）**下都有对应的子目录。
-
-#### 表在文件系统中的表示（InnoDB存储引擎）
-
-##### 表结构
-为了保存表结构，InnoDB在**数据目录**下对应的数据库子目录下创建了一个专门用于**描述表结构的文件**，文件名为：`表名.frm`。frm文件的格式在不同的平台上都是相同的，以**二进制格式**存储。
-
-MySQL8中不再单独提供frm文件，而是合并在[ibd文件](#独立表空间file-per-table-tablespace)中。
-
-##### 表中数据和索引
-
-###### 系统表空间(system tablespace)
-默认情况下，InnoDB会在数据目录下创建一个名为**idbdata**、大小为**12M**的文件，这个文件就是对应的**系统表空间**在文件系统上的表示。这个文件是**自扩展文件**，当不够用的时候它会自己增加文件大小。
-
-如果想让系统表空间对应文件系统上多个实际文件，或者想修改文件名，那可以在MySQL启动时配置对应的文件路径以及它们的大小，比如修改my.cnf配置文件：
-```cnf
-[server]
-innodb_data_file_path=data1:512M;data2:512M:autoextend
-```
-
-###### 独立表空间(file-per-table tablespace)
-InnoDB为**一个表建立一个独立表空间**，使用**独立表空间**来存储表中的数据和索引。在表所属数据库对应的子目录下存在一个表示该独立表空间的文件，文件名和表名相同，扩展名为**ibd**，完整的文件名称为：`表名.ibd`。
+MySQL服务器可以在不同的SQL模式下运行，并且可以针对不同的客户端以不同的方式应用这些模式，具体取决于sql_mode系统变量的值。
