@@ -18,7 +18,7 @@
 * [SQL执行流程](SQL执行流程.md)
 * [profiling](profiling.md)
 * [数据缓冲池](数据缓冲池.md)
-* [索引]
+* 索引
   * [索引的数据结构](索引的数据结构.md)
   * [InnoDB的索引](InnoDB的索引.md)
 * [InnoDB的存储结构](InnoDB的存储结构.md)
