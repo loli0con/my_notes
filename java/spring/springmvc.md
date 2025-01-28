@@ -1,21 +1,21 @@
 # SpringMVC
-Spring MVC是Spring Framework的一部分，是基于Java实现MVC的轻量级Web框架；  
-它通过一套注解，让一个简单的 Java 类成为处理请求的控制器，而无须实现任何接口；  
-同时它还支持RESTful 编程风格的请求。
+SpringMVC是一个基于Spring开发的MVC轻量级框架，Spring3.0后发布的组件，SpringMVC和Spring可以无缝整合，使用DispatcherServlet作为前端控制器，且内部提供了处理器映射器、处理器适配器、视图解析器等组件，可以简化JavaBean封装，Json转化、文件上传等操作。
 
 ![springmvc+20210801120809](https://i.loli.net/2021/08/01/ri85DZILefMl9oO.png)
 
+![springmvc+20231122194817](https://raw.githubusercontent.com/loli0con/picgo/master/images/springmvc+20231122194817.png+2023-11-22-19-48-18)
+
 ## 优点
-| 序号 | 优点                   | 详情                                                                                                                                                                                                                                                                                                      |
-| ---- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1    | 清晰的角色划分         | 前端控制器（DispatcherServlet）<br/>处理器映射器（HandlerMapping）<br/>处理器适配器（HandlerAdapter）<br/>视图解析器（ViewResolver）<br/>处理器（Controller）<br/>验证器（Validator）<br/>命令对象（Command 请求参数绑定到的对象就叫命令对象）<br/>表单对象（Form Object 提供给表单展示和表单提交的对象） |
-| 2    | 可扩展性好             | 可以很容易扩展，虽然几乎不需要                                                                                                                                                                                                                                                                            |
-| 3    | 与Spring 框架无缝集成  | 这是其它web框架不具备的                                                                                                                                                                                                                                                                                   |
-| 4    | 可适配性好             | 通过 HandlerAdapter 可以支持任意的类作为处理器                                                                                                                                                                                                                                                            |
-| 5    | 可定制性好             | 处理器映射器HandlerMapping和<br />视图解析器ViewResolver 能够非常简单的定制                                                                                                                                                                                                                               |
-| 6    | 单元测试方便           | 能够非常简单的进行 Web 层单元测试                                                                                                                                                                                                                                                                         |
-| 7    | 本地化、主题的解析支持 | 使我们更容易进行国际化和主题的切换                                                                                                                                                                                                                                                                        |
-| 8    | JSP标签库              | 强大的 JSP 标签库，使 JSP 编写更容易                                                                                                                                                                                                                                                                      |
+|序号|优点|详情|
+|---|---|---|
+|1|清晰的角色划分|前端控制器（DispatcherServlet <br/>处理器映射器（HandlerMapping）<br/>处理器适配器（HandlerAdapter）<br/>视图解析器（ViewResolver）<br/>处理器（Controller）<br/>验证器（Validator）<br/>命令对象（Command 请求参数绑定到的对象就叫命令对象）<br/>表单对象（Form Object 提供给表单展示和表单提交的对象）|
+|2|可扩展性好|可以很容易扩展，虽然几乎不需要|
+|3|与Spring 框架无缝集成|这是其它web框架不具备的|
+|4|可适配性好|通过 HandlerAdapter 可以支持任意的类作为处理器|
+|5|可定制性好|处理器映射器HandlerMapping和<br/>视图解析器ViewResolver能够非常简单的定制|
+|6|单元测试方便|能够非常简单的进行 Web 层单元测试|
+|7|本地化、主题的解析支持|使我们更容易进行国际化和主题的切换|
+|8|JSP标签库|强大的 JSP 标签库，使 JSP 编写更容易|
 
 ## 架构
 Spring的web框架围绕DispatcherServlet（调度Servlet）设计，DispatcherServlet的作用是将请求分发到不同的处理器。
@@ -45,7 +45,7 @@ View Resolver负责将处理结果生成View视图，View Resolver首先根据�
 
 
 ### 流程
-1. 用户向服务器发送请求，请求被SpringMVC 前端控制器 DispatcherServlet捕获。
+1. 用户向服务器发送请求，请求被SpringMVC的前端控制器DispatcherServlet捕获。
 2. DispatcherServlet对请求URL进行解析，得到请求资源标识符(URI)，判断请求URI对应的映射:
    1. 不存在:
       1. 判断是否配置了mvc:default-servlet-handler
@@ -62,9 +62,43 @@ View Resolver负责将处理结果生成View视图，View Resolver首先根据�
    4. 数据验证: 验证数据的有效性(长度、格式等)，验证结果存储到BindingResult或Error中
 7. Handler执行完成后，向DispatcherServlet返回一个ModelAndView对象。
 8. 此时将开始执行拦截器的postHandle(...)方法【逆向】。
-9. 根据返回的ModelAndView(此时会判断是否存在异常:如果存在异常，则执行HandlerExceptionResolver进行异常处理)选择一个适合的ViewResolver进行视图解析，根据Model和View，来渲染视图。
+9. 根据返回的ModelAndView(此时会判断是否存在异常:如果存在异常，则执行HandlerExceptionResolver进行异常处理)选择一个适合的ViewResolver进行视图解析，根据Model和View来渲染视图。
 10. 渲染视图完毕执行拦截器的afterCompletion(...)方法【逆向】。
 11. 将渲染结果返回给客户端。
+
+
+
+## 默认组件
+SpringMVC的默认组件，SpringMVC在前端控制器DispatcherServlet加载时，就会进行初始化操作，在进行初始化时，就会加载SpringMVC默认指定的一些组件，这些默认组件配置在*DispatcherServlet.properties*文件中，该文件存在与*spring-webmvc-版本号.jar*包下的org\springframework\web\servlet\DispatcherServlet.properties。
+
+DispatcherServlet.properties部分内容：
+```properties
+org.springframework.web.servlet.HandlerMapping=org.springframework.web.servlet.handler.BeanNameUrl HandlerMapping,\
+org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping,\
+org.springframework.web.servlet.function.support.RouterFunctionMapping
+
+org.springframework.web.servlet.HandlerAdapter=org.springframework.web.servlet.mvc.HttpRequestHand lerAdapter,\
+org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter,\
+org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter,\
+org.springframework.web.servlet.function.support.HandlerFunctionAdapter
+
+org.springframework.web.servlet.ViewResolver=org.springframework.web.servlet.view.InternalResource ViewResolver
+```
+
+这些默认的组件是在DispatcherServlet中进行初始化加载的，在DispatcherServlet中存在集合存储着这些组件，SpringMVC的默认组件会在DispatcherServlet中进行维护，但是并没有存储在与SpringMVC的容器中：
+```Java
+public class DispatcherServlet extends FrameworkServlet {
+    //存储处理器映射器
+    private List<HandlerMapping> handlerMappings;
+    //存储处理器适配器
+    private List<HandlerAdapter> handlerAdapters;
+    //存储视图解析器
+    private List<ViewResolver> viewResolvers;
+    // ... 省略其他代码 ...
+}
+```
+
+配置组件代替默认组件，如果不想使用默认组件，可以将替代方案使用Spring Bean的方式进行配置。DispatcherServlet在进行组件的初始化时，先从SpringMVC容器中找是否存在相应的组件，如果存在直接取出，存储到DispatcherServlet中的组件集合中去。
 
 
 ## FirstDemo（通过xml配置文件把自定义的Handler/Controller注册到IOC容器中）
@@ -188,8 +222,10 @@ ${msg}
 
    <!-- 自动扫描包，让指定包下的注解生效,由IOC容器统一管理 -->
    <context:component-scan base-package="com.demo.controller"/>
-   <!-- 让Spring MVC不处理静态资源 -->
+
+   <!-- 注册了一个 DefaultServletHttpRequestHandler 处理器，静态资源的访问都由该处理器去处理 -->
    <mvc:default-servlet-handler />
+   
    <!--
    支持mvc注解驱动
        在spring中一般采用@RequestMapping注解来完成映射关系
@@ -236,6 +272,7 @@ public class HelloController {
 * 在Spring MVC中，对于Controller的配置方式有很多种。
 
 ### 实现Control
+
 #### 实现Controller接口 - 不推荐
 Controller是一个接口，在org.springframework.web.servlet.mvc包下，接口中只有一个方法：
 
@@ -270,10 +307,12 @@ public class IndexController{
        //返回视图位置
        return "index";
   }
+}
 ```
 
 ### 路径处理
-#### @RequestMapping - 路径映射配置
+
+#### 路径映射配置 - @RequestMapping
 @RequestMapping注解将请求和处理请求的控制器关联起来，建立映射关系。可用于控制器的类或方法上。用于类上时，表示类中的所有响应请求的方法都是以该地址作为父路径，举个例子：
 1. 配置在方法上
    * 方法映射路径：@RequestMapping("/save.do")
@@ -311,7 +350,7 @@ public class IndexController{
 * @DeleteMapping
 * @PatchMapping
 
-#### @PathVariable - 路径参数提取
+#### 路径参数提取 - @PathVariable
 在@RequestMapping注解的value属性中使用占位符`{xxx}`表示传输的数据，再通过@PathVariable注解，将占位符所表示的数据赋值给控制器方法的形参。
 
 ```java
@@ -330,25 +369,25 @@ public class DemoController {
 }
 ```
 
-### 获取请求参数
+### 请求参数获取
 本小节描述如何获取请求参数：
-* url
-  * url的部分（上文）
-  * QueryString（本文）
-* 请求头
-* 请求体
+* [使用Servlet API](#servletapi)
+* 从URL中获取参数
+  1. [使用@PathVariable注解](#路径参数提取---pathvariable)
+  2. [使用@RequestParam注解](#requestparam)
+* 从请求头中获取参数：[使用@RequestHeader注解](#requestheader)
+  * 提取Cookie：[使用@CookieValue注解](#cookievalue)
+* 从请求体中获取参数：[使用@RequestBody注解](#requestbody)
 
-#### 通过ServletAPI获取
-在Controller里面，可以直接使用servlet对象：
+#### ServletAPI
+如果要操作会话域session\操作cookie\上下文域\设置响应头\设置响应行数据必须使用原生ServletAPI，只需要将需要的对象以形参的。形式写在方法上，SpringMVC框架在调用Controller方法时，会自动传递实参。
+
+在Controller里面，可以直接使用Servlet对象：
 * 请求对象HttpServletRequest
 * 响应对象HttpServletResponse
 * 会话对象HttpSession
 
-它们作为方法的参数声明，并由SpringMVC负责注入。
-
-如果要操作会话域session\操作cookie\上下文域\设置响应头\设置响应行数据必须使用原生servletAPI。
-
-使用servlet的原生API推荐控制器方法返回值为void，就不会走视图。
+使用Servlet的原生API推荐控制器方法返回值为void，这样就不会走视图。
 
 ```java
 @RequestMapping("/test")
@@ -359,30 +398,24 @@ public String test(HttpServletRequest request, HttpServletResponse response, Htt
 }
 ```
 
-#### 控制器方法的形参获取请求参数
-在控制器方法的形参位置，设置和请求参数同名的形参，当浏览器发送请求，匹配到请求映射时，在DispatcherServlet中就会将请求参数赋值给/绑定到相应的形参。
+#### 参数提取注解
+在Controller方法的形参位置，设置和**请求参数**同名的形参。当收到浏览器发送请求并匹配到请求映射Controller方法后，DispatcherServlet中就会将请求参数赋值给/绑定到相应的形参。若有多个同名的**请求参数**，此时可以在Controller方法的形参中设置*数组类型*、*`Collection`类型*或者*字符串类型*的形参接收此请求参数。若使用*数组类型*、*`Collection`类型*的形参，此形参的*数组*或*Collection*中包含了每一个数据；若使用*字符串类型*的形参，此参数的值为每个数据使用逗号拼接的字符串结果。
 
-若请求所传输的请求参数中有多个同名的请求参数，此时可以在控制器方法的形参中设置字符串数组或者字符串类型的形参接收此请求参数。若使用字符串数组类型的形参，此形参的数组中包含了每一个数据；若使用字符串类型的形参，此参数的值为每个数据中间使用逗号拼接的结果。
+##### @RequestParam
+* 作用：@RequestParam是将**请求参数**（包括QueryString和请求体中的x-www-form-urlencoded类型的数据）和控制器方法的形参创建映射关系
+* 位置：放在Controller方法的形参前
+* 属性
+  * name/value：指定为形参赋值的**请求参数**的参数名，用于提交的参数名与方法的形参不同的情况
+  * required：设置是否必须传输此**请求参数**，默认值为true。为true时，若不传参，且没有设置defaultValue属性，则页面报错400
+  * defaultValue：当value所指定的**请求参数**没有传输或者传输的值为空字符串时，则使用默认值为形参赋值
 
-##### 用到的注解
-它们共有的三个属性：value、required、defaultValue
-###### @RequestParam
-作用：@RequestParam是将请求参数（包括QueryString和请求体中的 x-www-form-urlencoded类型的数据）和控制器方法的形参创建映射关系
-
-| @RequestParam属性 | 应用场景：用于提交的参数名与方法的形参不同的情况                                                        |
-| ----------------- | ------------------------------------------------------------------------------------------------------- |
-| name/value        | 指定为形参赋值的请求参数的参数名                                                                        |
-| required          | 设置是否必须传输此请求参数，默认值为true。为true时，若不传参，且没有设置defaultValue属性，则页面报错400 |
-| defaultValue      | 当value所指定的请求参数没有传输或者传输的值为""时，则使用默认值为形参赋值                               |
-
-
-###### @RequestHeader
-* 作用：@RequestHeader是将请求头信息和控制器方法的形参创建映射关系
-* 位置：放在方法的参数前面
+##### @RequestHeader
+* 作用：@RequestHeader是将**请求头参数**（键值对）和控制器方法的形参创建映射关系
+* 位置：放在Controller方法的形参前
 * 属性（用法同@RequestParam）：
-  * value：指定请求头参数的名字
-  * required
-  * defaultValue
+  * value：指定为形参赋值的**请求头参数**的参数名，用于提交的参数名与方法的形参不同的情况
+  * required：设置是否必须传输此**请求头参数**，默认值为true。为true时，若不传参，且没有设置defaultValue属性，则页面报错400
+  * defaultValue：当value所指定的**请求头参数**没有传输或者传输的值为空字符串时，则使用默认值为形参赋值
 
 ```java
 @RequestMapping("/header")
@@ -392,9 +425,9 @@ public String header(@RequestHeader("user-agent") String header) {
 }
 ```
 
-###### @CookieValue
-* 作用：@CookieValue是将cookie数据和控制器方法的形参创建映射关系
-* 位置：放在方法的参数前面
+##### @CookieValue
+* 作用：@CookieValue是将Cookie数据和控制器方法的形参创建映射关系
+* 位置：放在Controller方法的形参前
 * 属性（用法同@RequestParam）：
   * value：指定Cookie的名字
   * required
@@ -408,33 +441,32 @@ public String cookie(@CookieValue("JSESSIONID") String cookieValue) {
 }
 ```
 
-###### @RequestBody
+##### @RequestBody
 * 作用：用于获取请求体的数据（String类型）
 * 位置：放在方法的参数前面
-* 注意：只能出现1次，因为每次请求只有一个请求体，只能用于POST请求，因为GET请求没有请求体
+* 注意：只能出现1次，因为每次请求只有一个请求体
 * 属性：
   * required：请求体中的数据是否必须
 
-##### 赋值/绑定的规则
-SpringMVC参数绑定的规则：
-1. Servlet对象：请求，响应，会话
-2. 简单类型：直接绑定 (八种基本类型+字符串类型)
-3. 简单类型的数组和集合：
+#### 参数绑定规则
+**请求参数**数据绑定到Controller形参的规则如下：
+1. 简单类型：直接绑定 (八种基本类型+字符串类型)
+2. 简单类型的数组和集合：
    1. 数组：直接绑定
    2. 集合：要设置@RequestParam注解
-4. POJO对象类型（可以在控制器方法的形参位置设置一个实体类类型的形参，此时若浏览器传输的请求参数的参数名和实体类中的属性名一致，那么请求参数就会为此属性赋值）
-   1. 普通属性：直接绑定
-   2. 简单类型的属性集合：直接绑定
-   3. POJO属性集合：对象名\[0].属性名
-   4. POJO属性的Map：对象名\['键'].属性名
+3. POJO对象类型：可以在Controller方法设置一个实体类类型的形参，此时若浏览器传输的**请求参数**的参数名和实体类中的属性名一致，那么**请求参数**就会给该属性赋值，根据属性的类型，具体赋值规则如下：
+   1. 普通类型：直接绑定
+   2. 简单类型的集合：直接绑定
+   3. 非简单类型的集合`List<非简单类型>`：`属性名[索引].属性名`
+   4. 非简单类型的字典`Map<String,非简单类型>`：`属性名['键'].属性名`
 
 ##### 简单类型
 使用包装类可以减少错误的发生：
 * 包装类型没有值就为null
 * 简单类型没有值会出现500错误（尝试将一个null转成int，所以报错）
 
-1. 提交数据 : http://localhost:8080/hello?name=kuangshen&age=18
-2. 处理方法 :
+1. 提交数据: http://localhost:8080/hello?name=kuangshen&age=18
+2. 处理方法:
 ```java
 @RequestMapping("/hello")
 public String hello(String name, Integer age){
@@ -442,11 +474,11 @@ public String hello(String name, Integer age){
    return "hello";
 }
 ```
-3. 后台输出 : kuangshen18
+3. 后台输出: kuangshen18
 
 ###### 参数名不一致的情况
-1. 提交数据 : http://localhost:8080/hello?username=kuangshen
-2. 处理方法 : 使用@RequestParam注解
+1. 提交数据: http://localhost:8080/hello?username=kuangshen
+2. 处理方法: 使用@RequestParam注解
 ```java
 //@RequestParam("username") : username提交的域的名称
 @RequestMapping("/hello")
@@ -455,25 +487,27 @@ public String hello(@RequestParam("username") String name){
    return "hello";
 }
 ```
-3. 后台输出 : kuangshen
+3. 后台输出: kuangshen
 
 ##### 数组/集合
-1. 提交数据 : http://localhost:8080/hello?arr=1&arr=2&list=aa&list=bb
-2. 处理方法 :
+1. 提交数据: http://localhost:8080/hello?arr=1&arr=2&list=aa&list=bb
+2. 处理方法:
 ```java
 @RequestMapping("/hello")
-public String hello(@RequestParam ArrayList<String> list,Integer[] arr) { //需要指定@RequestParam注解在集合形参前
+public String hello(@RequestParam ArrayList<String> list,Integer[] arr) {
+    //在List形参前，需要指定@RequestParam注解
+
     //输出集合中元素
     System.out.print(list);
     System.out.print(Arrays.toString(arr));
     return "hello";
 }
 ```
-3. 后台输出 : \[aa, bb]\[1, 2]
+3. 后台输出: \[aa, bb]\[1, 2]
 
 ##### 日期类型
-1. 提交数据 : http://localhost:8080/search?birth=2011-11-11
-2. 处理方法 :
+1. 提交数据: http://localhost:8080/search?birth=2011-11-11
+2. 处理方法:
 ```java
 // java.sql.Date可兼容
 // java.util.Date会报错
@@ -483,7 +517,10 @@ public String search(Date birth) {
     return "hello";
 }
 ```
-3. 后台输出 : 2011-11-11
+3. 后台输出: 2011-11-11
+4. 日期格式:
+   1. 默认日期类型格式: Spring内置的类型解析器，可以识别的日期格式是 *yyyy/MM/dd*，但如果提交的是其他格式，例如*yyyy-MM-dd*时，类型转换会报错
+   2. 解决方案: 使用@DateTimeFormat指定日期格式，
 
 ##### POJO类型
 请求参数名称要和对象的属性名一致（否则就是null），参数使用对象即可。
@@ -497,7 +534,7 @@ public class User {
    //tostring()
 }
 ```
-2. 提交数据 : http://localhost:8080/user?name=kuangshen&age=15
+2. 提交数据: http://localhost:8080/user?name=kuangshen&age=15
 3. 处理方法
 ```java
 @RequestMapping("/user")
@@ -506,7 +543,7 @@ public String user(User user){
    return "hello";
 }
 ```
-4. 后台输出 : User(name=奇魔猪, age=18)
+4. 后台输出: User(name=奇魔猪, age=18)
 
 ##### 复合POJO类型（类中类）
 1. 实体类
@@ -528,7 +565,7 @@ class Address {
     private String city;
 }
 ```
-2. 提交数据（注意需要*url编码*） : `http://localhost:8080/user?name=奇魔猪&age=18&address.province=广东&address.city=广州&hobby=唱歌&hobby=跳舞&addressList[0].province=浙江&addressList[0].city=杭州&addressList[1].province=湖北&addressList[1].city=武汉&map["pig"].province=广东&map["pig"].city=佛山&map["dog"].province=广东&map["dog"].city=深圳`
+2. 提交数据（注意需要*url编码*）: `http://localhost:8080/user?name=奇魔猪&age=18&address.province=广东&address.city=广州&hobby=唱歌&hobby=跳舞&addressList[0].province=浙江&addressList[0].city=杭州&addressList[1].province=湖北&addressList[1].city=武汉&map["pig"].province=广东&map["pig"].city=佛山&map["dog"].province=广东&map["dog"].city=深圳`
 3. 处理方法
 ```java
 @RequestMapping("/user")
@@ -537,18 +574,14 @@ public String user(User user){
    return "hello";
 }
 ```
-4. 后台输出 : User(id=null, name=奇魔猪, age=18, address=Address(province=广东, city=广州), hobby=[唱歌, 跳舞], addressList=[Address(province=浙江, city=杭州), Address(province=湖北, city=武汉)], map={dog=Address(province=广东, city=深圳), pig=Address(province=广东, city=佛山)})
+4. 后台输出: User(id=null, name=奇魔猪, age=18, address=Address(province=广东, city=广州), hobby=[唱歌, 跳舞], addressList=[Address(province=浙江, city=杭州), Address(province=湖北, city=武汉)], map={dog=Address(province=广东, city=深圳), pig=Address(province=广东, city=佛山)})
 
-对象的属性中如果是POJO类型的集合：
-* List：list\[0].属性名
-* Map：map\['键'].属性名
-
-##### 自定义类型转换器
+#### 自定义类型转换器
 1. 创建一个类实现Converter接口<源类型(通常为String), 目标类型> 
 2. 重写convert方法，进行类型转换（参数是要转换的源对象，返回转换好的目标对象）
 3. 配置springMVC.xml文件
 
-###### Demo
+##### Demo
 ```java
 // 转换器
 public class UserConverter implements Converter<String, User> {
@@ -579,7 +612,7 @@ public class UserConverter implements Converter<String, User> {
 
 ```xml
 <!-- 1. 配置转换服务工厂类ConversionServiceFactoryBean -->
-<bean class="org.springframework.context.support.ConversionServiceFactoryBean"  id="factoryBean">
+<bean class="org.springframework.context.support.ConversionServiceFactoryBean" id="factoryBean">
     <!-- 2. 指定converters属性，这是一个set集合，可以引用多个转换器对象。 -->
     <property name="converters">
         <set>
@@ -590,6 +623,44 @@ public class UserConverter implements Converter<String, User> {
 <!-- 3. 注解`mvc:annotation-driven`指定`conversion-service`属性，指定上面的转换器工厂类 -->
 <mvc:annotation-driven conversion-service="factoryBean"/>
 ```
+
+#### Jackson
+使用Json工具( jackson )将Json格式的字符串转化为JavaBean
+
+依赖包：
+```XML
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.9.0</version>
+</dependency>
+```
+
+使用方式（手动调用）：
+```Java
+@PostMapping("/show")
+public String show(@RequestBody String body) throws IOException {
+    System.out.println(body);
+    //获得ObjectMapper
+    ObjectMapper objectMapper = new ObjectMapper();
+    //将json格式字符串转化成指定的User
+    User user = objectMapper.readValue(body, User.class);
+    System.out.println(user);
+    return "hello";
+}
+```
+
+配置RequestMappingHandlerAdapter，指定消息转换器，就不用手动转换json格式字符串了：
+```XML
+<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+    <property name="messageConverters">
+        <list>
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+        </list>
+    </property>
+</bean>
+```
+
 
 ### 数据显示到前端
 #### 操作域对象
@@ -766,21 +837,55 @@ ResponseEntity是控制器方法的返回类型，该控制器方法的返回值
 
 
 ### 文件
-#### 上传
-文件上传要求form表单的请求方式必须为post，并且添加属性enctype="multipart/form-data"。
-##### 配置bean
+
+#### 客户端配置
+接收文件上传的数据，文件上传的表单需要一定的要求，如下: 
+* 表单的提交方式必须是POST
+* 表单的enctype属性必须是multipart/form-data
+* 文件上传项需要有name属性
+
+文件表单demo：
+```HTML
+<form action="" enctype="multipart/form-data">
+    <input type="file" name="myFile">
+</form>
+```
+
+##### 服务端配置
+服务器端，由于映射器适配器需要文件上传解析器，而该解析器默认未被注册，所以手动注册：
 ```xml
 <!--文件上传配置-->
 <!-- id必须为：multipartResolver -->
 <bean id="multipartResolver"  class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+
    <!-- 请求的编码格式，必须和jSP的pageEncoding属性一致，以便正确读取表单的内容，默认为ISO-8859-1 -->
-   <property name="defaultEncoding" value="utf-8"/>
-   <!-- 上传文件大小上限，单位为字节（10485760=10M） -->
+   <property name="defaultEncoding" value="UTF-8"/>
+
+   <!--上传的每个文件的大小现实，单位字节-->
+   <property name="maxUploadSizePerFile" value="1048576"/>
+
+   <!-- 上传文件的总大小限制，单位为字节（10485760=10M）-->
    <property name="maxUploadSize" value="10485760"/>
-   <!-- <property name="maxUploadSize"  value="#{1024*1024*10}"/> -->
+
+   <!-- 上传文件的缓存大小，单位为字节（10485760=10M）-->
    <property name="maxInMemorySize" value="40960"/>
 </bean>
 ```
+
+CommonsMultipartResolver底层使用的Apache的是Common-fileuplad等工具API进行的文件上传，因此需要配置相关依赖：
+```XML
+<dependency>
+    <groupId>commons-fileupload</groupId>
+    <artifactId>commons-fileupload</artifactId>
+    <version>1.4</version>
+</dependency>
+<dependency>
+    <groupId>commons-io</groupId>
+    <artifactId>commons-io</artifactId>
+    <version>2.7</version>
+</dependency>
+```
+
 ##### API
 MultipartFile(接口)/CommonsMultipartFile(实现类)的常用方法：
 * String getOriginalFilename()：获取上传文件的原名
@@ -790,14 +895,13 @@ MultipartFile(接口)/CommonsMultipartFile(实现类)的常用方法：
 ##### Demo
 ```java
 @RequestMapping("/uploadFile")
-public String  uploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws IOException {
-
+public String uploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws IOException {
     //1.生成一个文件唯一文件名（防止不同用户上传相同文件名覆盖）
     //文件名格式：xxxx.jpg
     //1.1 生成一个唯一值（使用jdk提供的UUID，通用唯一码，利用系统当前时间+系统中网卡的mac地址进行组合生成的唯一值，生成一个32字符长度的字符串）
     String uuid = UUID.randomUUID().toString();
     //1.2 获取上传文件的扩展名
-    String originalFilename = file.getOriginalFilename();//获取上传的文件名,例如：6.jpg
+    String originalFilename = file.getOriginalFilename();//获取上传的文件名，例如：6.jpg
     //1.3 拼接文件完整名
     String fileExtName = originalFilename.substring(originalFilename.lastIndexOf("."));  //获取到：".jpg"
     String fileName = uuid + fileExtName;  //xxxxxxxxxxx.jpg
@@ -894,15 +998,13 @@ public void downloads(HttpServletResponse response ,HttpServletRequest request) 
 
 
 ## 参数乱码问题
-解决**获取请求参数**的乱码问题，可以使用SpringMVC提供的编码过滤器CharacterEncodingFilter（或者第三方的），记得须在web.xml中进行注册。
+**请求参数**乱码的解决方案：使用SpringMVC提供的编码过滤器CharacterEncodingFilter（或者第三方的）。SpringMVC中处理编码的过滤器一定要配置到其他过滤器之前，否则无效。
 
-SpringMVC中处理编码的过滤器一定要配置到其他过滤器之前，否则无效。
-### Spring提供的过滤器
-Spring提供的过滤器，在web.xml中配置
+在web.xml中配置：
 ```xml
-<!-- 配置spring写的汉字乱码的过滤器 -->
+<!--配置全局的编码过滤器-->
 <filter>
-    <filter-name>encodingFilter</filter-name>
+    <filter-name>CharacterEncodingFilter</filter-name>
     <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
     <!-- 指定编码 -->
     <init-param>
@@ -911,7 +1013,7 @@ Spring提供的过滤器，在web.xml中配置
     </init-param>
 </filter>
 <filter-mapping>
-    <filter-name>encodingFilter</filter-name>
+    <filter-name>CharacterEncodingFilter</filter-name>
     <url-pattern>/*</url-pattern>
 </filter-mapping>
 ```
