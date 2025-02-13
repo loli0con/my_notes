@@ -1,7 +1,5 @@
 # MySQL8程序
 
-
-
 ## 安装（red hat）
 |安装方式|特点|
 |---|---|
@@ -17,8 +15,7 @@
 ## 服务配置
 
 ### 服务的初始化
-为了保证数据库目录与文件的所有者为 mysql 登录用户，如果你是以 root 身份运行 mysql 服务，需要执
-行下面的命令初始化：`mysqld --initialize --user=mysql`。
+为了保证数据库目录与文件的所有者为 mysql 登录用户，如果你是以 root 身份运行 mysql 服务，需要执行下面的命令初始化：`mysqld --initialize --user=mysql`。
 
 `--initialize` 选项默认以“安全”模式来初始化，则会为 root 用户生成一个密码并将该密码标记为过期，登录后你需要设置一个新的密码。生成的**临时密码**会往日志中记录一份。查看密码：`cat /var/log/mysqld.log`。
 
@@ -106,7 +103,7 @@ mysql> show variables like 'validate_password%';
 | Variable_name                        | Value  |
 +--------------------------------------+--------+
 | validate_password.check_user_name    | ON     |
-| validate_password.dictionary_file     |        |
+| validate_password.dictionary_file    |        |
 | validate_password.length             | 8      |
 | validate_password.mixed_case_count   | 1      |
 | validate_password.number_count       | 1      |
