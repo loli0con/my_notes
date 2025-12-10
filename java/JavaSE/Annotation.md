@@ -1,143 +1,344 @@
 # 注解
-Annotation
-![Annotation+20210609103638](https://raw.githubusercontent.com/loli0con/picgo/master/images/Annotation%2B20210609103638.png%2B2021-06-09-10-36-39)
-## 基本概念
+注解是那些<u>插入到源代码中</u>、<u>使用其他工具可以对其进行处理</u>的标签。
 
-### 定义
-注解是代码里的**特殊标记**，这些标记可以在*编译、类加载、运行时*被读取，并执行**相应操作**。
+注解不会改变程序的编译方式。Java编译器对于包含注解和不包含注解的代码会生成相同的虚拟机指令。
 
-注解也是一个**接口**，可以通过反射来获取它。
+为了能够利用注解，你需要选择一个**处理工具**，然后向代码中插入可被处理的注解，之后运用该处理工具处理这些代码。这种工具被统称为APT（Annotation Processing Tool）。
 
-### 特殊标记
-通过使用注解，可以在不改变原有逻辑的情况下，在源文件中嵌入一些补充信息。从某些方面来看，注解就像修饰符一样，可用于修饰包、类、构造器、方法、成员变量、参数、局部变量的声明。
+## 相关API
+java.lang.reflect.AnnotatedElement：
+* boolean isAnnotationPresent(Class<? extends Annotation> annotationType)：如果该项具有给定类型的注解，则返回true。
+* &lt;T extends Annotation> T getAnnotation(Class&lt;T> annotationType)：获得给定类型的注解，如果该项不具有这样的注解，则返回null。
+* &lt;T extends Annotation> T[] getAnnotationsByType(Class&lt;T> annotationType)：获得某个可重复注解类型的所有注解，或者返回长度为0的数组。
+* Annotation[] getAnnotations()：获得作用于该项的所有注解，包括继承而来的注解。如果没有出现任何注解，那么将返回一个长度为0的数组。
+* Annotation[] getDeclaredAnnotations()：获得为该项声明的所有注解，不包含继承而来的注解。如果没有出现任何注解，那么将返回一个长度为0的数组。
 
-注解提供了一种为程序元素设置[元数据](http://www.ruanyifeng.com/blog/2007/03/metadata.html)的方法。
+java.lang.annotation.Annotation：
+* Class<? extends Annotation> annotationType()：返回Class对象，它用于描述该注解对象的注解接口。注意：调用注解对象上的getClass方法返回的是真正的类，而不是接口。
+* boolean equals(object other)：如果other是一个实现了与该注解对象相同的注解接口的对象，并且如果该对象和other的所有元素彼此相等。那么返回True。
+* int hashCode()：返回一个与 equals 方法兼容、由注解接口名以及元素值衍生而来的散列码。
+* String tostring()：返回一个包含注解接口名以及元素值的字符串表示，例如：`@BugReport(assignedTo=[none], severity=0)`。
 
-注解也不会影响代码的运行。
+## 注解语法
 
-### 相应操作
-代码分析工具、开发工具和部署工具可以通过这些补充信息进行验证或进行部署。
+### 定义注解
+注解是由**注解接口**来定义的，@interface关键字声明并创建了一个注解接口：  
+<code>
+<i>modifiers</i> @interface <i>AnnotationName</i><br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>elementDeclaration</i><sub>1</sub><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>elementDeclaration</i><sub>2</sub><br>
+&nbsp;&nbsp;&nbsp;&nbsp;....<br>
+}
+</code>
 
-如果希望让程序中的注解在运行时发挥一定的作用，只有通过某种配套工具对注解中的信息进行访问和处理，这种工具被统称为APT（Annotation Processing Tool）。
+所有的注解接口都隐式地扩展自java.lang.annotation.Annotation接口，这个接口是一个常规接口，不是一个注解接口。
 
-## 基本Annotation
-在java.lang下，...
-### @Override
-限定重写父类方法：它用于强制指定某个子类的方法必须覆盖父类的方法，否则会编译出错。
+每个**元素**声明都具有下面这种形式，这些元素可以被读取并加以处理：  
+<code>
+<i>type</i> <i>elementName</i>();
+</code>  
+或者  
+<code>
+<i>type</i> <i>elementName</i> default <i>value</i>;
+</code>
 
-### @Deprecated
-标记已过时：它用于表示某个程序元素（类、方法等）已过时，当其他程序使用已过时的类、方法时，编译器会给出警告。
+注解接口中的方法与注解中的元素相对应。注解接口的方法没有参数、也没有throws子句，它们不能是default或static方法，也不能有类型参数。
 
-### @SuppressWarnings
-抑制编译器警告：它会让被修饰的程序元素（以及该程序元素中的所有子元素）取消现实指定的编译器警告。
+注解元素的类型为下列之一：
+* 基本类型（int、short、long、byte、char、double、float或者boolean）。
+* String。
+* Class（具有一个可选的类型参数，例如 Class<? extends MyClass>）。
+* enum类型。
+* 注解类型。
+* 由前面所述类型组成的数组（由数组组成的数组不是合法的元素类型）。
 
-### @SafeVarargs
-抑制堆污染警告：它会让被修饰的程序元素（方法或构造器）取消堆污染警告。
-
-#### 堆污染
-当把一个不带泛型的对象赋给一个带泛型的变量时，往往会发生堆污染。
-
-> TODO
-
-### @FunctionalInterface
-函数式接口：它指定的某个接口必须是函数式接口。
-
-## 元Annotation
-在java.lang.annotation下，它们用于修饰其他Annotation...
-
-### @Retention
-@Retention只能用于修饰Annotion定义，用于指定被修饰的Annotation可以保留多长时间。它包含一个RetentionPolicy类型的value成员变量，所以使用它时必须为该value成员变量指定值。  
-value成员变量的值只能是如下三个：
-* RetentionPolicy.CLASS：编译器将把Annotation记录在class文件中。当运行Java程序时，JVM不可获取Annotation信息。这是默认值。
-* RetentionPolicy.RUNTIME：编译器将把Annotation记录在class文件中。当运行Java程序时，JVM也可获取Annotation信息，程序可通过反射获得该Annotation信息。
-* RetentionPolicy.SOURCE：Annotation只保留在源代码中，编译器直接丢弃这种Annotation。
-
-### @Target
-@Target只能用于修饰Annotion定义，用于指定被修饰的Annotation能用于修饰哪些程序单元。它包含一个名为value的成员变量，该成员变量的值只能是如下几个：
-![Annotation+20210609092220](https://raw.githubusercontent.com/loli0con/picgo/master/images/Annotation%2B20210609092220.png%2B2021-06-09-09-22-21)
-
-#### 增强
-[修饰任何用到类型的地方！](Annotation.md#type-annotation)
-
-### @Documented
-@Documented用于指定被该元Annotation修饰的Annotation类将被javadoc工具提取成文档，如果定义Annotation类时使用了@Documented修饰，则所有使用该Annotation修饰的程序元素的API文档中将会包含该Annotation说明。
-![Annotation+20210609093357](https://raw.githubusercontent.com/loli0con/picgo/master/images/Annotation%2B20210609093357.png%2B2021-06-09-09-33-58)
-
-### @Inherited
-@Inherited元Annotation指定被它修饰的Annotation将具有继承性——如果某个类使用了@Xxx注解（定义该Annotation时使用了@Inherited修饰）修饰，则其子类将自动被@Xxx修饰。
-
-### @Repeatable
+下面是一些合法的元素声明的例子：
 ```Java
-// 定义一个普通的注解
-@Retention(RetentionPolicy.RUNTIME)
-public @interface FkTag{
-    String name() defalut "啦啦啦";
-    int age();
+public @interface BugReport {
+    // 定义一个enum类型
+    enum Status {UNCONFIRMED, CONFIRMED, FIXED, NOT_A_BUG};
+
+    // 基本类型int
+    int severity();
+    
+    // 基本类型boolean
+    boolean showStopper() default false;
+
+    // String类型
+    String assignedTo() default "[none]";
+
+    // Class类型
+    Class<?> testCase() default Void.class;
+
+    // enum类型
+    Status status() default Status.UNCONFIRMED;
+
+    // 注解类型
+    Reference ref() default @Reference;
+
+    // 由String类型组成的数组
+    String[] reportedBy();
+
+    // 由数组组成的数组（矩阵）不是一个合法的元素类型
+    // String[][] matrix();
+}
+
+@interface Reference {
+    String id() default "";
 }
 ```
-普通注解（FkTag）默认不能作为重复注解使用，如果使用两个以上的普通注解修饰同一个程序元素，编译器会报错。为了把普通注解改造成重复注解，需要使用@Repeatable修饰该注解，使用@Repeated时必须为value成员变量指定值，该成员变量的值是一个“容器”注解——该“容器注解”可包含多个普通注解，因此需要定义如下的“容器”注解。
+
+### 使用注解
+在Java中，注解是当作修饰符来使用的，它被置于被注解项之前，中间没有分号。
+
+每个注解都具有下面这种格式：  
+<code>
+@<i>AnnotationName</i>(<i>elementName</i><sub>1</sub>=<i>value</i><sub>1</sub>,&nbsp;<i>elementName</i><sub>2</sub>=<i>value</i><sub>2</sub>, ...)
+</code>
+
+元素的顺序无关紧要，下面两个注解是等价的：
 ```Java
-// 定义一个"容器"的注解
-@Retention(RetentionPolicy.RUNTIME)
-public @interface FkTags{
-    // 定义value成员变量，该成员变量可接受多个@FkTag注解
-    FkTag[] value();
-}
+@BugReport(assignedTo="Harry", severity=10)
+@BugReport(severity=10, assignedTo="Harry")
 ```
-接下来程序可在定义@FkTag注解时添加如下修饰代码：
+
+如果某个元素的值并未指定，那么就使用声明时提供的默认值。
+
+有两个特殊的方式可以用来简化注解：
+* **标记注解**：如果注解中没有任何元素，或者所有元素都使用默认值，那么此时就不需要使用圆括号了。
+* **单值注解**：如果一个元素具有特殊的名字value，并且在注解中没有指定其他元素，那么你就可以忽略掉这个元素名以及等号。
+
+一个项可以有多个注解。如果注解被声明为可重复的，那么你就可以对同一个项多次重复使用同一个注解。
+
+注解是由编译器计算而来的，所有元素值必须是编译期常量。
+
+一个注解元素永远不能设置为null，甚至不允许其默认值为null。这样在实际应用中会相当不方便。你必须使用其他的默认值，例如""或者Void.class。
+
+如果元素值是一个数组，那么要将它的值用括号括起来。如果该数组元素只有一个值，那么可以忽略括号。
+
+既然一个注解元素可以是另一个注解，那么就可以创建出任意复杂的注解。例如：
 ```Java
-@Repeatable(FkTags.class)  // 重点是这行！！！
+@BugReport(ref=@Reference(id="3352627"), ...)
+```
+
+在注解中引入循环依赖是一种错误：因为BugReport具有一个注解类型为Reference的元素，所以Reference就不能再拥有一个类型为BugReport的元素。
+
+### 注解的声明处
+注解可以出现在许多地方，这些地方可以分为两类：声明和类型用法。
+
+声明注解可以出现在下列声明处：
+* 包
+* 类（包括enum）
+* 接口（包括注解接口）
+* 方法
+* 构造器
+* 实例域（包含enum常量）
+* 局部变量
+* 参数变量
+* 类型参数
+
+对于类和接口，需要将注解放置在class和interface关键词的前面：
+```Java
+@Entity public class User { ... }
+```
+
+对于变量，需要将它们放置在类型的前面：
+```Java
+// 局部变量
+@SuppressWarnings("unchecked") List<User> users = ...;
+
+// 参数变量
+public User getUser(@Param("id") String userId)
+```
+
+泛型类或方法中的类型参数可以像下面这样被注解：
+```Java
+// 泛型类的类型参数V被@Immutable所注解
+public class Cache<@Immutable V> { ... }
+```
+
+包是在文件package-info.java中注解的，该文件只包含以注解先导的包语句。
+```Java
 /**
-  定义FkTag注解的代码
- */
+   Package-level Javadoc
+*/
+@GPL(version="3")
+package com.horstmann.corejava;
+import org.gnu.GPL;
 ```
 
-#### 注解的保存期
-![Annotation+20210609103122](https://raw.githubusercontent.com/loli0con/picgo/master/images/Annotation%2B20210609103122.png%2B2021-06-09-10-31-23)
+对局部变量的注解只能在源码级别上进行处理。类文件并不描述局部变量。因此，所有的局部变量注解在编译完一个类的时候就会被遗弃掉。同样地，对包的注解不会在源码级别之外存在。
 
+### 注解的类型用法
+在Java8以前，只能在定义各种程序元素（定义类、定义接口、定义方法、定义成员变量...）时使用注解。从Java8开始，ElementType枚举增加了枚举值TYPE_USE，这种注解被称为**类型用法注解**，它可以在任何用到类型的地方使用。
 
-## 自定义Annotation
-### 语法
-定义新的Annotation类型使用@interface关键字，它继承了java.lang.Annotation接口。Annotation的成员变量在Annotation定义中以无形参的方法形式来声明，其方法名和返回值定义了该成员变量的名字和类型。
+现在，假设我们有一个类型为List&lt;String>的参数，并且想要表示其中所有的字符串都不为null。这就是类型用法注解大显身手之处，可以将该注解放置到类型参数之前：List<@NonNull String>。
+
+类型用法注解可以出现在下面的位置：
+* 与泛型类型参数一起使用：
+  * List<@NonNull String>
+  * Comparator.<@NonNull String>reverseOrder()
+* 数组中的任何位置：
+  * @NonNull String\[]\[] words（words\[i]\[j]不为null）
+  * String @NonNull \[]\[] words（words不为null）
+  * String\[] @NonNull \[] words（words\[i]不为null）
+* 与超类和实现接口一起使用：
+  * class Warning extends @Localized Message
+  * class Warning implements @NonNull Serializable
+* 与构造器调用一起使用：new @Localized String(...)
+* 与强制转型和instanceof检査一起使用（这些注解只供外部工具使用，它们对强制转型和instanceof检査不会产生任何影响）：
+  * (@Localized String) text
+  * if (text instanceof @Localized String)
+* 与异常规约一起使用：public String read() throws @Localized IOException
+* 与通配符和类型边界一起使用：
+  * List<@Localized ? extends Message>
+  * List<? extends @Localized Message>
+* 与方法和构造器引用一起使用：@Localized Message::getText
+
+有多种类型位置是不能被注解的：
+* @NonNull String.class // ERROR: Cannot annotate class literal
+* import java.lang.@NonNull String; // ERROR: Cannot annotate import
+
+可以将注解放置到诸如private和static这样的其他修饰符的前面或后面。习惯（但不是必需）的做法，是将类型用法注解放置到其他修饰符的后面和将声明注解放置到其他修饰符的前面。例如：
+* private @NonNull String text; // Annotates the type use
+* @Id private String userId; // Annotates the variable
+
+如果一个注解可以同时应用于变量和类型用法，并且它确实被应用到了某个变量声明上，那么该变量和类型用法就都被注解了。例如，请考虑`public User getUser(@NonNull String userId)`，如果@NonNull可以同时应用于参数和类型用法，那么userId参数就被注解了，而其参数类型是@NonNull String。
+
+### 注解this
+可以用一种很少使用的语法变体来声明this，然后就可以添加注解了：
 ```Java
-public @interface MyTag{
-    String auther() default "loli0con";
-    int version();
+public class Point
+{
+    public boolean equals(@Readonly Point this, @Readonly Object other) { ... }
 }
 ```
-一旦在Annotation里定义了成员变量之后，使用该Annotation时就应该为该Annotation的成员变量指定值。
+第一个参数被称为接收器参数，它必须被命名为this，而它的类型就是要构建的类。
 
-也可以在定义Annotation成员变量时为其指定初始值（默认值），指定成员变量的初始值可使用default关键字。  
-如果为Annotation的成员变量指定了默认值，使用该Annotation时则可以不为这些成员变量指定值，而是直接使用默认值。当然也可以在使用时为成员变量指定值，则默认值不会起作用。
+传递给内部类构造器的是另一个不同的隐藏参数，即对其外围类对象的引用。你也可以让这个参数显式化：
+```Java
+public class Sequence
+{
+    private int from;
+    private int to;
 
-### 分类
-根据Annotation是否可以包含成员变量，可以把Annotation分为如下两类：
-* 标记Annotation：没有定义成员变量的Annotation类型被称为标记。这种Annotation利用自身的存在与否来提供信息。
-* 元数据Annotation：包含成员变量的Annotation，因为它们可以接受更多的元数据，所以也被称为元数据Annotation。
+    // 实例内部类
+    class Iterator implements java.util.Iterator<Integer>
+    {
+        private int current;
+        // Sequence.this是指向外部类实例的引用
+        public Iterator(@ReadOnly Sequence Sequence.this)
+        {
+            this.current = Sequence.this.from;
+        }
+        ...
+    }
+    ...
+}
+```
+这个参数的名字必须像引用它时那样，叫作EnclosingClass.this，其类型为外围类。
 
-### 提取
-使用Annotation修饰了类、方法、成员变量等成员之后，这些Annotation不会自己生效，必须由开发者提供相应的工具来提取并处理Annotation信息。
+## 标准注解
+java.lang、java.lang.annotation和javax.annotation包中定义了大量的注解接口。其中四个是元注解，用于描述注解接口的行为属性，其他的是规则接口，可以用它们来注解你的源代码中的项。
 
-![Annotation+20210609100312](https://raw.githubusercontent.com/loli0con/picgo/master/images/Annotation%2B20210609100312.png%2B2021-06-09-10-03-12)
+|注解接口|应用场合|目的|
+|---|---|---|
+|Deprecated|全部|将项标记为过时的|
+|SuppressWarnings|除了包和注解之外的所有情况|阻止某个给定类型的警告信息|
+|SafeVarargs|方法和构造器|断言varargs参数可安全使用|
+|Override|方法|检查该方法是否覆盖了某一个超类方法|
+|Serial|方法|检查该方法是不是正确序列化的方法|
+|FunctionalInterface|接口|将接口标记为只有一个抽象方法的函数式接口|
+|Generated|全部|将项标记为由某个工具生成的源代码|
+|Target|注解|指明这个注解可以应用到哪些项上|
+|Retention|注解|指明这个注解可以保留多久|
+|Documented|注解|指明这个注解应该包含在被注解项的文档中|
+|Inherited|注解|指明当这个注解应用于一个类的时候，能够自动被它的子类继承|
+|Repeatable|注解|指明这个注解可以在同一个项上应用多次|
 
-java.lang.reflect包主要包含一些实现反射功能的工具类，这些反射API具备读取运行时Annotation的能力。只有当定义Annotation时使用了@Retention（RetentionPolicy.RUNTIME）修饰，该Annotation才会在运行时可见，JVM才会在装在*.class文件时读取保存在class的Annotation。
+### 用于编译的注解
+@Deprecated注解可以被添加到任何不再鼓励使用的项上。所以，当你使用一个已过时的项时，编译器将会发出警告。该注解会一直持久化到运行时。
 
-![Annotation+20210609100627](https://raw.githubusercontent.com/loli0con/picgo/master/images/Annotation%2B20210609100627.png%2B2021-06-09-10-06-28)
+@SuppressWarnings注解会告知编译器阻止特定类型的警告信息，例如：`@SuppressWarnings("unchecked")`。
 
-### 使用
-> TODO
+@Override这种注解只能应用到方法上。编译器会检査具有这种注解的方法是否真正覆盖了一个来自超类的方法。如果没有覆盖一个来自超类的方法，那么编译器会报告一个错误。
 
-## Type Annotation
-### 定义
-![Annotation+20210609104612](https://raw.githubusercontent.com/loli0con/picgo/master/images/Annotation%2B20210609104612.png%2B2021-06-09-10-46-13)
+@Generated注解的目的是供代码生成工具来使用。任何生成的源代码都可以被注解，从而与程序员提供的代码区分开。每个注解都必须包含一个表示代码生成器的唯一标识符，而日期字符串（ISO8601格式）和注释字符串是可选的。例如：`@Generated("com.horstmann.beanproperty", "2008-01-04T12:08:56.235-0700");`。
 
-### 示例
-![Annotation+20210609104851](https://raw.githubusercontent.com/loli0con/picgo/master/images/Annotation%2B20210609104851.png%2B2021-06-09-10-48-54)
+### 元注解
+@Target元注解可以应用于一个注解，以限制该注解可以应用到哪些项上。例如：
+```Java
+@Target(｛ElementType.TYPE, ElementType.METHOD｝)
+public @interface BugReport{ ... }
+```
 
-## APT
-![Annotation+20210609105124](https://raw.githubusercontent.com/loli0con/picgo/master/images/Annotation%2B20210609105124.png%2B2021-06-09-10-51-25)
+下表显示了所有可能的取值情况，它们属于枚举类型ElementType。可以指定任意数量的元素类型，用括号括起来。
 
-![Annotation+20210609105213](https://raw.githubusercontent.com/loli0con/picgo/master/images/Annotation%2B20210609105213.png%2B2021-06-09-10-52-14)
+|元素类型|注解适用场台|
+|---|---|
+|ANNOTATION_TYPE|注解类型声明|
+|PACKAGE|包|
+|TYPE|类（包括enum）及接口（包括注解类型，即TYPE包括ANNOTATION_TYPE）|
+|METHOD|方法|
+|CONSTRUCTOR|构造器|
+|FIELD|成员域（包括enum常量）|
+|PARAMETER|方法或构造器参数|
+|LOCAL_VARIABLE|局部变最|
+|TYPE_PARAMETER|类型参数|
+|TYPE_USE|类型用法|
 
-## 后记
-[java-apt的实现之Element详解](https://www.jianshu.com/p/899063e8452e)
+一条没有@Target限制的注解可以应用于任何项上。编译器将检査你是否将一条注解只应用到了某个允许的项上。
+
+@Retention元注解用于指定一条注解应该保留多长时间。只能将其指定为下表中的任意值，其默认值是RetentionPolicy.CLASS。
+
+|保留规则|描述|
+|---|---|
+|SOURCE|源代码级别。不包括在类文件中的注解。|
+|CLASS|字节码级别。包括在类文件中的注解，但是虚拟机不需要将它们载入。|
+|RUNTIME|运行时级别。包括在类文件中的注解，并由虚拟机载入。通过反射API可获得它们。|
+
+@Documented元注解为像Javadoc这样的归档工具提供了一些提示。应该像处理其他修饰符 （例如protected和static） 一样来处理归档注解，以实现其归档目的。其他注解的使用并不会 
+纳入归档的范畴。
+
+假定我们将@ActionListenerFor作为一个归档注解来声明：
+```Java
+@Documented // 将@ActionListenerFor声明为一个归档注解
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME) 
+public @interface ActionListenerFor{ ... }
+```
+
+现在每一个被@ActionListenerFor注解标注过的方法的归档就会含有这条注解，如下图所示。
+
+![20251209155647](https://raw.githubusercontent.com/loli0con/picgo/master/20251209155647.png)
+
+@Inherited元注解只能应用于对类的注解。如果一个类具有继承注解，那么它的所有子类都自动具有同样的注解。
+
+```Java
+@Inherited @interface Persistent { } // 使用@Inherited来声明@Persistent
+@Persistent class Employee { ... } // 在父类上使用@Persistent
+class Manager extends Employee { ... } // 子类上同样具有@Persistent的效果
+```
+
+对于Java 8来说，将同种类型的注解多次应用于某一项是合法的。为了向后兼容，可重复注解的实现者需要提供一个容器注解，它可以将这些重复注解存储到一个数组中。
+
+下面是如何定义@TestCase注解以及它的容器的代码：
+```Java
+// 定义可重复注解@TestCase，并提供容器注解@TestCases
+@Repeatable(TestCases.class)
+@interface TestCase
+{
+    String params(); 
+    String expected();
+}
+
+@interface TestCases
+{
+    TestCase[] value();
+}
+```
+
+无论何时，只要用户提供了两个或更多个@TestCase注解，那么它们就会自动地被包装到一个@TestCases注解中。
+
+在处理可重复注解时必须非常仔细。如果调用getAnnotation来查找某个可重复注解，而该注解又确实重复了，那么就会得到null。这是因为重复注解被包装到了容器注解中。在这种情况下，应该调用getAnnotationsByType。这个调用会“遍历”容器，并给出一个重复注解的数组。如果只有一条注解，那么该数组的长度就为1。通过使用这个方法，你就不用操心如何处理容器注解了。
