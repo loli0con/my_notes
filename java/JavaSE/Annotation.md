@@ -5,20 +5,6 @@
 
 为了能够利用注解，你需要选择一个**处理工具**，然后向代码中插入可被处理的注解，之后运用该处理工具处理这些代码。这种工具被统称为APT（Annotation Processing Tool）。
 
-## 相关API
-java.lang.reflect.AnnotatedElement：
-* boolean isAnnotationPresent(Class<? extends Annotation> annotationType)：如果该项具有给定类型的注解，则返回true。
-* &lt;T extends Annotation> T getAnnotation(Class&lt;T> annotationType)：获得给定类型的注解，如果该项不具有这样的注解，则返回null。
-* &lt;T extends Annotation> T[] getAnnotationsByType(Class&lt;T> annotationType)：获得某个可重复注解类型的所有注解，或者返回长度为0的数组。
-* Annotation[] getAnnotations()：获得作用于该项的所有注解，包括继承而来的注解。如果没有出现任何注解，那么将返回一个长度为0的数组。
-* Annotation[] getDeclaredAnnotations()：获得为该项声明的所有注解，不包含继承而来的注解。如果没有出现任何注解，那么将返回一个长度为0的数组。
-
-java.lang.annotation.Annotation：
-* Class<? extends Annotation> annotationType()：返回Class对象，它用于描述该注解对象的注解接口。注意：调用注解对象上的getClass方法返回的是真正的类，而不是接口。
-* boolean equals(object other)：如果other是一个实现了与该注解对象相同的注解接口的对象，并且如果该对象和other的所有元素彼此相等。那么返回True。
-* int hashCode()：返回一个与 equals 方法兼容、由注解接口名以及元素值衍生而来的散列码。
-* String tostring()：返回一个包含注解接口名以及元素值的字符串表示，例如：`@BugReport(assignedTo=[none], severity=0)`。
-
 ## 注解语法
 
 ### 定义注解
@@ -342,3 +328,17 @@ class Manager extends Employee { ... } // 子类上同样具有@Persistent的效
 无论何时，只要用户提供了两个或更多个@TestCase注解，那么它们就会自动地被包装到一个@TestCases注解中。
 
 在处理可重复注解时必须非常仔细。如果调用getAnnotation来查找某个可重复注解，而该注解又确实重复了，那么就会得到null。这是因为重复注解被包装到了容器注解中。在这种情况下，应该调用getAnnotationsByType。这个调用会“遍历”容器，并给出一个重复注解的数组。如果只有一条注解，那么该数组的长度就为1。通过使用这个方法，你就不用操心如何处理容器注解了。
+
+## 相关API
+java.lang.reflect.AnnotatedElement：
+* boolean isAnnotationPresent(Class<? extends Annotation> annotationType)：如果该项具有给定类型的注解，则返回true。
+* &lt;T extends Annotation> T getAnnotation(Class&lt;T> annotationType)：获得给定类型的注解，如果该项不具有这样的注解，则返回null。
+* &lt;T extends Annotation> T[] getAnnotationsByType(Class&lt;T> annotationType)：获得某个可重复注解类型的所有注解，或者返回长度为0的数组。
+* Annotation[] getAnnotations()：获得作用于该项的所有注解，包括继承而来的注解。如果没有出现任何注解，那么将返回一个长度为0的数组。
+* Annotation[] getDeclaredAnnotations()：获得为该项声明的所有注解，不包含继承而来的注解。如果没有出现任何注解，那么将返回一个长度为0的数组。
+
+java.lang.annotation.Annotation：
+* Class<? extends Annotation> annotationType()：返回Class对象，它用于描述该注解对象的注解接口。注意：调用注解对象上的getClass方法返回的是真正的类，而不是接口。
+* boolean equals(object other)：如果other是一个实现了与该注解对象相同的注解接口的对象，并且如果该对象和other的所有元素彼此相等。那么返回True。
+* int hashCode()：返回一个与 equals 方法兼容、由注解接口名以及元素值衍生而来的散列码。
+* String tostring()：返回一个包含注解接口名以及元素值的字符串表示，例如：`@BugReport(assignedTo=[none], severity=0)`。
