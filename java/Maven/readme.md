@@ -20,12 +20,3 @@ Maven的作用我们可以分成三类：
 8. [Profile](Profile.md)
 9. [继承和聚合](继承和聚合.md)
 10. [清理脚本](清理脚本.md)
-
-## 参考
-* https://www.bilibili.com/video/BV1Ah411S7ZE
-* https://www.runoob.com/maven/maven-tutorial.html
-* https://www.liaoxuefeng.com/wiki/1252599548343744/1309301146648610
-* https://www.cnblogs.com/lenve/p/12047793.html
-* https://dunwu.github.io/java-tutorial/javatool/build/maven/maven-quickstart.html
-* https://www.cnblogs.com/hzg110/p/6936101.html
-* http://c.biancheng.net/maven/
