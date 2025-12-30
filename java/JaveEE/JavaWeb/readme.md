@@ -1,4 +1,4 @@
-# readme
+# JavaWeb
 
 JavaEE是Java Platform Enterprise Edition的缩写，即Java企业平台。JavaEE不是凭空冒出来的，它实际上是完全基于JavaSE，只是多了一大堆服务器相关的库以及API接口。所有的JavaEE程序，仍然是运行在标准的JavaSE的虚拟机上的。
 
