@@ -1,109 +1,62 @@
 # Servelet
-1. Servlet是**JavaEE规范**之一。
-2. Servlet就JavaWeb三大组件之一。
-3. Servlet是运行在服务器上的一个Java小程序，它可以**接收客户端发送过来的请求，并响应数据给客户端**。
-
-### 接口规范
-在JavaEE平台上，处理TCP连接，解析HTTP协议这些底层工作统统扔给现成的Web服务器去做，开发者只需要把自己的应用程序跑在Web服务器上。为了实现这一目的，JavaEE提供了Servlet API，开发者使用Servlet API编写自己的Servlet来处理HTTP请求，Web服务器实现Servlet API接口，实现底层功能：
-```
-                 ┌───────────┐
-                 │My Servlet │
-                 ├───────────┤
-                 │Servlet API│
-┌───────┐  HTTP  ├───────────┤
-│Browser│<──────>│Web Server │
-└───────┘        └───────────┘
-```
+在JavaEE平台上，处理TCP连接、解析HTTP协议这些底层工作统统扔给现成的Web服务器去做，开发者只需要把自己的应用程序跑在Web服务器上。为了实现这一目的，JavaEE提供了Servlet API，开发者使用Servlet API编写自己的Servlet来处理HTTP请求，Web服务器实现Servlet API接口，实现底层功能。因此Servlet就是一个运行在JavaWeb服务器中的一个程序，它接收客户端发送过来的请求，执行相应的处理逻辑，并将响应的数据返回给客户端。
 
 
-## Servlet体系
+
+## Servlet的继承体系
 ![servlet+20210719092717](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B20210719092717.png%2B2021-07-19-09-27-19)
 
-## Servlet API
-Servlet API是一个jar包，需要通过Maven来引入它，才能正常编译。
-```xml
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>com.itranswarp.learnjava</groupId>
-    <artifactId>web-servlet-hello</artifactId>
-    <packaging>war</packaging>
-    <version>1.0-SNAPSHOT</version>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <java.version>17</java.version>
-    </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <version>5.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+## Servlet的开发示例
+[使用IDEA开发Servlet开发的示例](servlet_develop_demo.md)
 
-    <build>
-        <finalName>hello</finalName>
-    </build>
-</project>
-```
 
-注意事项：
-1. 打包类型不是jar，而是war，表示Java Web Application Archive
-2. `<scope>`指定为`provided`，表示编译时使用，但不会打包到.war文件中，因为运行期Web服务器本身已经提供了Servlet API相关的jar包
-3. Servlet版本
-   1. 4.0及之前的servlet-api由Oracle官方维护，引入的依赖项是`javax.servlet:javax.servlet-api`，编写代码时引入的包名为：`import javax.servlet.*;`
-   2. 5.0及以后的servlet-api由Eclipse开源社区维护，引入的依赖项是`jakarta.servlet:jakarta.servlet-api`，编写代码时引入的包名为：`import jakarta.servlet.*;`
-   3. `WEB-INF/web.xml`配置文件：低版本Servlet必须有，高版本Servlet不需要
 
 ## Servlet的开发流程
 1. 首先我们需要开发自己的Servlet程序（编写相关代码）
-2. 然后将Servlet程序注册到tomcat，有两种方式注册方式：
+2. 然后将Servlet程序注册到Tomcat，有两种方式注册方式：
    1. 在WEB-INF/web.xml中配置
    2. 在Servlet上使用@WebServlet注解进行修饰
-3. 最后tomcat会使用我们开发的Servlet程序处理请求并响应数据
+3. 最后Tomcat会使用我们开发的Servlet程序处理请求并响应数据
 
-### 两种注册方式
 
-#### 在web.xml中配置Servlet
+
+## Servlet的两种注册方式
+
+#### 通过xml注册Servlet
 [官方示例](https://tomcat.apache.org/tomcat-8.5-doc/appdev/web.xml.txt)
 ```xml
 <!-- servlet 标签给 Tomcat 配置 Servlet 程序 -->
 <servlet>  
-  <!-- servlet-name 标签 Servlet 程序起一个别名(一般是类名) -->
-  <servlet-name>servlet名称<servlet-name>
-  <!-- servlet-class 是 Servlet 程序的全类名-->
-  <servlet-class>全限定类名<servlet-class>
+    <!-- servlet-name标签Servlet程序起一个别名（一般是类名，小驼峰） -->
+    <servlet-name>servlet名称<servlet-name>
+    <!-- servlet-class是Servlet程序的全类名-->
+    <servlet-class>全限定类名<servlet-class>
 
-  <!-- 更多关于servlet的配置：
-    <description>
-    <init-param>
-      <param-name>  注释： 可有多组name-value
-      <param-value>
-    <load-on-startup>  注释： 取值范围1-6
-  -->
+    <!-- 更多关于servlet的配置：
+        <description>
+        <init-param>
+        <param-name> 注释：可有多组name-value
+        <param-value>
+        <load-on-startup> 注释：取值范围1-6
+    -->
 <servlet>
 
-<!-- servlet-mapping 标签给 servlet 程序配置访问地址-->
-<!-- 可以有多个servlet-mapping映射到同一个servlet -->
+<!-- servlet-mapping标签给Servlet程序配置访问地址-->
+<!-- 可以有多个servlet-mapping映射到同一个Servlet -->
 <servlet-mapping> 
-  <!--servlet-name 标签的作用是告诉服务器，我当前配置的地址给哪个 Servlet 程序使用-->
-  <servlet-name>servlet名称</servlet-name>
-  <!--url-pattern 标签配置访问地址-->
-  <!-- 可以有多个url-pattern -->
-  <url-pattern>url模式</url-pattern>
+    <!-- servlet-name标签的指示当前配置的地址给指向哪个Servlet程序 -->
+    <servlet-name>servlet名称</servlet-name>
+    <!-- url-pattern标签配置访问地址 -->
+    <!-- 可以有多个url-pattern -->
+    <url-pattern>url模式</url-pattern>
 
-  <!-- 更多关于url映射的配置 -->
+    <!-- 更多关于url映射的配置 -->
 </servlet-mapping>
 ```
 
-#### 通过注解配置Servlet
+#### 通过注解注册Servlet
 ```java
 // 在自己编写的servlet类上进行注解
 @WebServlet( ... )
@@ -115,8 +68,9 @@ public class MyServlet extends HttpServlet { ... }
 ![servlet+20210719094845](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B20210719094845.png%2B2021-07-19-09-48-46)
 
 
-### 映射路径的规则
-Servlet的映射路径可以在web.xml或@WebServlet注解中进行配置：
+
+## Servlet的映射规则
+Servlet的映射规则可以在web.xml或@WebServlet注解中进行配置：
 * web.xml：  
   ```xml
   <servlet-mapping>
@@ -130,7 +84,7 @@ Servlet的映射路径可以在web.xml或@WebServlet注解中进行配置：
   public class MyServlet extends HttpServlet { ... }
   ```
 
-#### url的匹配形式
+### url的匹配模式
 在url匹配中，有且只有星号匹配符这一种匹配符，不存在其他的匹配符。星号匹配符可以匹配0到多个字符，但是不能匹配正斜杠（<b>/</b>）字符。
 
 在进行url匹配时，有如下形式：
@@ -139,7 +93,7 @@ Servlet的映射路径可以在web.xml或@WebServlet注解中进行配置：
 * 目录匹配：`/path/*`，例如`/users/*`能够匹配`/users/`、`/users/profile`、`/users/details`等。
 * 精确匹配：例如`/exactPath`只能匹配`/exactPath`。
 
-#### 匹配的优先级
+### 匹配的优先级
 一个url路径满足多个映射条件时，遵循以下优先级：
 1. 精确匹配：例如，如果同时有`/login`和`/login/*`，请求`/login`会优先匹配精确的`/login`。
 2. 最长前缀匹配：如果存在`/app/user/*`和`/app/user/profile/*`，那么`/app/user/profile/info`会匹配后者。
@@ -147,7 +101,7 @@ Servlet的映射路径可以在web.xml或@WebServlet注解中进行配置：
 4. 拓展名匹配：优先级低于路径匹配。
 5. `/*`：最后的兜底。
 
-#### 常见写法
+### 常见写法
 * `/`：表示通配所有资源,不包括jsp文件
 * `/*`：表示通配所有资源,包括jsp文件
 * `/a/*`：匹配所有以a前缀的映射路径
@@ -158,34 +112,36 @@ Servlet的映射路径可以在web.xml或@WebServlet注解中进行配置：
 ## Servlet的生命周期
 
 ### 相关方法
-0. 构造器方法，创建Java对象时被自动调用，会被调用1次
-1. init初始化方法，实例化Servlet之后被调用，会被调用1次
-2. service方法，处理请求与返回响应时会被调用的方法，每次收到请求就会被调用，会被调用多次
-3. destroy销毁方法，在Web容器关闭的时候，销毁Servlet之前被调用，会被调用1次
+0. 构造器方法，创建Java对象时被自动调用，会被调用1次。
+1. init初始化方法，实例化Servlet之后被调用，会被调用1次。
+2. service方法，处理请求与返回响应时会被调用的方法，每次收到请求就会被调用，会被调用多次。
+3. destroy销毁方法，在Web容器关闭的时候，销毁Servlet之前被调用，会被调用1次。
 
 ### 创建时机
 
 #### 第一次访问时创建(默认情况)
-浏览器默认第一次访问的时候调用了init，说明这个时候创建了Servlet对象
+浏览器默认第一次访问的时候调用了init，说明这个时候创建了Servlet对象。
 
 #### 服务器启动时创建(可选配置)
 Servlet对象可以修改为服务器启动时创建，需要配置：
-* xml方式: \<load-on-startup>1\</load-on-startup>
-* 注解方式: loadOnStartup = 1
+* xml方式：&lt;load-on-startup>1&lt;/load-on-startup>
+* 注解方式：loadOnStartup = 1
 
 其中里面的“1”可以修改的值范围1~6，值越小，越先创建
 
 ### 创建次数
-init方法值调用一次，说明servlet对象只创建一次，全局唯一对象，节省内存
+Servlet对象只创建一次，全局唯一对象，节省内存。
 
 ### 多例模式
 类实现接口SingleThreadModel后，Servlet对象是多例模式创建。但强烈不建议这么做，这会导致内存浪费。
 
 
+
 ## Servlet的运行原理
-服务器根据url找到类全名，通过反射`Class.forName(servlet类全名)`创建了servlet对象，服务器将所有请求数据封装到request对象中，所有响应数据封装到response中，将request和response传入service方法，使用反射调用service方法。
+服务器根据url找到类全名，通过反射`Class.forName(servlet全类名)`创建了Servlet对象，服务器将所有请求数据封装到HttpServletRequest对象中，所有响应数据封装到HttpServletResponse对象中，将HttpServletRequest对象和HttpServletResponse对象传入service方法，使用反射调用service方法。
 
 ![servlet+20210719093753](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B20210719093753.png%2B2021-07-19-09-37-55)
+
 
 
 ## ServletConfig
@@ -208,13 +164,13 @@ public interface ServletConfig {
 ```
 
 ### ServletConfig的作用
-1. 获取Servlet的别名*servlet-name*的值
-2. 获取Servlet的初始化参数*init-param*
-3. 获取*ServletContext*对象
+1. 获取Servlet的别名*servlet-name*的值。
+2. 获取Servlet的初始化参数*init-param*。
+3. 获取*ServletContext*对象。
 
 ### 设置ServletConfig两种方式
 
-#### 在web.xml中进行设置
+#### 在xml中设置ServletConfig
 ```xml
 <servlet>
     <init-param>
@@ -223,23 +179,24 @@ public interface ServletConfig {
     </init-param>
 </servlet>
 ```
-#### 在注解中进行设置
-```java
+#### 在注解中设置ServletConfig
+```Java
 @WebServlet(
     initParams = {
         @WebInitParam(name = "参数名1",value = "参数值1"),
         @WebInitParam(name = "参数名2",value = "参数值1")
     }
 )
+public class MyServlet{ ... }
 ```
 
 ### 在Servlet中使用ServletConfig
-```java
-// GenericServlet 实例方法 getServletConfig()
-ServletConfig servletConfig = genericServlet.getServletConfig()
+```Java
+// GenericServlet的实例方法getServletConfig()
+ServletConfig servletConfig = genericServlet.getServletConfig();
 
-// 获取 Servlet 程序的别名 servlet-name 的值
-System.out.println("程序的别名是:" + servletConfig.getServletName());
+// 获取Servlet程序的别名servlet-name的值
+System.out.println("程序的别名是：" + servletConfig.getServletName());
 
 // 获取初始化参数 init-param
 Enumeration<String> enumeration = servletConfig.getInitParameterNames();
@@ -261,7 +218,7 @@ System.out.println(servletConfig.getServletContext());
 ```java
 HttpServletRequest req;
 ```
-每次只要有请求进入Tomcat服务器，Tomcat服务器就会把请求过来的HTTP协议信息解析好封装到Request对象中，然后传递到service方法（doGet和doPost）中给我们使用。我们可以通过HttpServletRequest对象，获取到所有请求的信息。
+每次只要有请求进入Tomcat服务器，Tomcat服务器就会把请求过来的HTTP协议信息解析好封装到HttpServletRequest对象中，然后传递到service方法中给我们使用。我们可以通过HttpServletRequest对象，获取到所有请求的信息。
 
 ### 请求数据
 #### 请求行
@@ -290,7 +247,7 @@ HttpServletRequest req;
 * void setCharacterEncoding(String env)：设置从请求体中读取数据时使用的字符集，避免乱码。
 * Enumeration&lt;String> req.getParameterNames()：获取所有参数名。
 * Map&lt;String, String[]> getParameterMap()：获取所有参数键和值。
-* String req.getParameter(String name)：通过参数名获得参数值（参数值为单值/一个字符串）。
+* String req.getParameter(String name)：通过参数名获得参数值（参数值为一个字符串）。
 * String[] req.getParameterValues(String name)：通过参数名获得一组同名的值（参数值为一个字符串数组）。
 * ServletInputStream getInputStream()：如果该请求带有HTTP Body，该方法将打开一个输入流用于读取Body。
 * BufferedReader getReader()：和getInputStream()类似，但打开的是Reader。
@@ -302,7 +259,7 @@ HttpServletRequest req;
 ```java
 HttpServletResponse resp;
 ```
-每次请求进来，Tomcat服务器都会创建一个Response对象传递给Servlet程序去使用。我们如果需要设置返回给客户端的信息，都可以通过HttpServletResponse对象来进行设置。
+每次请求进来，Tomcat服务器都会创建一个HttpServletResponse对象传递给Servlet程序去使用。我们如果需要设置返回给客户端的信息，可以通过HttpServletResponse对象进行设置。
 
 ### 响应数据
 #### 响应行
@@ -328,7 +285,7 @@ HttpServletResponse resp;
 
 #### 响应体
 Servlet API中提供的操作响应体*resp*的方法，主要用于实现如下的功能：
-* 获取响应体的输出流后，进行数据输出的操作，只能从字符流或字节流中的二者中择一进行操作：
+* 获取响应体的输出流后，进行数据输出的操作，只能从字符流和字节流的二者中择一进行操作：
   * `var writer = resp.getWriter();`：获取字符流输出
     * `writer.print(任何类型);`：该方法的本质是将任何类型的对象通过String.valueOf静态方法转换为字符串后进行输出，因此有较好的兼容性
     * `writer.write(字符串类型);`
@@ -352,7 +309,7 @@ Servlet API中提供的操作响应体*resp*的方法，主要用于实现如下
 [Url编码-百分号编码介绍](../front-end/url-encode.md)  
 [base64编码](../front-end/base64.md)
 
-### 注意事项
+写入响应体前后的注意事项：
 1. 写入响应前，无需设置setContentLength()，因为底层服务器会根据写入的字节数自动设置，如果写入的数据量很小，实际上会先写入缓冲区，如果写入的数据量很大，服务器会自动采用Chunked编码让浏览器能识别数据结束符而不需要设置Content-Length头。
 2. 写入完毕后，必须调用flush()，因为大部分Web服务器都基于HTTP/1.1协议，会复用TCP连接。如果没有调用flush()，将导致缓冲区的内容无法及时发送到客户端。此外，写入完毕后千万不要调用close()，原因同样是因为会复用TCP连接，如果关闭写入流，将关闭TCP连接，使得Web服务器无法复用此TCP连接。
 
@@ -372,10 +329,10 @@ Servlet API中提供的操作响应体*resp*的方法，主要用于实现如下
 |是否可以访问WEB-INF下的资源|是|否|
 |是否可以访问本项目外的资源|否|是|
 
-### 使用示例
+### 转发和重定向的代码示例
 ![f5cc5da1-8344-46fb-aae9-23ad34bcce5d](https://raw.githubusercontent.com/loli0con/picgo/master/f5cc5da1-8344-46fb-aae9-23ad34bcce5d.png)
 
-#### 转发
+#### 转发的代码示例
 ```Java
 @WebServlet("/servletA")
 public class ServletA extends HttpServlet {
@@ -427,7 +384,7 @@ public class ServletB extends HttpServlet {
 }
 ```
 
-#### 重定向
+#### 重定向的代码示例
 ```Java
 @WebServlet("/servletA")
 public class ServletA extends HttpServlet {
@@ -474,14 +431,13 @@ public class ServletB extends HttpServlet {
 ```
 
 
-## 作用域对象
+## 三大作用域对象
 域对象是一些用于存储数据和传递数据的对象。根据传递数据的范围的不同，我们将其划分为不同的域。不同的域对象代表不同的域，共享数据的范围也不同。
 
-### 三大域对象
 |作用域对象|作用域范围|应用场景|
 |---|---|---|
-|Request请求域|一次请求内|**转发**跳转页面传递数据|
-|Session会话域|一个会话内|存储验证码、用户登录数据等|
+|HttpServletRequest请求域|一次请求内|**转发**跳转页面传递数据|
+|HttpSession会话域|一个会话内|存储验证码、用户登录数据等|
 |Servletcontext全局上下文域|整个Web应用程序内|统计全局的数据。这个数据全局共享，所有用户共享，可用于统计登录人数等|
 
 ### 通用API
@@ -540,18 +496,18 @@ while (initParameterNames.hasMoreElements()) {
 ### Cookie技术
 Cookie是服务器发送到用户浏览器并存储在本地的小数据文件，浏览器会存储Cookie并在下次向同一服务器再发起请求时携带并发送到服务器上，用于实现状态管理（如登录状态、购物车）、个性化设置和用户行为跟踪。Cookie使基于无状态的HTTP协议能记住用户信息。
 
-#### 工作原理
+#### Cookie的工作原理
 1. 首次请求与设置：
-  * 用户第一次访问网站时，服务器响应中会包含一个Set-Cookie响应头，里面包含键值对（如session_id=xyz）和过期时间等信息。具体的格式（中括号中的部分是可选的）：`Set-Cookie: name=value[; expires=date][; domain=domain][; path=path][; secure][; httpOnly][; sameSime=Lax]`。
-  * 浏览器接收到Set-Cookie后，将此数据保存在本地（通常是硬盘上的文本文件或内存）。
+   * 用户第一次访问网站时，服务器响应中会包含一个Set-Cookie响应头，里面包含键值对（如session_id=xyz）和过期时间等信息。具体的格式（中括号的部分是可选的）：`Set-Cookie: name=value[; expires=date][; domain=domain][; path=path][; secure][; httpOnly][; sameSime=Lax]`。
+   * 浏览器接收到Set-Cookie后，将此数据保存在本地（通常是硬盘上的文本文件或内存）。
 2. 后续请求与发送：当用户再次访问同一网站时，浏览器会自动查找并携带该网站的Cookie，将其添加到HTTP请求头（Cookie header）中发送给服务器。例如：`Cookie: user_id=abc123; session=xyz789; theme=dark; lang=zh-CN; _ga=GA1.2.1234567890.1234567890`。
 3. 服务器识别与响应：
-  * 服务器接收到携带的Cookie，就能识别出是哪个用户（或会话），从而提供个性化服务、记住登录状态或购物车内容。
-  * 服务器也可以根据需要更新Cookie或设置新的Cookie。 
+    * 服务器接收到携带的Cookie，就能识别出是哪个用户（或会话），从而提供个性化服务（记住登录状态或购物车内容）。
+    * 服务器也可以根据需要更新Cookie或设置新的Cookie。 
 
 #### Cookie相关的API
 
-##### Cokkie的创建和配置 
+##### Cookie的创建和配置 
 * Cookie(String name, String value)：构造方法，创建一个Cookie对象。
 * String getName()：得到cookie的键。
 * String getValue()：得到cookie的值。
@@ -559,15 +515,15 @@ Cookie是服务器发送到用户浏览器并存储在本地的小数据文件�
   * 正数：设置秒数；
   * 负数：浏览器关闭就失效；
   * 零：删除cookie。
-* setPath(String uri)：设置cookie的访问路径，只有在用户访问这个路径或者它的子路径，浏览器才会将cookie发送给服务器。
+* setPath(String uri)：设置cookie的访问路径，只有在用户访问这个路径或者它的子路径时，浏览器才会将cookie发送给服务器。
 
-如果是https网页，还需要调用setSecure(true)方法，否则浏览器不会发送该Cookie，服务端自然就无法获取到该Cookie。
+如果用户是通过https访问网页，则还需要对Cookie对象调用setSecure(true)方法，否则浏览器不会发送该Cookie，服务端也就无法获取到该Cookie。
 
 ##### 与客户端进行Cookie的交互
 * resp.addCookie(Cookie cookie)：利用HttpServletResponse对象，将服务器创建的cookie通过响应发送给浏览器。
-* Cookie[] req.getCookies()：利用HttpServletRequest对象，服务器获取浏览器发送过来的所有的cookie信息，该方法返回的是一个Cookie的对象数组。如果没有读到任何的Cookie，返回null。
+* Cookie[] req.getCookies()：利用HttpServletRequest对象，获取浏览器发送过来的所有的cookie信息，该方法返回的是一个Cookie的对象数组。如果没有读到任何的Cookie，返回null。
 
-##### Cookie的编码问题
+#### Cookie的编码问题
 在Cookie值中不能使用分号（;）、逗号（,）、等号（=）以及空格。Tomcat8中可以直接使用汉字，Tomcat7中不能直接使用汉字。
 
 如果要使用特殊字符，必须在写入字符值之前进行编码。读取以后再进行解码：
@@ -576,12 +532,14 @@ Cookie是服务器发送到用户浏览器并存储在本地的小数据文件�
 
 
 ### Session会话域
-cookie是用于在客户端浏览器存储会话数据。Cookie属于客户端会话技术，数据保存在浏览器端文件中，Cookie中键和值都是String类型。
+Cookie在客户端存储会话数据，Session在服务端存储会话数据。
 
-Session属于服务器端的会话技术，数据保存服务器内存中，Session中键是String，值是Object类型。服务器会为每个浏览器（每个用户）都会创建独享的Session对象。
+Cookie属于客户端的会话技术，数据保存在客户端的文件中，Cookie中键和值都是String类型。
+
+Session属于服务器端的会话技术，数据保存在服务器的内存中，Session中键是String，值是Object类型。服务器会为每个浏览器（每个用户）都会创建独享的Session对象。
 
 #### Session的实现方式
-通常session技术是依赖cookie技术（Set-Cookie: JSESSIONID=会话ID）实现的，但还有[其他实现方式](https://www.zhihu.com/question/35307626)。
+Session技术通常是依赖Cookie技术（Set-Cookie: JSESSIONID=会话ID）实现的，但还有[其他实现方式](https://www.zhihu.com/question/35307626)。
 
 ![servlet+20210722165512](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B20210722165512.png%2B2021-07-22-16-55-16)
 
@@ -599,15 +557,15 @@ Session属于服务器端的会话技术，数据保存服务器内存中，Sess
 * boolean isNew()：判断是否为新创建的会话。
 * String getId()：会话ID，在服务器上唯一的32位的十六进制数。会话ID指的是`Set-Cookie: JSESSIONID=会话ID`中JSESSIONID的值。
 * long getCreationTime()：该会话创建的时间，返回1970-1-1到这个时间的之间相差的毫秒数。
-* long getLastAccessedTime()：客户端在携带该session的情况下，最后一次访问服务器的时间，返回1970-1-1到这个时间的之间相差的毫秒数。
-* int getMaxInactiveInterval()：得到该会话最大非活动时间间隔，默认是1800秒（30分钟）。如果客户端与服务器在这个最大非活动时间间隔内未进行过交互（交互的过程中必须携带该session），则服务器会认为该会话已超时，并使该会话失效。
+* long getLastAccessedTime()：客户端在携带该会话的情况下，最后一次访问服务器的时间，返回1970-1-1到这个时间的之间相差的毫秒数。
+* int getMaxInactiveInterval()：得到该会话最大非活动时间间隔，默认是1800秒（30分钟）。如果客户端与服务器在这个最大非活动时间间隔内未进行过交互（交互的过程中必须携带该会话），则服务器会认为该会话已超时，并使该会话失效。
 * setMaxInactiveInterval(int interval)：设置会话最大非活动时间间隔，单位是秒。通过设置该时间间隔，可以改变该会话的超时时间。如果参数*interval*不是一个正数，则该会话被设为永不超时。
 * invalidate()：让会话立刻失效，一般用于用户退出注销。
 
 #### Session的默认超时时间
-session在服务器内存中不是永久的，默认距离上一次请求间隔超过30分钟会失效。
+Session在服务器内存中不是永久的，默认距离上一次请求间隔超过30分钟会失效。
 
-可以在web.xml统一修改所有session超时时间：
+可以在web.xml统一修改所有Session超时时间（*Tomcat目录中的conf/web.xml*或者*当前Web项目中的WEB-INF/web.xml*）：
 ```xml
 <session-config>
     <!-- 单位是分钟 -->
@@ -618,9 +576,9 @@ session在服务器内存中不是永久的，默认距离上一次请求间隔�
 #### 修改JSESSIONID的有效期
 在服务端中为某个客户端生成的Session对象之后，服务器通过响应头`Set-Cookie: JSESSIONID=会话ID`将Session对象以Cookie的形式，与该客户端进行绑定（因为客户端下一次会在请求头内回传`Cookie: JSESSIONID=会话ID`）。
 
-但在浏览器关闭的时候，<u>该cookie数据"JSESSIONID"</u>就会过期。如果再次打开浏览器并访问服务器时，浏览器不会携带<u>该cookie数据"JSESSIONID"</u>。
+但在浏览器关闭的时候，<u>该Cookie数据"JSESSIONID"</u>就会过期。如果再次打开浏览器并访问服务器时，浏览器不会携带<u>该Cookie数据"JSESSIONID"</u>。
 
-如果想要修改<u>该cookie数据"JSESSIONID"</u>的有效期，让浏览器关闭后再次打开时，也能携带<u>该cookie数据"JSESSIONID"</u>，则需要通过以下的代码实现：
+如果想要修改<u>该Cookie数据"JSESSIONID"</u>的有效期，让浏览器关闭后再次打开时，也能携带<u>该Cookie数据"JSESSIONID"</u>，则需要通过以下的代码实现：
 ```Java
 // 1. 获得Session对象
 HttpSession session = req.getSession();
@@ -638,24 +596,82 @@ cookie.setMaxAge(60 * 60); // 传参单位是秒，这里示例是60*60*24秒=1�
 resp.addCookie(cookie);
 ```
 
-通过上述代码，可以修改的cookie数据"JSESSIONID"的有效期，可以在浏览器（或者接口测试工具）中查看服务器返回的响应头包含如下内容（假定当前时间为2025-29-04:14:59GMT）：
+通过上述代码，可以修改的Cookie数据"JSESSIONID"的有效期，可以在浏览器（或者接口测试工具）中查看服务器返回的响应头包含如下内容（假定当前时间为2025-12-29 04:14:59 GMT）：
 ```
 Set-Cookie: JSESSIONID=7871A456FC86497CA648BC76F5F6417B; Max-Age=3600; Expires=Mon, 29 Dec 2025 05:14:59 GMT
 ```
 
-
 #### Session的钝化与激活
-##### 钝化
-Tomcat正常关闭时，会将内存中的Session数据持久化到磁盘上，类似于对象序列化的过程。
+Session钝化是指当服务器正常关闭时，将内存中未过期的Session对象通过序列化成文件（如SESSIONS.ser）存储到磁盘上，以便服务器重启后能反序列化恢复这些Session，保持用户状态不丢失。这个过程需要Session中的对象实现java.io.Serializable接口，并且通常在Tomcat等Servlet容器中配置实现。默认存储位置：$CATALINA_HOME\work\Catalina\localhost\项目名\SESSIONS.ser。
 
-存储位置：$CATALINA_HOME\work\Catalina\localhost\项目名\SESSIONS.ser
+当我们把Web应用程序部署以后，每一个会话的开启，服务端都要为其创建一个Session对象。如果Web应用的访问量比较大，那么很快服务器中就会有大量的Session对象存在，服务器的内存压力会迅速上升。如果能把不活跃的Session对象钝化保存到磁盘文件上，那么服务器就可以腾出内存空间，支持更多的访问了。
 
-##### 激活
-Tomcat启动时，会将存储在磁盘中的Session数据恢复到内存会话域对象中，类似于对象反序列化的过程。
+##### Session钝化与活化的管理机制
+Tomcat提供了两种Session钝化与活化的管理机制：
+* StandardManager：StandardManager是Tomcat的默认Session管理机制。
+  * 当Tomcat被关闭，或者重启时，会把Session对象钝化保存到磁盘文件上；
+  * 当Tomcat启动时，会把保存在磁盘上的文件进行反序列化，恢复到内存中形成一个Session对象；
+  * 强制kill掉Tomcat，是不会把Session钝化到磁盘上的。
+* PersistentManager：PersistentManager需要进行配置才会生效。配置这种方式，可以将长时间不用的Session对象钝化到磁盘上，减少内存的占用。
 
-##### 注意
-1. idea无法演示钝化与激活的过程，必须将项目部署到Tomcat上，单独启动与关闭服务器测试才有效。因为idea部署的机制会先删除所有数据再进行部署，在这个过程中该序列化文件也会被删除。
-2. 由于涉及到序列化与反序列操作，因此Session中的对象（对象所属的类）需要实现Serializable接口。
+##### Session钝化与活化的配置方式
+
+###### 对当前Web应用生效
+在当前Web应用的webapp/META-INF目录下创建一个context.xml文件，内容如下：
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+    <!--
+        className：指定Session管理对象是PersistentManager
+        maxActiveSessions：最大活跃Session数，超过将抛出异常，默认为-1（无限）
+        maxIdleBackup：最大空闲备份时间（秒），空闲时间超过指定时间时将Session备份到Store，默认为-1（关闭）
+        maxIdleSwap：最大空闲清理时间（秒），空闲时间超过指定时间时将Session备份到Store并从内存中清除，默认为-1（关闭）
+        minIdleSwap：最小空闲清理时间（秒），空闲时间超过指定时间时才允许清理以减少最大活跃Session数，默认为-1（关闭）
+        persistAuthentication：备份Principal认证信息，默认为false
+        processExpiresFrequency：备份/清理/失效等后台操作执行周期（单位10秒），默认为6（即60秒）
+        saveOnRestart：重启容器时自动备份与恢复Session，默认为true
+    -->
+    <Manager className="org.apache.catalina.session.PersistentManager" maxIdleSwap="1800">
+
+        <!-- 
+            存储到文件夹中
+            className：指定钝化Session时生成文件的管理类    
+            directory：指定生成的文件保存的文件夹（$CATALINA_HOME\work\Catalina\localhost\web应用名称\指定的文件夹名称）
+        -->
+        <!-- 存储到文件夹中 -->
+        <Store className="org.apache.catalina.session.FileStore" directory="指定的文件夹名称"/>
+        <!--
+            存储到数据库中
+            sessionTable：Session备份表名，默认为tomcat$sessions
+            dataSourceName：JNDI数据源
+        -->
+        <Store className="org.apache.catalina.session.JDBCStore" connectionName="用户名" connectionPassword="密码" connectionURL="jdbc:mysql://127.0.0.1:3306/test" driverName="com.mysql.cj.jdbc.Driver"/>
+    </Manager>
+</Context>
+```
+
+###### 对某个Web应用生效
+修改Tomcat的conf/server.xml，在Host标签中增加子标签内容如下：
+```xml
+<!-- 
+    docBase：部署的web应用的路径，可以写web应用的绝对路径，也可以写webapps中的web应用文件夹名称
+    path：web应用的访问路径，也就是contextPath 
+-->
+<Context docBase="activation" path="/activation" reloadable="true">
+    <Manager className="org.apache.catalina.session.PersistentManager" maxIdleSwap="1800">
+        <Store className="org.apache.catalina.session.FileStore" directory="my_session"/>
+    </Manager>
+</Context>
+```
+Context标签中的docBase，配置的哪个web应用，就对哪个Web应用生效。
+
+###### 对所有Web应用生效
+修改Tomcat的conf\context.xml，在Context标签里增加子标签内容如下：
+```xml
+<Manager className="org.apache.catalina.session.PersistentManager" maxIdleSwap="1800">
+    <Store className="org.apache.catalina.session.FileStore" directory="my_session"/>
+</Manager>
+```
 
 #### 禁用Cookie的解决方案
 除了使用Cookie机制可以实现Session外，还可以通过隐藏表单、URL末尾附加ID来追踪Session。
@@ -678,7 +694,7 @@ String url = resp.encodeURL(req.getContextPath() + "/Servlet2");
 
 最终得到：
 xxx/Servlet2;jsessionid=4C927EA8EBEBBCE600B6444772BF7951
- */
+*/
 
 // 3.跳转到Servlet2去读取展现
 resp.sendRedirect(url);
