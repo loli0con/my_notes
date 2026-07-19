@@ -7,13 +7,20 @@ JavaEE体系提供一个Filter接口，主要用于拦截请求与过滤响应�
 ## Filter的注册方式
 ### 通过注解注册Filter
 ```Java
-// 注解语法：@WebFilter(filterName = "设置过滤器的名名字", urlPatterns = {"拦截的资源路径1", "拦截的资源路径2", servletNames = {"拦截的servlet名字1", "拦截的servlet名字2", ...})
+/**
+ * 注解语法：
+ * @WebFilter(
+ *     filterName = "设置过滤器的名名字",
+ *     urlPatterns = {"拦截的资源路径1", "拦截的资源路径2"},
+ *     servletNames = {"拦截的servlet名字1", "拦截的servlet名字2"}
+ * )
+ */
 @WebFilter("/DemoServlet")
 public class DemoFilter implements Filter {
-     /*
+    /*
      * 初始化方法：当前服务器创建过滤器对象之后调用的方法，只会调用1次，服务器启动时调用
      * 作用：做一些初始化的操作
-     * */
+     */
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -21,14 +28,14 @@ public class DemoFilter implements Filter {
 
     /*
      * 拦截请求与响应方法：每次浏览器访问拦截路径都会执行
-     * */
+     */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         //1.拦截请求
         doSomethingBefore(request, response);
         // System.out.println("==执行了DemoFilter拦截请求的代码==");
 
-        //2.放行(将请求放行给到目标资源去执行)
+        //2.放行（将请求放行给到目标资源去执行）
         filterChain.doFilter(request, response);
 
         //3.拦截响应
@@ -39,7 +46,7 @@ public class DemoFilter implements Filter {
     /*
      * 销毁方法：当服务器关闭之前调用的方法，执行1次
      * 作用：做一些销毁的操作
-     * */
+     */
     @Override
     public void destroy() {
 
@@ -49,7 +56,7 @@ public class DemoFilter implements Filter {
 
 ### 通过xml注册Filter
 ```xml
-<!--filter 标签用于配置一个 Filter 过滤器-->
+<!--filter标签：用于配置一个Filter过滤器-->
 <filter>
     <!--给 filter 起一个别名-->
     <filter-name>filter名字</filter-name>
@@ -57,7 +64,7 @@ public class DemoFilter implements Filter {
     <filter-class>filter类全名</filter-class>
 </filter>
 
-<!--filter-mapping 配置 Filter 过滤器的拦截路径-->
+<!--filter-mapping标签：配置Filter滤器的拦截路径-->
 <filter-mapping>
     <!--表示当前的拦截路径给哪个 filter 使用-->
     <filter-name>filter名字</filter-name>
@@ -163,7 +170,7 @@ Filter默认不会拦截转发的目标资源，可以修改**拦截方式**使F
 |---|---|
 |dispatcherTypes = {DispatcherType.REQUEST}|设置采用默认拦截方式，拦截浏览器直接url访问的资源请求与响应|
 |dispatcherTypes = {DispatcherType.FORWARD}|设置采用请求转发拦截方式（如果只配置这种方式，默认方式直接url访问资源将无效不能拦截）|
-|dispatcherTypes = {DispatcherType.REQUEST,DispatcherType.FORWARD}|设置采用直接url和请求转发这两种拦截方式|
+|dispatcherTypes = {DispatcherType.REQUEST, DispatcherType.FORWARD}|设置采用直接url和请求转发这两种拦截方式|
 
 #### 通过xml修改拦截方式
 ```xml
@@ -254,5 +261,91 @@ public class EncodingFilter implements Filter {
         //3.放行
         chain.doFilter(req, resp);
     }
+}
+```
+
+## Filter的原理解析
+Filter接口定义：
+```Java
+public interface Filter {
+    default void init(FilterConfig filterConfig) throws ServletException {}
+
+    // 应用开发者需要实现的方法，在该方法中调用FilterChain对象的doFilter方法表示继续执行Filter链，或者执行Servlet的
+    void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException;
+
+    default void destroy() {}
+}
+```
+
+FilterChain的实现类ApplicationFilterChain：
+```Java
+/**
+ * 实现 jakarta.servlet.FilterChain 接口
+ * 由 Tomcat 的 Catalina 引擎提供具体实现
+ */
+public final class ApplicationFilterChain implements FilterChain {
+
+    // 存储当前Web应用配置的所有过滤器包装对象
+    // 在addFilter方法中提供对该实例变量的动态扩容功能
+    // 零长度数组初始化是一种优秀的编程习惯（避免魔术值和频繁的非空校验）
+    private ApplicationFilterConfig[] filters = new ApplicationFilterConfig[0];
+
+    // 当前执行到的过滤器下标索引
+    private int pos = 0;
+
+    // 当前执行链中的过滤器总数
+    private int n = 0;
+
+    // 执行链终点的Servlet（即 SpringMVC的DispatcherServlet）
+    private Servlet servlet = null;
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response)
+        throws IOException, ServletException {
+        // 调用内部私有逻辑
+        internalDoFilter(request, response);
+    }
+
+    private void internalDoFilter(ServletRequest request, ServletResponse response)
+        throws IOException, ServletException {
+
+        // 1. 如果尚未执行完所有Filter，则继续调用下一个Filter
+        if (pos < n) {
+            // 获取数组中当前下标对应的Filter配置
+            ApplicationFilterConfig filterConfig = filters[pos++];
+            try {
+                Filter filter = filterConfig.getFilter();
+
+                // 核心逻辑：执行当前过滤器的doFilter方法
+                // 注意：这里将当前ApplicationFilterChain实例（this）作为参数传入
+                filter.doFilter(request, response, this);
+                
+            } catch (IOException | ServletException | RuntimeException e) {
+                throw e;
+            }
+            // 一旦当前的filter.doFilter执行完毕并返回，该方法也就结束了
+            return;
+        }
+
+        // 2. 当所有Filter执行完毕（pos == n），调用最终的Servlet业务逻辑
+        try {
+            if (servlet != null) {
+                servlet.service(request, response);
+            }
+        } catch (IOException | ServletException | RuntimeException e) {
+            throw e;
+        }
+    }
+
+    // 释放资源，供Tomcat对象池回收利用
+    // 复用这个对象的，但是里面的实例数据会重新初始化，这样能避免对象创建时的性能消耗
+    void release() {
+        filters = null;
+        pos = 0;
+        n = 0;
+        servlet = null;
+    }
+    
+    // 其他辅助方法（addFilter等）
 }
 ```
