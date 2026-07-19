@@ -24,10 +24,10 @@
 
 ## Servlet的两种注册方式
 
-#### 通过xml注册Servlet
+### 通过XML注册Servlet
 [官方示例](https://tomcat.apache.org/tomcat-8.5-doc/appdev/web.xml.txt)
 ```xml
-<!-- servlet 标签给 Tomcat 配置 Servlet 程序 -->
+<!-- servlet标签：给Tomcat配置Servlet程序 -->
 <servlet>  
     <!-- servlet-name标签Servlet程序起一个别名（一般是类名，小驼峰） -->
     <servlet-name>servlet名称<servlet-name>
@@ -56,7 +56,7 @@
 </servlet-mapping>
 ```
 
-#### 通过注解注册Servlet
+### 通过注解注册Servlet
 ```java
 // 在自己编写的servlet类上进行注解
 @WebServlet( ... )
@@ -102,10 +102,10 @@ Servlet的映射规则可以在web.xml或@WebServlet注解中进行配置：
 5. `/*`：最后的兜底。
 
 ### 常见写法
-* `/`：表示通配所有资源,不包括jsp文件
-* `/*`：表示通配所有资源,包括jsp文件
-* `/a/*`：匹配所有以a前缀的映射路径
-* `*.action`：匹配所有以action为后缀的映射路径
+* `/`：表示通配所有资源，不包括jsp文件。
+* `/*`：表示通配所有资源，包括jsp文件。
+* `/a/*`：匹配所有以"a"为前缀的映射路径。
+* `*.action`：匹配所有以"action"为后缀的映射路径。
 
 
 
@@ -170,7 +170,7 @@ public interface ServletConfig {
 
 ### 设置ServletConfig两种方式
 
-#### 在xml中设置ServletConfig
+#### 在XML中设置ServletConfig
 ```xml
 <servlet>
     <init-param>
@@ -306,8 +306,6 @@ Servlet API中提供的操作响应体*resp*的方法，主要用于实现如下
   2. `resp.setHeader("Location", "/项目路径/资源路径");`
 
 ![servlet+1565982684673](https://raw.githubusercontent.com/loli0con/picgo/master/images/servlet%2B1565982684673.png%2B2021-07-19-15-01-53)
-[Url编码-百分号编码介绍](../front-end/url-encode.md)  
-[base64编码](../front-end/base64.md)
 
 写入响应体前后的注意事项：
 1. 写入响应前，无需设置setContentLength()，因为底层服务器会根据写入的字节数自动设置，如果写入的数据量很小，实际上会先写入缓冲区，如果写入的数据量很大，服务器会自动采用Chunked编码让浏览器能识别数据结束符而不需要设置Content-Length头。
@@ -389,7 +387,7 @@ public class ServletB extends HttpServlet {
 @WebServlet("/servletA")
 public class ServletA extends HttpServlet {
     @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws IOException, IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // 获取请求参数
         String username = req.getParameter("username");
         System.out.println(username);
@@ -398,14 +396,16 @@ public class ServletA extends HttpServlet {
         req.setAttribute("reqKey", "requestMessage");
 
         // 响应重定向
-        // 重定向到servlet动态资源 OK
+        // 重定向到servlet动态资源（绝对路径） OK
+        resp.sendRedirect("/servletB");
+        // （相对路径，不推荐的写法）浏览器会根据地址栏中的地址字符串，重定向到../servletB
         resp.sendRedirect("servletB");
 
         // 重定向到视图静态资源 OK
-        // resp.sendRedirect("welcome.html");
+        // resp.sendRedirect("/welcome.html");
 
         // 重定向到WEB-INF下的资源 NO
-        // resp.sendRedirect("WEB-INF/views/view1");
+        // resp.sendRedirect("/WEB-INF/views/view1");
 
         // 重定向到外部资源 OK
         // resp.sendRedirect("http://www.google.com");
@@ -580,26 +580,34 @@ Session在服务器内存中不是永久的，默认距离上一次请求间隔�
 
 如果想要修改<u>该Cookie数据"JSESSIONID"</u>的有效期，让浏览器关闭后再次打开时，也能携带<u>该Cookie数据"JSESSIONID"</u>，则需要通过以下的代码实现：
 ```Java
-// 1. 获得Session对象
+// 1. 创建或获得Session对象（底层会创建一个Cookie，下文会称它为旧Cookie）
 HttpSession session = req.getSession();
 
 // 2. 获得sessionId
 String sessionId = session.getId();
 
-// 3. 创建Cookie写入JSESSIONID数据
+// 3. 创建Cookie写入JSESSIONID数据（用来强制覆盖旧的Cookie）
 Cookie cookie = new Cookie("JSESSIONID", sessionId);
 
-// 4. 设置JSESSIONID的过期时间
+// 4. 显式设置新Cookie路径，确保和旧Cookie完全一致
+// 新Cookie的路径默认为当前URI所在的目录，即砍掉URI中的最后一级剩余的部分
+// 旧Cookie的路径默认为当前Web应用的根目录，即下面这行代码
+cookie.setPath(req.getContextPath() + "/");
+
+// 5. 设置JSESSIONID的过期时间
 cookie.setMaxAge(60 * 60); // 传参单位是秒，这里示例是60*60*24秒=1小时
 
-// 5. 覆盖默认的cookie数据"JSESSIONID"
+// 6. 覆盖默认的cookie数据"JSESSIONID"
 resp.addCookie(cookie);
 ```
 
-通过上述代码，可以修改的Cookie数据"JSESSIONID"的有效期，可以在浏览器（或者接口测试工具）中查看服务器返回的响应头包含如下内容（假定当前时间为2025-12-29 04:14:59 GMT）：
+通过上述代码，可以修改的Cookie数据"JSESSIONID"的有效期，可以在浏览器（或者接口测试工具）中查看服务器返回的响应头包含如下内容：
 ```
-Set-Cookie: JSESSIONID=7871A456FC86497CA648BC76F5F6417B; Max-Age=3600; Expires=Mon, 29 Dec 2025 05:14:59 GMT
+Set-Cookie: JSESSIONID=7871A456FC86497CA648BC76F5F6417B; Path=/
+Set-Cookie: JSESSIONID=7871A456FC86497CA648BC76F5F6417B; Path=/; Max-Age=3600
 ```
+
+浏览器发现有两个“名字一摸一样，路径也一摸一样”的Cookie时，会用后者的参数覆盖前者的参数。
 
 #### Session的钝化与激活
 Session钝化是指当服务器正常关闭时，将内存中未过期的Session对象通过序列化成文件（如SESSIONS.ser）存储到磁盘上，以便服务器重启后能反序列化恢复这些Session，保持用户状态不丢失。这个过程需要Session中的对象实现java.io.Serializable接口，并且通常在Tomcat等Servlet容器中配置实现。默认存储位置：$CATALINA_HOME\work\Catalina\localhost\项目名\SESSIONS.ser。
@@ -663,7 +671,7 @@ Tomcat提供了两种Session钝化与活化的管理机制：
     </Manager>
 </Context>
 ```
-Context标签中的docBase，配置的哪个web应用，就对哪个Web应用生效。
+Context标签中的docBase，配置的哪个Web应用，就对哪个Web应用生效。
 
 ###### 对所有Web应用生效
 修改Tomcat的conf\context.xml，在Context标签里增加子标签内容如下：
@@ -687,13 +695,13 @@ HttpSession session = req.getSession();
 session.setAttribute("username", "admin");
 
 //使用url重写解决
-String url = resp.encodeURL(req.getContextPath() + "/Servlet2");
+String url = resp.encodeURL(req.getContextPath() + "/Servlet2"+ ";JSESSIONID=" + session.getId());
 /* 
 实现原理：
-就是在这个路径req.getContextPath() + "/Servlet2" 后面拼接 “;jsessionid=sessionid”
+就是在这个路径req.getContextPath() + "/Servlet2" 后面拼接 “;JSESSIONID=sessionid”
 
 最终得到：
-xxx/Servlet2;jsessionid=4C927EA8EBEBBCE600B6444772BF7951
+xxx/Servlet2;JSESSIONID=7871A456FC86497CA648BC76F5F6417B
 */
 
 // 3.跳转到Servlet2去读取展现
