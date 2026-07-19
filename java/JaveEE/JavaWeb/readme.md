@@ -33,7 +33,7 @@ JavaWeb三大组件：
   * [Servlet的开发示例](servlet.md#Servlet的开发示例)
   * [Servlet的开发流程](servlet.md#Servlet的开发流程)
   * [Servlet的两种注册方式](servlet.md#Servlet的两种注册方式)
-    * [通过xml注册Servlet](servlet.md#通过xml注册Servlet)
+    * [通过XML注册Servlet](servlet.md#通过XML注册Servlet)
     * [通过注解注册Servlet](servlet.md#通过注解注册Servlet)
   * [Servlet的映射规则](servlet.md#Servlet的映射规则)
   * [Servlet的生命周期](servlet.md#Servlet的生命周期)
@@ -76,3 +76,16 @@ JavaWeb三大组件：
   * [Listener的注册方式](listener.md#Listener的注册方式)
     * [通过注解注册Listener](listener.md#通过注解注册Listener)
     * [通过xml注册Listener](listener.md#通过xml注册Listener)
+
+## 路径结构
+* [路径结构](path_structure.md)
+  * [用一个例子来阐述请求路径拆分规则](path_structure.md#用一个例子来阐述请求路径拆分规则)
+  * [URI组成的公式](path_structure.md#URI组成的公式)
+  * [URL和URI的区别](path_structure.md#URL和URI的区别)
+  * [SpringBoot和SpringMVC中的路径结构](path_structure.md#SpringBoot和SpringMVC中的路径结构)
+
+## HTTP协议中涉及的编码问题和解决方案
+* [HTTP编码](coding.md#HTTP编码)
+  * [URL中的编码问题](coding.md#URL)
+  * [Header中的编码问题](coding.md#Header)
+  * [Body中的编码问题](coding.md#Body)

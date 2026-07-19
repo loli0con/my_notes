@@ -84,7 +84,7 @@ Servlet的映射规则可以在web.xml或@WebServlet注解中进行配置：
   public class MyServlet extends HttpServlet { ... }
   ```
 
-### url的匹配模式
+### URL的匹配模式
 在url匹配中，有且只有星号匹配符这一种匹配符，不存在其他的匹配符。星号匹配符可以匹配0到多个字符，但是不能匹配正斜杠（<b>/</b>）字符。
 
 在进行url匹配时，有如下形式：
